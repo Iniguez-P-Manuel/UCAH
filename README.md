@@ -17,4 +17,10 @@ https://docs.google.com/spreadsheets/d/1uQ-Ngv8h1ubQQp1mkbPZ41Mugmum-3gBhPMBAY2V
 
 Tabla Estados:<br>
 https://docs.google.com/spreadsheets/d/1SNYmuBwT2nn1S9tCeyvzKt7Wk9r91FMe10leL7PWPyg/edit?usp=sharing
+
+Tabla Cultivos:<br>
+https://docs.google.com/spreadsheets/d/19gpXpb0NSQlWHr912SnfFJ-sIItXPxMfj5ukssLAgR4/edit?usp=sharing
+
+Tabla Facturas:<br>
+https://docs.google.com/spreadsheets/d/1dv4mGIeWADDaaZ_PoIdxPUHbeqJ52GVgJvTGYMi4fOo/edit?usp=sharing
 <br>
