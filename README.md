@@ -1,7 +1,7 @@
 Administrador para sqlite:<br>
 https://sqliteonline.com/<br>
-
-
+ModeloDB<br>
+https://dbdiagram.io/d/UCAH-68aa12c21e7a6119674a342e<br>
 
 -----------------------------------MODELAR-----------------------------------<br>
 https://docs.google.com/spreadsheets/d/1JlG9Lf788q4b1pd1XOpsacioDKrA2eq1jWQ2XN_39ZA/edit?usp=sharing
