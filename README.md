@@ -6,6 +6,9 @@ https://dbdiagram.io/d/UCAH-68aa12c21e7a6119674a342e<br>
 -----------------------------------MODELAR-----------------------------------<br>
 https://docs.google.com/spreadsheets/d/1JlG9Lf788q4b1pd1XOpsacioDKrA2eq1jWQ2XN_39ZA/edit?usp=sharing
 -----------------------------------TABLAS CSV-----------------------------------<br>
+Tabla Clientes:<br>
+https://docs.google.com/spreadsheets/d/1ujOmiiAunwv1DWnFvgzgGtaoMtoMu3eaT2ap-fLl3WI/edit?usp=sharing
+
 Tabla Colonias:<br>
 https://docs.google.com/spreadsheets/d/1o1PGGTzIzXGH8I2hi-VImkbPhoZi6c7zRhEOkjPf6ts/edit?usp=sharing
 
