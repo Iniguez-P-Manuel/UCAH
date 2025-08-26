@@ -26,4 +26,7 @@ https://docs.google.com/spreadsheets/d/19gpXpb0NSQlWHr912SnfFJ-sIItXPxMfj5ukssLA
 
 Tabla Facturas:<br>
 https://docs.google.com/spreadsheets/d/1dv4mGIeWADDaaZ_PoIdxPUHbeqJ52GVgJvTGYMi4fOo/edit?usp=sharing
+
+Tabla Liquidacion Notas Cargo:<br>
+https://docs.google.com/spreadsheets/d/1F6nvR_HMdgofPOy9EbAH-OfDp5Al2w5bwvSGsnDs1Y0/edit?usp=sharing
 <br>
