@@ -35,4 +35,10 @@ https://docs.google.com/spreadsheets/d/16wj_0t9rHT9ja5Y6a13CcomdwZj-98LUeutNOQIt
 
 Tabla Tipo Deduccion:<br>
 https://docs.google.com/spreadsheets/d/1F2U9ljE22H_umLAfhMtO3VECnLwJWEOLsPjrMBif28M/edit?usp=sharing
+
+Tabla Grupo Deducciones<br>
+https://docs.google.com/spreadsheets/d/12E9qfJZPlO8ZyUzoeS4GeMEWsaKXjB6bgtiI6UGKWgo/edit?usp=sharing
+
+Tabla Deducciones Nota<br>
+https://docs.google.com/spreadsheets/d/16vQJKQfagaAl-jBxySke4S-P0X0SwFXSNhqM2CIFlgk/edit?usp=sharing
 <br>
