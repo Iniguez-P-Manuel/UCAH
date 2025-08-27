@@ -32,4 +32,7 @@ https://docs.google.com/spreadsheets/d/1F6nvR_HMdgofPOy9EbAH-OfDp5Al2w5bwvSGsnDs
 
 Tabla Tipo Persona Fiscal:<br>
 https://docs.google.com/spreadsheets/d/16wj_0t9rHT9ja5Y6a13CcomdwZj-98LUeutNOQItfy0/edit?usp=sharing
+
+Tabla Tipo Deduccion:<br>
+https://docs.google.com/spreadsheets/d/1F2U9ljE22H_umLAfhMtO3VECnLwJWEOLsPjrMBif28M/edit?usp=sharing
 <br>
