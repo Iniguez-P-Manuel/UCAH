@@ -29,7 +29,8 @@
         private void InitializeComponent()
         {
             panel1 = new Panel();
-            button3 = new Button();
+            textBox7 = new TextBox();
+            btnDeducciones = new Button();
             textBox6 = new TextBox();
             label7 = new Label();
             textBox5 = new TextBox();
@@ -52,7 +53,8 @@
             // panel1
             // 
             panel1.BackColor = Color.White;
-            panel1.Controls.Add(button3);
+            panel1.Controls.Add(textBox7);
+            panel1.Controls.Add(btnDeducciones);
             panel1.Controls.Add(textBox6);
             panel1.Controls.Add(label7);
             panel1.Controls.Add(textBox5);
@@ -75,32 +77,48 @@
             panel1.Size = new Size(457, 235);
             panel1.TabIndex = 5;
             // 
-            // button3
+            // textBox7
             // 
-            button3.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
-            button3.BackColor = Color.DarkSeaGreen;
-            button3.BackgroundImageLayout = ImageLayout.Stretch;
-            button3.FlatAppearance.MouseOverBackColor = Color.FromArgb(128, 255, 128);
-            button3.FlatStyle = FlatStyle.Flat;
-            button3.Image = Properties.Resources.icons8_efectivo_20;
-            button3.ImageAlign = ContentAlignment.MiddleRight;
-            button3.Location = new Point(342, 173);
-            button3.Name = "button3";
-            button3.Size = new Size(108, 25);
-            button3.TabIndex = 54;
-            button3.Text = "Deducciones";
-            button3.TextAlign = ContentAlignment.MiddleLeft;
-            button3.UseVisualStyleBackColor = false;
+            textBox7.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
+            textBox7.BackColor = SystemColors.Info;
+            textBox7.Cursor = Cursors.No;
+            textBox7.Location = new Point(342, 175);
+            textBox7.Name = "textBox7";
+            textBox7.ReadOnly = true;
+            textBox7.Size = new Size(108, 23);
+            textBox7.TabIndex = 55;
+            textBox7.Text = "0.00";
+            textBox7.TextAlign = HorizontalAlignment.Right;
+            // 
+            // btnDeducciones
+            // 
+            btnDeducciones.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
+            btnDeducciones.BackColor = Color.DarkSeaGreen;
+            btnDeducciones.BackgroundImageLayout = ImageLayout.Stretch;
+            btnDeducciones.FlatAppearance.MouseOverBackColor = Color.FromArgb(128, 255, 128);
+            btnDeducciones.FlatStyle = FlatStyle.Flat;
+            btnDeducciones.Image = Properties.Resources.icons8_efectivo_20;
+            btnDeducciones.ImageAlign = ContentAlignment.MiddleRight;
+            btnDeducciones.Location = new Point(228, 173);
+            btnDeducciones.Name = "btnDeducciones";
+            btnDeducciones.Size = new Size(108, 25);
+            btnDeducciones.TabIndex = 54;
+            btnDeducciones.Text = "Deducciones";
+            btnDeducciones.TextAlign = ContentAlignment.MiddleLeft;
+            btnDeducciones.UseVisualStyleBackColor = false;
+            btnDeducciones.Click += btnDeducciones_Click;
             // 
             // textBox6
             // 
             textBox6.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
             textBox6.BackColor = SystemColors.Info;
+            textBox6.Cursor = Cursors.No;
             textBox6.Location = new Point(342, 204);
             textBox6.Name = "textBox6";
+            textBox6.ReadOnly = true;
             textBox6.Size = new Size(108, 23);
             textBox6.TabIndex = 53;
-            textBox6.Text = "0";
+            textBox6.Text = "0.00";
             textBox6.TextAlign = HorizontalAlignment.Right;
             // 
             // label7
@@ -118,9 +136,9 @@
             textBox5.Anchor = AnchorStyles.Left;
             textBox5.Location = new Point(270, 122);
             textBox5.Name = "textBox5";
+            textBox5.PlaceholderText = "0.00";
             textBox5.Size = new Size(108, 23);
             textBox5.TabIndex = 51;
-            textBox5.Text = "0";
             textBox5.TextAlign = HorizontalAlignment.Right;
             // 
             // label6
@@ -138,9 +156,9 @@
             textBox4.Anchor = AnchorStyles.Left;
             textBox4.Location = new Point(71, 122);
             textBox4.Name = "textBox4";
+            textBox4.PlaceholderText = "0.00";
             textBox4.Size = new Size(108, 23);
             textBox4.TabIndex = 49;
-            textBox4.Text = "0";
             textBox4.TextAlign = HorizontalAlignment.Right;
             // 
             // label5
@@ -177,8 +195,11 @@
             // textBox3
             // 
             textBox3.Anchor = AnchorStyles.Left;
+            textBox3.BackColor = SystemColors.Info;
+            textBox3.Cursor = Cursors.No;
             textBox3.Location = new Point(71, 93);
             textBox3.Name = "textBox3";
+            textBox3.ReadOnly = true;
             textBox3.Size = new Size(307, 23);
             textBox3.TabIndex = 45;
             // 
@@ -206,8 +227,11 @@
             // textBox2
             // 
             textBox2.Anchor = AnchorStyles.Left;
+            textBox2.BackColor = SystemColors.Info;
+            textBox2.Cursor = Cursors.No;
             textBox2.Location = new Point(71, 64);
             textBox2.Name = "textBox2";
+            textBox2.ReadOnly = true;
             textBox2.Size = new Size(307, 23);
             textBox2.TabIndex = 42;
             // 
@@ -233,7 +257,7 @@
             // label1
             // 
             label1.AutoSize = true;
-            label1.Location = new Point(12, 13);
+            label1.Location = new Point(20, 13);
             label1.Name = "label1";
             label1.Size = new Size(43, 15);
             label1.TabIndex = 39;
@@ -241,10 +265,15 @@
             // 
             // textBox1
             // 
-            textBox1.Location = new Point(61, 7);
+            textBox1.BackColor = SystemColors.Info;
+            textBox1.Cursor = Cursors.No;
+            textBox1.Location = new Point(71, 7);
             textBox1.Name = "textBox1";
-            textBox1.Size = new Size(100, 23);
+            textBox1.PlaceholderText = "0";
+            textBox1.ReadOnly = true;
+            textBox1.Size = new Size(72, 23);
             textBox1.TabIndex = 38;
+            textBox1.TextAlign = HorizontalAlignment.Center;
             // 
             // NotaCargo
             // 
@@ -263,7 +292,7 @@
         #endregion
 
         private Panel panel1;
-        private Button button3;
+        private Button btnDeducciones;
         private TextBox textBox6;
         private Label label7;
         private TextBox textBox5;
@@ -280,5 +309,6 @@
         private DateTimePicker dateTimePicker1;
         private Label label1;
         private TextBox textBox1;
+        private TextBox textBox7;
     }
 }

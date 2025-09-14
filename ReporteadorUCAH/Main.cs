@@ -29,17 +29,32 @@ namespace ReporteadorUCAH
         }
 
         private List<Form> ventanasAbiertas = new List<Form>();
-        
 
+        //Metodo para abrir el form interno
+        public void AgregarForm(Form Nuevoform, String titulo)
+        {
+            if(!FocusForm(Nuevoform))
+            {
+                Nuevoform.TopLevel = false;
+                Nuevoform.Location = new Point((PanelVentana.Width - Nuevoform.Width) / 2, (PanelVentana.Height - Nuevoform.Height) / 2);
+                PanelVentana.Controls.Add(Nuevoform);
+                Nuevoform.Show();
+            }
+        }
 
         //Metodo para cerrar el form interno
-        public void CerrarForms()
+        public bool FocusForm(Form FormoNuevo)
         {
             Form[] forms = Application.OpenForms.Cast<Form>().ToArray();
             foreach (Form thisForm in forms)
             {
-                if (thisForm.Name != "Main") thisForm.Close();
+                if (thisForm.Name.Equals(FormoNuevo.Name)) 
+                {
+                    thisForm.Focus();
+                    return true;
+                }
             }
+            return false;
         }
 
 
@@ -50,7 +65,7 @@ namespace ReporteadorUCAH
         }
 
         //Boton maximizar
-        private void button2_Click_1(object sender, EventArgs e)
+        private void btnMaximizar_Click(object sender, EventArgs e)
         {
             if (this.WindowState == FormWindowState.Maximized)
             {
@@ -63,43 +78,39 @@ namespace ReporteadorUCAH
         }
 
         //Boton minimizar
-        private void button3_Click(object sender, EventArgs e)
+        private void btnMinimizar_Click(object sender, EventArgs e)
         {
             this.WindowState = FormWindowState.Minimized;
         }
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="Nuevoform"></param>
-        /// <param name="titulo"></param>
 
+        
 
-        //Metodo para abrir el form interno
-        public void AgregarForm(Form Nuevoform, String titulo)
-        {
-            Nuevoform.TopLevel = false;
-            Nuevoform.Location = new Point((PanelVentana.Width - Nuevoform.Width) / 2, (PanelVentana.Height - Nuevoform.Height) / 2);
-            PanelVentana.Controls.Add(Nuevoform);
-            CerrarForms();
-            //Titulo.Text = titulo;
-            Nuevoform.Show();
-            PanelVentana.BackgroundImage = null;
-        }
-
-        private void button4_Click(object sender, EventArgs e)
+        private void btnNotasCargo_Click(object sender, EventArgs e)
         {
             Formas.NotaCargo form = new Formas.NotaCargo();
             AgregarForm(form, "Test");
 
         }
 
-        private void panel3_MouseMove(object sender, MouseEventArgs e)
+        private void barraPrincipal_MouseMove(object sender, MouseEventArgs e)
         {
             if (e.Button == MouseButtons.Left)
             {
                 ReleaseCapture();
                 SendMessage(Handle, WM_NCLBUTTONDOWN, HT_CAPTION, 0);
+            }
+        }
+
+        private void barraPrincipal_DoubleClick(object sender, EventArgs e)
+        {
+            if (this.WindowState == FormWindowState.Maximized)
+            {
+                this.WindowState = FormWindowState.Normal;
+            }
+            else
+            {
+                this.WindowState = FormWindowState.Maximized;
             }
         }
     }

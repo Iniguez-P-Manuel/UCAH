@@ -15,7 +15,17 @@ namespace ReporteadorUCAH.Formas
         public NotaCargo()
         {
             InitializeComponent();
-            this.CambiarTitulo(this.Text);
+        }
+
+        public override void Guardar()
+        {
+            MessageBox.Show("ahuevito");
+        }
+
+        private void btnDeducciones_Click(object sender, EventArgs e)
+        {
+            DeduccionesNota formDeducciones = new DeduccionesNota();
+            formDeducciones.Show();
         }
     }
 }
