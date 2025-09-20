@@ -47,12 +47,14 @@
             dateTimePicker1 = new DateTimePicker();
             label1 = new Label();
             textBox1 = new TextBox();
+            button3 = new Button();
             panel1.SuspendLayout();
             SuspendLayout();
             // 
             // panel1
             // 
             panel1.BackColor = Color.White;
+            panel1.Controls.Add(button3);
             panel1.Controls.Add(textBox7);
             panel1.Controls.Add(btnDeducciones);
             panel1.Controls.Add(textBox6);
@@ -275,6 +277,18 @@
             textBox1.TabIndex = 38;
             textBox1.TextAlign = HorizontalAlignment.Center;
             // 
+            // button3
+            // 
+            button3.Anchor = AnchorStyles.Left;
+            button3.BackgroundImage = Properties.Resources.icons8_letra_pequeña_20;
+            button3.BackgroundImageLayout = ImageLayout.Stretch;
+            button3.Location = new Point(146, 4);
+            button3.Name = "button3";
+            button3.Size = new Size(33, 31);
+            button3.TabIndex = 56;
+            button3.UseVisualStyleBackColor = true;
+            button3.Click += button3_Click;
+            // 
             // NotaCargo
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
@@ -310,5 +324,6 @@
         private Label label1;
         private TextBox textBox1;
         private TextBox textBox7;
+        private Button button3;
     }
 }

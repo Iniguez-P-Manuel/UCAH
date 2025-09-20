@@ -119,5 +119,19 @@ namespace ReporteadorUCAH
             Formas.Clientes form = new Formas.Clientes();
             AgregarForm(form, "Test");
         }
+
+        private void Main_Load(object sender, EventArgs e)
+        {
+            using (DatabaseConnection varCon = new DatabaseConnection())
+            {
+                if (!varCon.TestConnection())
+                    this.Dispose();
+            }
+        }
+
+        private void btnCultivos_Click(object sender, EventArgs e)
+        {
+
+        }
     }
 }

@@ -53,9 +53,10 @@
             panel1.Controls.Add(btnNotasCargo);
             panel1.Controls.Add(panel2);
             panel1.Dock = DockStyle.Left;
-            panel1.Location = new Point(0, 48);
+            panel1.Location = new Point(0, 29);
+            panel1.Margin = new Padding(2);
             panel1.Name = "panel1";
-            panel1.Size = new Size(248, 972);
+            panel1.Size = new Size(175, 583);
             panel1.TabIndex = 0;
             // 
             // btnCultivos
@@ -65,13 +66,13 @@
             btnCultivos.FlatStyle = FlatStyle.Flat;
             btnCultivos.Image = Properties.Resources.icons8_brote_23;
             btnCultivos.ImageAlign = ContentAlignment.MiddleRight;
-            btnCultivos.Location = new Point(0, 220);
-            btnCultivos.Margin = new Padding(4, 5, 4, 5);
+            btnCultivos.Location = new Point(0, 132);
             btnCultivos.Name = "btnCultivos";
-            btnCultivos.Size = new Size(244, 60);
+            btnCultivos.Size = new Size(171, 36);
             btnCultivos.TabIndex = 4;
             btnCultivos.Text = "Cultivos";
             btnCultivos.UseVisualStyleBackColor = false;
+            btnCultivos.Click += btnCultivos_Click;
             // 
             // btnClientes
             // 
@@ -80,10 +81,9 @@
             btnClientes.FlatStyle = FlatStyle.Flat;
             btnClientes.Image = Properties.Resources.icons8_encuentra_hombre_usuario_23;
             btnClientes.ImageAlign = ContentAlignment.MiddleRight;
-            btnClientes.Location = new Point(0, 160);
-            btnClientes.Margin = new Padding(4, 5, 4, 5);
+            btnClientes.Location = new Point(0, 96);
             btnClientes.Name = "btnClientes";
-            btnClientes.Size = new Size(244, 60);
+            btnClientes.Size = new Size(171, 36);
             btnClientes.TabIndex = 3;
             btnClientes.Text = "Clientes";
             btnClientes.UseVisualStyleBackColor = false;
@@ -96,10 +96,9 @@
             btnNotasCargo.FlatStyle = FlatStyle.Flat;
             btnNotasCargo.Image = Properties.Resources.icons8_documento_20;
             btnNotasCargo.ImageAlign = ContentAlignment.MiddleRight;
-            btnNotasCargo.Location = new Point(0, 100);
-            btnNotasCargo.Margin = new Padding(4, 5, 4, 5);
+            btnNotasCargo.Location = new Point(0, 60);
             btnNotasCargo.Name = "btnNotasCargo";
-            btnNotasCargo.Size = new Size(244, 60);
+            btnNotasCargo.Size = new Size(171, 36);
             btnNotasCargo.TabIndex = 2;
             btnNotasCargo.Text = "Notas cargo";
             btnNotasCargo.UseVisualStyleBackColor = false;
@@ -112,8 +111,9 @@
             panel2.BackgroundImageLayout = ImageLayout.Stretch;
             panel2.Dock = DockStyle.Top;
             panel2.Location = new Point(0, 0);
+            panel2.Margin = new Padding(2);
             panel2.Name = "panel2";
-            panel2.Size = new Size(244, 100);
+            panel2.Size = new Size(171, 60);
             panel2.TabIndex = 1;
             // 
             // barraPrincipal
@@ -124,8 +124,9 @@
             barraPrincipal.Controls.Add(btnCerrar);
             barraPrincipal.Dock = DockStyle.Top;
             barraPrincipal.Location = new Point(0, 0);
+            barraPrincipal.Margin = new Padding(2);
             barraPrincipal.Name = "barraPrincipal";
-            barraPrincipal.Size = new Size(1243, 48);
+            barraPrincipal.Size = new Size(870, 29);
             barraPrincipal.TabIndex = 1;
             barraPrincipal.DoubleClick += barraPrincipal_DoubleClick;
             barraPrincipal.MouseMove += barraPrincipal_MouseMove;
@@ -136,9 +137,10 @@
             btnMinimizar.FlatAppearance.BorderSize = 0;
             btnMinimizar.FlatStyle = FlatStyle.Flat;
             btnMinimizar.Image = Properties.Resources.icons8_línea_horizontal_16;
-            btnMinimizar.Location = new Point(1105, 0);
+            btnMinimizar.Location = new Point(774, 0);
+            btnMinimizar.Margin = new Padding(2);
             btnMinimizar.Name = "btnMinimizar";
-            btnMinimizar.Size = new Size(46, 48);
+            btnMinimizar.Size = new Size(32, 29);
             btnMinimizar.TabIndex = 3;
             btnMinimizar.UseVisualStyleBackColor = true;
             btnMinimizar.Click += btnMinimizar_Click;
@@ -149,9 +151,10 @@
             btnMaximizar.FlatAppearance.BorderSize = 0;
             btnMaximizar.FlatStyle = FlatStyle.Flat;
             btnMaximizar.Image = Properties.Resources.icons8_squares_16_fliped;
-            btnMaximizar.Location = new Point(1151, 0);
+            btnMaximizar.Location = new Point(806, 0);
+            btnMaximizar.Margin = new Padding(2);
             btnMaximizar.Name = "btnMaximizar";
-            btnMaximizar.Size = new Size(46, 48);
+            btnMaximizar.Size = new Size(32, 29);
             btnMaximizar.TabIndex = 2;
             btnMaximizar.UseVisualStyleBackColor = true;
             btnMaximizar.Click += btnMaximizar_Click;
@@ -162,9 +165,10 @@
             btnCerrar.FlatAppearance.BorderSize = 0;
             btnCerrar.FlatStyle = FlatStyle.Flat;
             btnCerrar.Image = Properties.Resources.icons8_eliminar_16;
-            btnCerrar.Location = new Point(1197, 0);
+            btnCerrar.Location = new Point(838, 0);
+            btnCerrar.Margin = new Padding(2);
             btnCerrar.Name = "btnCerrar";
-            btnCerrar.Size = new Size(46, 48);
+            btnCerrar.Size = new Size(32, 29);
             btnCerrar.TabIndex = 1;
             btnCerrar.UseVisualStyleBackColor = true;
             btnCerrar.Click += button1_Click;
@@ -176,9 +180,10 @@
             PanelVentana.BackgroundImageLayout = ImageLayout.Stretch;
             PanelVentana.Dock = DockStyle.Fill;
             PanelVentana.ForeColor = SystemColors.ControlText;
-            PanelVentana.Location = new Point(248, 48);
+            PanelVentana.Location = new Point(175, 29);
+            PanelVentana.Margin = new Padding(2);
             PanelVentana.Name = "PanelVentana";
-            PanelVentana.Size = new Size(995, 972);
+            PanelVentana.Size = new Size(695, 583);
             PanelVentana.TabIndex = 2;
             // 
             // button1
@@ -193,18 +198,20 @@
             // 
             // Main
             // 
-            AutoScaleDimensions = new SizeF(10F, 25F);
+            AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(1243, 1020);
+            ClientSize = new Size(870, 612);
             Controls.Add(PanelVentana);
             Controls.Add(panel1);
             Controls.Add(barraPrincipal);
             FormBorderStyle = FormBorderStyle.None;
             Icon = (Icon)resources.GetObject("$this.Icon");
             IsMdiContainer = true;
+            Margin = new Padding(2);
             Name = "Main";
             Text = "Form1";
             WindowState = FormWindowState.Maximized;
+            Load += Main_Load;
             panel1.ResumeLayout(false);
             barraPrincipal.ResumeLayout(false);
             ResumeLayout(false);
