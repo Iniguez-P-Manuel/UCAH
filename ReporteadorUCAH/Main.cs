@@ -33,7 +33,7 @@ namespace ReporteadorUCAH
         //Metodo para abrir el form interno
         public void AgregarForm(Form Nuevoform, String titulo)
         {
-            if(!FocusForm(Nuevoform))
+            if (!FocusForm(Nuevoform))
             {
                 Nuevoform.TopLevel = false;
                 Nuevoform.Location = new Point((PanelVentana.Width - Nuevoform.Width) / 2, (PanelVentana.Height - Nuevoform.Height) / 2);
@@ -48,7 +48,7 @@ namespace ReporteadorUCAH
             Form[] forms = Application.OpenForms.Cast<Form>().ToArray();
             foreach (Form thisForm in forms)
             {
-                if (thisForm.Name.Equals(FormoNuevo.Name)) 
+                if (thisForm.Name.Equals(FormoNuevo.Name))
                 {
                     thisForm.Focus();
                     return true;
@@ -84,7 +84,7 @@ namespace ReporteadorUCAH
         }
 
 
-        
+
 
         private void btnNotasCargo_Click(object sender, EventArgs e)
         {
@@ -112,6 +112,12 @@ namespace ReporteadorUCAH
             {
                 this.WindowState = FormWindowState.Maximized;
             }
+        }
+
+        private void btnClientes_Click(object sender, EventArgs e)
+        {
+            Formas.Clientes form = new Formas.Clientes();
+            AgregarForm(form, "Test");
         }
     }
 }
