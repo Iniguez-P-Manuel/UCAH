@@ -131,7 +131,8 @@ namespace ReporteadorUCAH
 
         private void btnCultivos_Click(object sender, EventArgs e)
         {
-
+            Formas.Cultivos form = new Formas.Cultivos();
+            AgregarForm(form, "Test");
         }
     }
 }
