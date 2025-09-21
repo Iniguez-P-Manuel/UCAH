@@ -30,11 +30,11 @@ namespace ReporteadorUCAH.Formas
             this.CambiarColor(NuevoColor);
         }
 
-        private void button1_Click(object sender, EventArgs e)
+        private async void button1_Click(object sender, EventArgs e)
         {
             Buscar();
         }
-        private void Buscar()
+        private async void Buscar()
         {
             string Busqueda = txtBusqueda.Text;
             dgvNotas.Rows.Clear();
@@ -46,7 +46,9 @@ namespace ReporteadorUCAH.Formas
             {
                 using (NotasCargo DB_Notas = new NotasCargo(varCon))
                 {
-                    lstNotas = DB_Notas.BuscarNotas(Busqueda);
+                    lstNotas = await EjecutarConLoading(() => {
+                        return DB_Notas.BuscarNotas(Busqueda);
+                    });
                 }
             }
 

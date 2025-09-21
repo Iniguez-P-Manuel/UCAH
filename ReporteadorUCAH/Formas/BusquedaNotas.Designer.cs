@@ -52,14 +52,14 @@
             panel1.Dock = DockStyle.Fill;
             panel1.Location = new Point(3, 32);
             panel1.Name = "panel1";
-            panel1.Size = new Size(579, 319);
+            panel1.Size = new Size(579, 310);
             panel1.TabIndex = 5;
             // 
             // button1
             // 
             button1.BackgroundImage = Properties.Resources.icons8_letra_pequeña_20;
             button1.BackgroundImageLayout = ImageLayout.Stretch;
-            button1.Location = new Point(544, 15);
+            button1.Location = new Point(544, 10);
             button1.Name = "button1";
             button1.Size = new Size(32, 29);
             button1.TabIndex = 2;
@@ -69,7 +69,7 @@
             // txtBusqueda
             // 
             txtBusqueda.Anchor = AnchorStyles.Left | AnchorStyles.Right;
-            txtBusqueda.Location = new Point(3, 18);
+            txtBusqueda.Location = new Point(3, 14);
             txtBusqueda.Name = "txtBusqueda";
             txtBusqueda.PlaceholderText = "Buscar cliente...";
             txtBusqueda.Size = new Size(539, 23);
@@ -86,7 +86,7 @@
             dgvNotas.ColumnHeadersBorderStyle = DataGridViewHeaderBorderStyle.Single;
             dgvNotas.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             dgvNotas.Columns.AddRange(new DataGridViewColumn[] { colidNota, colFecha, colCliente, colCultivo, colTons });
-            dgvNotas.Location = new Point(3, 47);
+            dgvNotas.Location = new Point(3, 43);
             dgvNotas.Name = "dgvNotas";
             dgvNotas.RowHeadersVisible = false;
             dgvNotas.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
