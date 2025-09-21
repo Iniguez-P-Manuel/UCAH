@@ -35,6 +35,7 @@
             btnNotasCargo = new Button();
             panel2 = new Panel();
             barraPrincipal = new Panel();
+            lblTitulo = new Label();
             btnMinimizar = new Button();
             btnMaximizar = new Button();
             btnCerrar = new Button();
@@ -119,6 +120,7 @@
             // barraPrincipal
             // 
             barraPrincipal.BackColor = Color.Peru;
+            barraPrincipal.Controls.Add(lblTitulo);
             barraPrincipal.Controls.Add(btnMinimizar);
             barraPrincipal.Controls.Add(btnMaximizar);
             barraPrincipal.Controls.Add(btnCerrar);
@@ -130,6 +132,20 @@
             barraPrincipal.TabIndex = 1;
             barraPrincipal.DoubleClick += barraPrincipal_DoubleClick;
             barraPrincipal.MouseMove += barraPrincipal_MouseMove;
+            // 
+            // lblTitulo
+            // 
+            lblTitulo.Anchor = AnchorStyles.Left | AnchorStyles.Right;
+            lblTitulo.BackColor = Color.Transparent;
+            lblTitulo.Font = new Font("Segoe UI", 12F, FontStyle.Bold, GraphicsUnit.Point, 0);
+            lblTitulo.Location = new Point(232, -1);
+            lblTitulo.Name = "lblTitulo";
+            lblTitulo.Size = new Size(407, 30);
+            lblTitulo.TabIndex = 4;
+            lblTitulo.Text = "Liquidación notas cargo";
+            lblTitulo.TextAlign = ContentAlignment.MiddleCenter;
+            lblTitulo.DoubleClick += lblTitulo_DoubleClick;
+            lblTitulo.MouseMove += lblTitulo_MouseMove;
             // 
             // btnMinimizar
             // 
@@ -230,6 +246,7 @@
         private Button btnNotasCargo;
         private Button btnClientes;
         private Button btnCultivos;
+        private Label lblTitulo;
     }
 }
 

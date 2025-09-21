@@ -20,17 +20,11 @@ namespace ReporteadorUCAH.DB_Services
             using (DatabaseConnection varCon = new DatabaseConnection())
             {
                 using (Cultivos DB_Cultivo = new Cultivos(varCon)) 
-                {
                     _cultivo = DB_Cultivo.GetCultivoById(reader.GetInt32(reader.GetOrdinal("idCultivo")));
-                }
                 using (Clientes DB_Clientes = new Clientes(varCon))
-                {
                     _cliente = DB_Clientes.GetClienteById(reader.GetInt32(reader.GetOrdinal("idCliente")));
-                }
                 using (DeduccionesNota DB_Deducciones = new DeduccionesNota(varCon))
-                {
                     _deducciones = DB_Deducciones.GetDeduccionesByNota(reader.GetInt32(reader.GetOrdinal("id")));
-                }
             }
 
             return new Modelos.NotaCargo
@@ -49,11 +43,30 @@ namespace ReporteadorUCAH.DB_Services
         }
         public static Cliente MapToCliente(SqliteDataReader reader)
         {
+
+            TipoPersonaFiscal _tipoPersona = new TipoPersonaFiscal();
+            Colonia _colonia = new Colonia();
+            Ciudad _ciudad = new Ciudad();
+            Municipio _municipio = new Municipio();
+            Estado _estado = new Estado();
+            using (DatabaseConnection varCon = new DatabaseConnection())
+            {
+                using (TiposPersona DB_TiposPersona = new TiposPersona(varCon))
+                    _tipoPersona = DB_TiposPersona.GetTipoPersonaByID(reader.GetInt32(reader.GetOrdinal("idTipoPersona")));
+                using (Colonias DB_Colonia = new Colonias(varCon))
+                    _colonia = DB_Colonia.GetColoniaByid(reader.GetInt32(reader.GetOrdinal("idColonia")));
+                using (Ciudades DB_Ciudad = new Ciudades(varCon))
+                    _ciudad = DB_Ciudad.GetCiudadByid(reader.GetInt32(reader.GetOrdinal("idCiudad")));
+                using (Municipios DB_Municipio = new Municipios(varCon))
+                    _municipio = DB_Municipio.GetMunicipioByid(reader.GetInt32(reader.GetOrdinal("idMunicipio")));
+                using (Estados DB_Estado = new Estados(varCon))
+                    _estado = DB_Estado.GetEstadoByid(reader.GetInt32(reader.GetOrdinal("idEstado")));
+                }
             return new Cliente
             {
                 Id = reader.GetInt32(reader.GetOrdinal("id")),
                 Nombre = GetStringOrNull(reader, "Nombre"),
-                TipoPersona = new TipoPersonaFiscal(), // Se resuelve después
+                TipoPersona = _tipoPersona,
                 ApellidoPaterno = GetStringOrNull(reader, "apellidoPaterno"),
                 ApellidoMaterno = GetStringOrNull(reader, "apellidoMaterno"),
                 Nombres = GetStringOrNull(reader, "nombres"),
@@ -64,12 +77,13 @@ namespace ReporteadorUCAH.DB_Services
                 Calle = GetStringOrNull(reader, "calle"),
                 NoInterior = GetStringOrNull(reader, "noInterior"),
                 NoExterior = GetStringOrNull(reader, "noExterior"),
-                _Colonia = new Colonia(), // Se resuelve después
-                _Ciudad = new Ciudad(), // Se resuelve después
-                _Municipio = new Municipio(), // Se resuelve después
-                _Estado = new Estado(), // Se resuelve después
+                _Colonia = _colonia, 
+                _Ciudad = _ciudad, 
+                _Municipio = _municipio, 
+                _Estado = _estado, 
                 Referencia = GetStringOrNull(reader, "referencia"),
-                Telefonos = GetStringOrNull(reader, "telefonos"),
+                Correo = GetStringOrNull(reader, "correo"),
+                Telefono = GetStringOrNull(reader, "telefonos"),
                 CondicionPago = GetStringOrNull(reader, "condicionPago"), 
                 MetodoPago = GetStringOrNull(reader, "metodoPago"), 
                 LimiteCredito = GetInt32OrNull(reader, "limiteCredito"),
@@ -95,9 +109,7 @@ namespace ReporteadorUCAH.DB_Services
             using (DatabaseConnection varCon = new DatabaseConnection())
             {
                 using (TiposDeduccion DB_TipoDeduccion = new TiposDeduccion(varCon))
-                {
                     _tipoDeduccion = DB_TipoDeduccion.GetTipoDeduccionByID(reader.GetInt32(reader.GetOrdinal("idDeduccion")));
-                }
             }
             return new Modelos.DeduccionNota
             {
@@ -108,10 +120,92 @@ namespace ReporteadorUCAH.DB_Services
         }
         public static Modelos.TipoDeduccion MapToTipoDeduccion(SqliteDataReader reader)
         {
+            Modelos.GrupoDeducciones _grupoDedu = new Modelos.GrupoDeducciones();
+
+            using (DatabaseConnection varCon = new DatabaseConnection())
+            {
+                using (GruposDeducciones DB_GruposDedu = new GruposDeducciones(varCon))
+                    _grupoDedu = DB_GruposDedu.GetGrupoDeduccionesById(reader.GetInt32(reader.GetOrdinal("idGrupo")));
+            }
             return new Modelos.TipoDeduccion
             {
                 Id = reader.GetInt32(reader.GetOrdinal("id")),
-                _Grupo = new GrupoDeducciones(),
+                _Grupo = _grupoDedu,
+                Nombre = GetStringOrNull(reader, "Nombre")
+            };
+        }
+
+        public static Modelos.TipoPersonaFiscal MapToTipoPersonaFiscal(SqliteDataReader reader)
+        {
+            
+            return new Modelos.TipoPersonaFiscal
+            {
+                Id = reader.GetInt32(reader.GetOrdinal("id")),
+                NombreCorto = GetStringOrNull(reader, "NombreCorto"),
+                Nombre = GetStringOrNull(reader, "Nombre")
+            };
+        }
+        public static Colonia MapToColonia(SqliteDataReader reader)
+        {
+            Ciudad _ciudad = new Ciudad();
+            using (DatabaseConnection varCon = new DatabaseConnection())
+            {
+                using (Ciudades DB_Ciudades = new Ciudades(varCon))
+                    _ciudad = DB_Ciudades.GetCiudadByid(reader.GetInt32(reader.GetOrdinal("idCiudad")));
+            }
+            return new Colonia
+            {
+                Id = reader.GetInt32(reader.GetOrdinal("id")),
+                Nombre = GetStringOrNull(reader, "Nombre"),
+                _Ciudad = _ciudad,
+            };
+        }
+
+        public static Ciudad MapToCiudad(SqliteDataReader reader)
+        {
+            Municipio _municipio = new Municipio();
+            using (DatabaseConnection varCon = new DatabaseConnection())
+            {
+                using (Municipios DB_Municipios = new Municipios(varCon))
+                    _municipio = DB_Municipios.GetMunicipioByid(reader.GetInt32(reader.GetOrdinal("idMunicipio")));
+            }
+            return new Ciudad
+            {
+                Id = reader.GetInt32(reader.GetOrdinal("id")),
+                Nombre = GetStringOrNull(reader, "Nombre"),
+                _Municipio = _municipio,
+            };
+        }
+
+        public static Municipio MapToMunicipio(SqliteDataReader reader)
+        {
+            Estado _estado = new Estado();
+            using (DatabaseConnection varCon = new DatabaseConnection())
+            {
+                using (Estados DB_Estados = new Estados(varCon))
+                    _estado = DB_Estados.GetEstadoByid(reader.GetInt32(reader.GetOrdinal("idEstado")));
+            }
+            return new Municipio
+            {
+                Id = reader.GetInt32(reader.GetOrdinal("id")),
+                Nombre = GetStringOrNull(reader, "Nombre"),
+                _Estado = _estado,
+            };
+        }
+        public static Estado MapToEstado(SqliteDataReader reader)
+        {
+            return new Estado
+            {
+                Id = reader.GetInt32(reader.GetOrdinal("id")),
+                Nombre = GetStringOrNull(reader, "Nombre"),
+                EstadoNumero = GetStringOrNull(reader, "estadoNumero"),
+            };
+        }
+        public static GrupoDeducciones MapToGrupoDeducciones(SqliteDataReader reader)
+        {
+            return new GrupoDeducciones
+            {
+                Id = reader.GetInt32(reader.GetOrdinal("id")),
                 Nombre = GetStringOrNull(reader, "Nombre")
             };
         }
@@ -120,7 +214,11 @@ namespace ReporteadorUCAH.DB_Services
             int ordinal = reader.GetOrdinal(columnName);
             return reader.IsDBNull(ordinal) ? 0 : reader.GetInt32(ordinal);
         }
-
+        private static double getDoubleOrNull(SqliteDataReader reader, string columnName)
+        {
+            int ordinal = reader.GetOrdinal(columnName);
+            return reader.IsDBNull(ordinal) ? 0 : reader.GetDouble(ordinal);
+        }
         private static string GetStringOrNull(SqliteDataReader reader, string columnName)
         {
             int ordinal = reader.GetOrdinal(columnName);

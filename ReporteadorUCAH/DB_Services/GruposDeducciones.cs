@@ -8,61 +8,30 @@ using System.Threading.Tasks;
 
 namespace ReporteadorUCAH.DB_Services
 {
-    internal class Clientes : IDisposable
+    internal class GruposDeducciones : IDisposable
     {
         private readonly DatabaseConnection _dbConnection;
-        public Clientes(DatabaseConnection dbConnection)
+        public GruposDeducciones(DatabaseConnection dbConnection)
         {
             _dbConnection = dbConnection;
         }
 
-        public List<Cliente> BuscarClientes(string Busqueda)
-        {
-            var Clientes = new List<Cliente>();
 
-            try
-            {
-                using (var conn = _dbConnection.GetConnection())
-                using (var command = conn.CreateCommand())
-                {
-                    command.CommandText = "SELECT * FROM Clientes " +
-                                           "WHERE Nombre LIKE '%' || @Busqueda || '%' " +
-                                            "LIMIT 100";
-                    command.Parameters.AddWithValue("@Busqueda", Busqueda);
-
-                    using (var reader = command.ExecuteReader())
-                    {
-                        while (reader.Read())
-                        {
-                            var cliente = MapClasses.MapToCliente(reader);
-                            Clientes.Add(cliente);
-                        }
-                    }
-                }
-            }
-            catch (SqliteException ex)
-            {
-                Console.WriteLine($"Error al obtener notas: {ex.Message}");
-                throw;
-            }
-
-            return Clientes;
-        }
-        public Cliente GetClienteById(int id)
+        public GrupoDeducciones GetGrupoDeduccionesById(int id)
         {
             try
             {
                 using (var conn = _dbConnection.GetConnection())
                 using (var command = conn.CreateCommand())
                 {
-                    command.CommandText = "SELECT * FROM Clientes WHERE Id = @Id";
+                    command.CommandText = "SELECT * FROM GrupoDeducciones WHERE Id = @Id";
                     command.Parameters.AddWithValue("@Id", id);
 
                     using (var reader = command.ExecuteReader())
                     {
                         if (reader.Read())
                         {
-                            return MapClasses.MapToCliente(reader);
+                            return MapClasses.MapToGrupoDeducciones(reader);
                         }
                     }
                 }
@@ -72,12 +41,39 @@ namespace ReporteadorUCAH.DB_Services
             }
             catch (SqliteException ex)
             {
-                Console.WriteLine($"Error al obtener Cliente por ID: {ex.Message}");
+                Console.WriteLine($"Error al obtener gropo deducciones por ID: {ex.Message}");
                 throw;
             }
         }
 
+        public List<Modelos.GrupoDeducciones> GetAllGruposDeducciones()
+        {
+            var Grupos = new List<Modelos.GrupoDeducciones>();
+            try
+            {
+                using (var conn = _dbConnection.GetConnection())
+                using (var command = conn.CreateCommand())
+                {
+                    command.CommandText = "SELECT * FROM GrupoDeducciones";
 
+                    using (var reader = command.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            var grupoDeduccion = MapClasses.MapToGrupoDeducciones(reader);
+                            Grupos.Add(grupoDeduccion);
+                        }
+                    }
+                }
+            }
+            catch (SqliteException ex)
+            {
+                Console.WriteLine($"Error al obtener Grupos deducciones: {ex.Message}");
+                throw;
+            }
+
+            return Grupos;
+        }
 
 
 

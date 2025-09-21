@@ -19,10 +19,6 @@ namespace ReporteadorUCAH.Formas
         }
         Modelos.NotaCargo NotaActual = new Modelos.NotaCargo();
 
-        public override void Guardar()
-        {
-            MessageBox.Show("ahuevito");
-        }
 
         private void btnDeducciones_Click(object sender, EventArgs e)
         {
@@ -37,7 +33,7 @@ namespace ReporteadorUCAH.Formas
             formBusqueda.ObjetoSeleccionado += BusquedaSeleccionada;
             formBusqueda.ShowDialog();
         }
-        private void BusquedaSeleccionada(object sender, ObjetoSeleccionadoEventArgs e)
+        private void BusquedaSeleccionada(object sender, BusquedaNotas.ObjetoSeleccionadoEventArgs e)
         {
             NotaActual = e.ObjetoSeleccionado;
             double totalDeducciones = NotaActual.Deducciones?.Sum(d => d.Importe) ?? 0;
@@ -51,5 +47,21 @@ namespace ReporteadorUCAH.Formas
             txtToneladas.Text = NotaActual.Tons.ToString();
 
         }
+        public override void Nuevo()
+        {
+            //Limpiar objeto nota
+            NotaActual = new Modelos.NotaCargo();
+
+            // Limpiar TextBoxes
+            txtCliente.Text = string.Empty;
+            txtCultivo.Text = string.Empty;
+            txtDeducciones.Text = "0.00";
+            txtID.Text = string.Empty;
+            txtImporte.Text = "0.00";
+            txtPrecio.Text = string.Empty;
+            txtToneladas.Text = string.Empty;
+        }
+
+
     }
 }

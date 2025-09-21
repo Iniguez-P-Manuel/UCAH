@@ -8,61 +8,29 @@ using System.Threading.Tasks;
 
 namespace ReporteadorUCAH.DB_Services
 {
-    internal class Clientes : IDisposable
+    internal class Colonias : IDisposable
     {
         private readonly DatabaseConnection _dbConnection;
-        public Clientes(DatabaseConnection dbConnection)
+        public Colonias(DatabaseConnection dbConnection)
         {
             _dbConnection = dbConnection;
         }
 
-        public List<Cliente> BuscarClientes(string Busqueda)
-        {
-            var Clientes = new List<Cliente>();
-
-            try
-            {
-                using (var conn = _dbConnection.GetConnection())
-                using (var command = conn.CreateCommand())
-                {
-                    command.CommandText = "SELECT * FROM Clientes " +
-                                           "WHERE Nombre LIKE '%' || @Busqueda || '%' " +
-                                            "LIMIT 100";
-                    command.Parameters.AddWithValue("@Busqueda", Busqueda);
-
-                    using (var reader = command.ExecuteReader())
-                    {
-                        while (reader.Read())
-                        {
-                            var cliente = MapClasses.MapToCliente(reader);
-                            Clientes.Add(cliente);
-                        }
-                    }
-                }
-            }
-            catch (SqliteException ex)
-            {
-                Console.WriteLine($"Error al obtener notas: {ex.Message}");
-                throw;
-            }
-
-            return Clientes;
-        }
-        public Cliente GetClienteById(int id)
+        public Modelos.Colonia GetColoniaByid(int id)
         {
             try
             {
                 using (var conn = _dbConnection.GetConnection())
                 using (var command = conn.CreateCommand())
                 {
-                    command.CommandText = "SELECT * FROM Clientes WHERE Id = @Id";
+                    command.CommandText = "SELECT * FROM Colonia WHERE id = @Id ";
                     command.Parameters.AddWithValue("@Id", id);
 
                     using (var reader = command.ExecuteReader())
                     {
                         if (reader.Read())
                         {
-                            return MapClasses.MapToCliente(reader);
+                            return MapClasses.MapToColonia(reader);
                         }
                     }
                 }
@@ -72,14 +40,40 @@ namespace ReporteadorUCAH.DB_Services
             }
             catch (SqliteException ex)
             {
-                Console.WriteLine($"Error al obtener Cliente por ID: {ex.Message}");
+                Console.WriteLine($"Error al obtener colonia: {ex.Message}");
                 throw;
             }
         }
 
+        public List<Colonia> GetAllColonias()
+        {
+            var Colonias = new List<Colonia>();
 
+            try
+            {
+                using (var conn = _dbConnection.GetConnection())
+                using (var command = conn.CreateCommand())
+                {
+                    command.CommandText = "SELECT * FROM Colonia";
 
+                    using (var reader = command.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            var Colonia = MapClasses.MapToColonia(reader);
+                            Colonias.Add(Colonia);
+                        }
+                    }
+                }
+            }
+            catch (SqliteException ex)
+            {
+                Console.WriteLine($"Error al obtener Colonias: {ex.Message}");
+                throw;
+            }
 
+            return Colonias;
+        }
 
         public void Dispose()
         {

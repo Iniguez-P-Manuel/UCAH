@@ -8,61 +8,29 @@ using System.Threading.Tasks;
 
 namespace ReporteadorUCAH.DB_Services
 {
-    internal class Clientes : IDisposable
+    internal class Estados : IDisposable
     {
         private readonly DatabaseConnection _dbConnection;
-        public Clientes(DatabaseConnection dbConnection)
+        public Estados(DatabaseConnection dbConnection)
         {
             _dbConnection = dbConnection;
         }
 
-        public List<Cliente> BuscarClientes(string Busqueda)
-        {
-            var Clientes = new List<Cliente>();
-
-            try
-            {
-                using (var conn = _dbConnection.GetConnection())
-                using (var command = conn.CreateCommand())
-                {
-                    command.CommandText = "SELECT * FROM Clientes " +
-                                           "WHERE Nombre LIKE '%' || @Busqueda || '%' " +
-                                            "LIMIT 100";
-                    command.Parameters.AddWithValue("@Busqueda", Busqueda);
-
-                    using (var reader = command.ExecuteReader())
-                    {
-                        while (reader.Read())
-                        {
-                            var cliente = MapClasses.MapToCliente(reader);
-                            Clientes.Add(cliente);
-                        }
-                    }
-                }
-            }
-            catch (SqliteException ex)
-            {
-                Console.WriteLine($"Error al obtener notas: {ex.Message}");
-                throw;
-            }
-
-            return Clientes;
-        }
-        public Cliente GetClienteById(int id)
+        public Modelos.Estado GetEstadoByid(int id)
         {
             try
             {
                 using (var conn = _dbConnection.GetConnection())
                 using (var command = conn.CreateCommand())
                 {
-                    command.CommandText = "SELECT * FROM Clientes WHERE Id = @Id";
+                    command.CommandText = "SELECT * FROM Estados WHERE id = @Id ";
                     command.Parameters.AddWithValue("@Id", id);
 
                     using (var reader = command.ExecuteReader())
                     {
                         if (reader.Read())
                         {
-                            return MapClasses.MapToCliente(reader);
+                            return MapClasses.MapToEstado(reader);
                         }
                     }
                 }
@@ -72,14 +40,40 @@ namespace ReporteadorUCAH.DB_Services
             }
             catch (SqliteException ex)
             {
-                Console.WriteLine($"Error al obtener Cliente por ID: {ex.Message}");
+                Console.WriteLine($"Error al obtener estado: {ex.Message}");
                 throw;
             }
         }
 
+        public List<Estado> GetAllEstados()
+        {
+            var Estados = new List<Estado>();
 
+            try
+            {
+                using (var conn = _dbConnection.GetConnection())
+                using (var command = conn.CreateCommand())
+                {
+                    command.CommandText = "SELECT * FROM Estados";
 
+                    using (var reader = command.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            var Estado = MapClasses.MapToEstado(reader);
+                            Estados.Add(Estado);
+                        }
+                    }
+                }
+            }
+            catch (SqliteException ex)
+            {
+                Console.WriteLine($"Error al obtener Estados: {ex.Message}");
+                throw;
+            }
 
+            return Estados;
+        }
 
         public void Dispose()
         {

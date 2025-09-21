@@ -27,7 +27,8 @@ namespace ReporteadorUCAH.DB_Services
                 {
                     command.CommandText = "SELECT LiquidacionNotasCargo.* FROM LiquidacionNotasCargo " +
                                            "INNER JOIN Clientes ON Clientes.id = LiquidacionNotasCargo.idCliente " +
-                                           "WHERE Clientes.Nombre LIKE '%' || @Busqueda || '%'";
+                                           "WHERE Clientes.Nombre LIKE '%' || @Busqueda || '%' " +
+                                            "LIMIT 100";
                     command.Parameters.AddWithValue("@Busqueda", Busqueda);
 
                     using (var reader = command.ExecuteReader())

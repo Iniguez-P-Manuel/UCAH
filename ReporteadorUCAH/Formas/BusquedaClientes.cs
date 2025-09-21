@@ -14,12 +14,12 @@ namespace ReporteadorUCAH.Formas
 {
 
 
-    public partial class BusquedaNotas : FormModel
+    public partial class BusquedaClientes : FormModel
     {
         public event EventHandler<ObjetoSeleccionadoEventArgs> ObjetoSeleccionado;
 
-        private List<Modelos.NotaCargo> lstNotas = new List<Modelos.NotaCargo>();
-        public BusquedaNotas()
+        private List<Modelos.Cliente> lstClientes = new List<Modelos.Cliente>();
+        public BusquedaClientes()
         {
             InitializeComponent();
 
@@ -31,31 +31,30 @@ namespace ReporteadorUCAH.Formas
             this.CambiarColor(NuevoColor);
         }
 
-        private async void button1_Click(object sender, EventArgs e)
+        private void button1_Click(object sender, EventArgs e)
         {
             Buscar();
         }
         private async void Buscar()
         {
             string Busqueda = txtBusqueda.Text;
-            dgvNotas.Rows.Clear();
-            lstNotas.Clear();
+            dgvClientes.Rows.Clear();
+            lstClientes.Clear();
 
-            lstNotas = new List<Modelos.NotaCargo>();
 
             using (DatabaseConnection varCon = new DatabaseConnection())
             {
-                using (NotasCargo DB_Notas = new NotasCargo(varCon))
+                using (DB_Services.Clientes DB_Clientes = new DB_Services.Clientes(varCon))
                 {
-                    lstNotas = await EjecutarConLoading(() => {
-                        return DB_Notas.BuscarNotas(Busqueda);
+                    lstClientes = await EjecutarConLoading(() => {
+                        return DB_Clientes.BuscarClientes(Busqueda);
                     });
                 }
             }
 
-            foreach (Modelos.NotaCargo nota in lstNotas)
+            foreach (Modelos.Cliente cliente in lstClientes)
             {
-                dgvNotas.Rows.Add(nota.Id, nota.Fecha, nota._Cliente.Nombre, nota._Cultivo.Nombre, nota.Tons);
+                dgvClientes.Rows.Add(cliente.Id, cliente.Nombres, cliente.Calle, cliente.Rfc);
             }
         }
 
@@ -73,9 +72,9 @@ namespace ReporteadorUCAH.Formas
 
         public class ObjetoSeleccionadoEventArgs : EventArgs
         {
-            public Modelos.NotaCargo ObjetoSeleccionado { get; }
+            public Modelos.Cliente ObjetoSeleccionado { get; }
 
-            public ObjetoSeleccionadoEventArgs(Modelos.NotaCargo objeto)
+            public ObjetoSeleccionadoEventArgs(Modelos.Cliente objeto)
             {
                 ObjetoSeleccionado = objeto;
             }
@@ -84,10 +83,10 @@ namespace ReporteadorUCAH.Formas
         public void Seleccionar()
         {
             // Obtener el ID de la primera columna
-            int idSeleccionado = Convert.ToInt32(dgvNotas.Rows[dgvNotas.CurrentRow.Index].Cells[0].Value);
+            int idSeleccionado = Convert.ToInt32(dgvClientes.Rows[dgvClientes.CurrentRow.Index].Cells[0].Value);
 
             // Buscar el objeto completo en la lista
-            Modelos.NotaCargo objetoSeleccionado = lstNotas.FirstOrDefault(nota => nota.Id == idSeleccionado);
+            Modelos.Cliente objetoSeleccionado = lstClientes.FirstOrDefault(cliente => cliente.Id == idSeleccionado);
 
             if (objetoSeleccionado != null)
             {
@@ -100,7 +99,7 @@ namespace ReporteadorUCAH.Formas
         }
         public override void Guardar()
         {
-            if (dgvNotas.CurrentRow != null && dgvNotas.CurrentRow.Index >= 0 )
+            if (dgvClientes.CurrentRow != null && dgvClientes.CurrentRow.Index >= 0 )
             {
                 Seleccionar();
             }

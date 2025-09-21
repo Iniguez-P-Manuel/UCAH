@@ -8,61 +8,29 @@ using System.Threading.Tasks;
 
 namespace ReporteadorUCAH.DB_Services
 {
-    internal class Clientes : IDisposable
+    internal class TiposPersona : IDisposable
     {
         private readonly DatabaseConnection _dbConnection;
-        public Clientes(DatabaseConnection dbConnection)
+        public TiposPersona(DatabaseConnection dbConnection)
         {
             _dbConnection = dbConnection;
         }
 
-        public List<Cliente> BuscarClientes(string Busqueda)
-        {
-            var Clientes = new List<Cliente>();
-
-            try
-            {
-                using (var conn = _dbConnection.GetConnection())
-                using (var command = conn.CreateCommand())
-                {
-                    command.CommandText = "SELECT * FROM Clientes " +
-                                           "WHERE Nombre LIKE '%' || @Busqueda || '%' " +
-                                            "LIMIT 100";
-                    command.Parameters.AddWithValue("@Busqueda", Busqueda);
-
-                    using (var reader = command.ExecuteReader())
-                    {
-                        while (reader.Read())
-                        {
-                            var cliente = MapClasses.MapToCliente(reader);
-                            Clientes.Add(cliente);
-                        }
-                    }
-                }
-            }
-            catch (SqliteException ex)
-            {
-                Console.WriteLine($"Error al obtener notas: {ex.Message}");
-                throw;
-            }
-
-            return Clientes;
-        }
-        public Cliente GetClienteById(int id)
+        public Modelos.TipoPersonaFiscal GetTipoPersonaByID(int id)
         {
             try
             {
                 using (var conn = _dbConnection.GetConnection())
                 using (var command = conn.CreateCommand())
                 {
-                    command.CommandText = "SELECT * FROM Clientes WHERE Id = @Id";
+                    command.CommandText = "SELECT * FROM TipoPersona WHERE id = @Id ";
                     command.Parameters.AddWithValue("@Id", id);
 
                     using (var reader = command.ExecuteReader())
                     {
                         if (reader.Read())
                         {
-                            return MapClasses.MapToCliente(reader);
+                            return MapClasses.MapToTipoPersonaFiscal(reader);
                         }
                     }
                 }
@@ -72,13 +40,39 @@ namespace ReporteadorUCAH.DB_Services
             }
             catch (SqliteException ex)
             {
-                Console.WriteLine($"Error al obtener Cliente por ID: {ex.Message}");
+                Console.WriteLine($"Error al obtener Tipo persona: {ex.Message}");
                 throw;
             }
         }
+        public List<TipoPersonaFiscal> GetAllTiposPersona()
+        {
+            var TiposPErsona = new List<TipoPersonaFiscal>();
 
+            try
+            {
+                using (var conn = _dbConnection.GetConnection())
+                using (var command = conn.CreateCommand())
+                {
+                    command.CommandText = "SELECT * FROM TipoPersona";
 
+                    using (var reader = command.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            var tipoPersona = MapClasses.MapToTipoPersonaFiscal(reader);
+                            TiposPErsona.Add(tipoPersona);
+                        }
+                    }
+                }
+            }
+            catch (SqliteException ex)
+            {
+                Console.WriteLine($"Error al obtener Tipos persona fiscal: {ex.Message}");
+                throw;
+            }
 
+            return TiposPErsona;
+        }
 
 
         public void Dispose()

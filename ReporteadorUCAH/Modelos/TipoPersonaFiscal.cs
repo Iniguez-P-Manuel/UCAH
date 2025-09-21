@@ -10,6 +10,6 @@ namespace ReporteadorUCAH.Modelos
     {
         public int Id { get; set; }
         public string Nombre { get; set; }
-        public int NombreCorto { get; set; }
+        public string NombreCorto { get; set; }
     }
 }

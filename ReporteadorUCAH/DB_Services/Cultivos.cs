@@ -46,7 +46,35 @@ namespace ReporteadorUCAH.DB_Services
             }
         }
 
+        public List<Cultivo> GetAllCultivos()
+        {
+            var Cultivos = new List<Cultivo>();
 
+            try
+            {
+                using (var conn = _dbConnection.GetConnection())
+                using (var command = conn.CreateCommand())
+                {
+                    command.CommandText = "SELECT * FROM Cultivos";
+
+                    using (var reader = command.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            var Cultivo = MapClasses.MapToCultivo(reader);
+                            Cultivos.Add(Cultivo);
+                        }
+                    }
+                }
+            }
+            catch (SqliteException ex)
+            {
+                Console.WriteLine($"Error al obtener Cultivos: {ex.Message}");
+                throw;
+            }
+
+            return Cultivos;
+        }
 
 
 

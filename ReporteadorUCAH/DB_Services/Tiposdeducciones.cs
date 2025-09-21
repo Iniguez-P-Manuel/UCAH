@@ -40,9 +40,39 @@ namespace ReporteadorUCAH.DB_Services
             }
             catch (SqliteException ex)
             {
-                Console.WriteLine($"Error al obtener notas: {ex.Message}");
+                Console.WriteLine($"Error al obtener Tipo deduccion: {ex.Message}");
                 throw;
             }
+        }
+
+        public List<TipoDeduccion> GetAllTiposDeduccion()
+        {
+            var TiposDeduccion = new List<TipoDeduccion>();
+
+            try
+            {
+                using (var conn = _dbConnection.GetConnection())
+                using (var command = conn.CreateCommand())
+                {
+                    command.CommandText = "SELECT * FROM TipoDeducciones";
+
+                    using (var reader = command.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            var tipoDedu = MapClasses.MapToTipoDeduccion(reader);
+                            TiposDeduccion.Add(tipoDedu);
+                        }
+                    }
+                }
+            }
+            catch (SqliteException ex)
+            {
+                Console.WriteLine($"Error al obtener Tipos Deducciones: {ex.Message}");
+                throw;
+            }
+
+            return TiposDeduccion;
         }
 
 
