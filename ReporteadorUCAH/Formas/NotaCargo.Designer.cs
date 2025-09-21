@@ -29,25 +29,25 @@
         private void InitializeComponent()
         {
             panel1 = new Panel();
-            textBox7 = new TextBox();
+            button3 = new Button();
+            txtDeducciones = new TextBox();
             btnDeducciones = new Button();
-            textBox6 = new TextBox();
+            txtImporte = new TextBox();
             label7 = new Label();
-            textBox5 = new TextBox();
+            txtPrecio = new TextBox();
             label6 = new Label();
-            textBox4 = new TextBox();
+            txtToneladas = new TextBox();
             label5 = new Label();
             button2 = new Button();
             label4 = new Label();
-            textBox3 = new TextBox();
+            txtCultivo = new TextBox();
             button1 = new Button();
             label3 = new Label();
-            textBox2 = new TextBox();
+            txtCliente = new TextBox();
             label2 = new Label();
             dateTimePicker1 = new DateTimePicker();
             label1 = new Label();
-            textBox1 = new TextBox();
-            button3 = new Button();
+            txtID = new TextBox();
             panel1.SuspendLayout();
             SuspendLayout();
             // 
@@ -55,42 +55,54 @@
             // 
             panel1.BackColor = Color.White;
             panel1.Controls.Add(button3);
-            panel1.Controls.Add(textBox7);
+            panel1.Controls.Add(txtDeducciones);
             panel1.Controls.Add(btnDeducciones);
-            panel1.Controls.Add(textBox6);
+            panel1.Controls.Add(txtImporte);
             panel1.Controls.Add(label7);
-            panel1.Controls.Add(textBox5);
+            panel1.Controls.Add(txtPrecio);
             panel1.Controls.Add(label6);
-            panel1.Controls.Add(textBox4);
+            panel1.Controls.Add(txtToneladas);
             panel1.Controls.Add(label5);
             panel1.Controls.Add(button2);
             panel1.Controls.Add(label4);
-            panel1.Controls.Add(textBox3);
+            panel1.Controls.Add(txtCultivo);
             panel1.Controls.Add(button1);
             panel1.Controls.Add(label3);
-            panel1.Controls.Add(textBox2);
+            panel1.Controls.Add(txtCliente);
             panel1.Controls.Add(label2);
             panel1.Controls.Add(dateTimePicker1);
             panel1.Controls.Add(label1);
-            panel1.Controls.Add(textBox1);
+            panel1.Controls.Add(txtID);
             panel1.Dock = DockStyle.Fill;
             panel1.Location = new Point(3, 32);
             panel1.Name = "panel1";
             panel1.Size = new Size(457, 235);
             panel1.TabIndex = 5;
             // 
-            // textBox7
+            // button3
             // 
-            textBox7.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
-            textBox7.BackColor = SystemColors.Info;
-            textBox7.Cursor = Cursors.No;
-            textBox7.Location = new Point(342, 175);
-            textBox7.Name = "textBox7";
-            textBox7.ReadOnly = true;
-            textBox7.Size = new Size(108, 23);
-            textBox7.TabIndex = 55;
-            textBox7.Text = "0.00";
-            textBox7.TextAlign = HorizontalAlignment.Right;
+            button3.Anchor = AnchorStyles.Left;
+            button3.BackgroundImage = Properties.Resources.icons8_letra_pequeña_20;
+            button3.BackgroundImageLayout = ImageLayout.Stretch;
+            button3.Location = new Point(146, 4);
+            button3.Name = "button3";
+            button3.Size = new Size(33, 31);
+            button3.TabIndex = 56;
+            button3.UseVisualStyleBackColor = true;
+            button3.Click += button3_Click;
+            // 
+            // txtDeducciones
+            // 
+            txtDeducciones.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
+            txtDeducciones.BackColor = SystemColors.Info;
+            txtDeducciones.Cursor = Cursors.No;
+            txtDeducciones.Location = new Point(342, 175);
+            txtDeducciones.Name = "txtDeducciones";
+            txtDeducciones.ReadOnly = true;
+            txtDeducciones.Size = new Size(108, 23);
+            txtDeducciones.TabIndex = 55;
+            txtDeducciones.Text = "0.00";
+            txtDeducciones.TextAlign = HorizontalAlignment.Right;
             // 
             // btnDeducciones
             // 
@@ -110,18 +122,18 @@
             btnDeducciones.UseVisualStyleBackColor = false;
             btnDeducciones.Click += btnDeducciones_Click;
             // 
-            // textBox6
+            // txtImporte
             // 
-            textBox6.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
-            textBox6.BackColor = SystemColors.Info;
-            textBox6.Cursor = Cursors.No;
-            textBox6.Location = new Point(342, 204);
-            textBox6.Name = "textBox6";
-            textBox6.ReadOnly = true;
-            textBox6.Size = new Size(108, 23);
-            textBox6.TabIndex = 53;
-            textBox6.Text = "0.00";
-            textBox6.TextAlign = HorizontalAlignment.Right;
+            txtImporte.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
+            txtImporte.BackColor = SystemColors.Info;
+            txtImporte.Cursor = Cursors.No;
+            txtImporte.Location = new Point(342, 204);
+            txtImporte.Name = "txtImporte";
+            txtImporte.ReadOnly = true;
+            txtImporte.Size = new Size(108, 23);
+            txtImporte.TabIndex = 53;
+            txtImporte.Text = "0.00";
+            txtImporte.TextAlign = HorizontalAlignment.Right;
             // 
             // label7
             // 
@@ -133,15 +145,15 @@
             label7.TabIndex = 52;
             label7.Text = "Importe";
             // 
-            // textBox5
+            // txtPrecio
             // 
-            textBox5.Anchor = AnchorStyles.Left;
-            textBox5.Location = new Point(270, 122);
-            textBox5.Name = "textBox5";
-            textBox5.PlaceholderText = "0.00";
-            textBox5.Size = new Size(108, 23);
-            textBox5.TabIndex = 51;
-            textBox5.TextAlign = HorizontalAlignment.Right;
+            txtPrecio.Anchor = AnchorStyles.Left;
+            txtPrecio.Location = new Point(270, 122);
+            txtPrecio.Name = "txtPrecio";
+            txtPrecio.PlaceholderText = "0.00";
+            txtPrecio.Size = new Size(108, 23);
+            txtPrecio.TabIndex = 51;
+            txtPrecio.TextAlign = HorizontalAlignment.Right;
             // 
             // label6
             // 
@@ -153,15 +165,15 @@
             label6.TabIndex = 50;
             label6.Text = "Precio";
             // 
-            // textBox4
+            // txtToneladas
             // 
-            textBox4.Anchor = AnchorStyles.Left;
-            textBox4.Location = new Point(71, 122);
-            textBox4.Name = "textBox4";
-            textBox4.PlaceholderText = "0.00";
-            textBox4.Size = new Size(108, 23);
-            textBox4.TabIndex = 49;
-            textBox4.TextAlign = HorizontalAlignment.Right;
+            txtToneladas.Anchor = AnchorStyles.Left;
+            txtToneladas.Location = new Point(71, 122);
+            txtToneladas.Name = "txtToneladas";
+            txtToneladas.PlaceholderText = "0.00";
+            txtToneladas.Size = new Size(108, 23);
+            txtToneladas.TabIndex = 49;
+            txtToneladas.TextAlign = HorizontalAlignment.Right;
             // 
             // label5
             // 
@@ -194,16 +206,16 @@
             label4.TabIndex = 46;
             label4.Text = "Cultivo";
             // 
-            // textBox3
+            // txtCultivo
             // 
-            textBox3.Anchor = AnchorStyles.Left;
-            textBox3.BackColor = SystemColors.Info;
-            textBox3.Cursor = Cursors.No;
-            textBox3.Location = new Point(71, 93);
-            textBox3.Name = "textBox3";
-            textBox3.ReadOnly = true;
-            textBox3.Size = new Size(307, 23);
-            textBox3.TabIndex = 45;
+            txtCultivo.Anchor = AnchorStyles.Left;
+            txtCultivo.BackColor = SystemColors.Info;
+            txtCultivo.Cursor = Cursors.No;
+            txtCultivo.Location = new Point(71, 93);
+            txtCultivo.Name = "txtCultivo";
+            txtCultivo.ReadOnly = true;
+            txtCultivo.Size = new Size(307, 23);
+            txtCultivo.TabIndex = 45;
             // 
             // button1
             // 
@@ -226,16 +238,16 @@
             label3.TabIndex = 43;
             label3.Text = "Cliente";
             // 
-            // textBox2
+            // txtCliente
             // 
-            textBox2.Anchor = AnchorStyles.Left;
-            textBox2.BackColor = SystemColors.Info;
-            textBox2.Cursor = Cursors.No;
-            textBox2.Location = new Point(71, 64);
-            textBox2.Name = "textBox2";
-            textBox2.ReadOnly = true;
-            textBox2.Size = new Size(307, 23);
-            textBox2.TabIndex = 42;
+            txtCliente.Anchor = AnchorStyles.Left;
+            txtCliente.BackColor = SystemColors.Info;
+            txtCliente.Cursor = Cursors.No;
+            txtCliente.Location = new Point(71, 64);
+            txtCliente.Name = "txtCliente";
+            txtCliente.ReadOnly = true;
+            txtCliente.Size = new Size(307, 23);
+            txtCliente.TabIndex = 42;
             // 
             // label2
             // 
@@ -265,29 +277,17 @@
             label1.TabIndex = 39;
             label1.Text = "# Nota";
             // 
-            // textBox1
+            // txtID
             // 
-            textBox1.BackColor = SystemColors.Info;
-            textBox1.Cursor = Cursors.No;
-            textBox1.Location = new Point(71, 7);
-            textBox1.Name = "textBox1";
-            textBox1.PlaceholderText = "0";
-            textBox1.ReadOnly = true;
-            textBox1.Size = new Size(72, 23);
-            textBox1.TabIndex = 38;
-            textBox1.TextAlign = HorizontalAlignment.Center;
-            // 
-            // button3
-            // 
-            button3.Anchor = AnchorStyles.Left;
-            button3.BackgroundImage = Properties.Resources.icons8_letra_pequeña_20;
-            button3.BackgroundImageLayout = ImageLayout.Stretch;
-            button3.Location = new Point(146, 4);
-            button3.Name = "button3";
-            button3.Size = new Size(33, 31);
-            button3.TabIndex = 56;
-            button3.UseVisualStyleBackColor = true;
-            button3.Click += button3_Click;
+            txtID.BackColor = SystemColors.Info;
+            txtID.Cursor = Cursors.No;
+            txtID.Location = new Point(71, 7);
+            txtID.Name = "txtID";
+            txtID.PlaceholderText = "0";
+            txtID.ReadOnly = true;
+            txtID.Size = new Size(72, 23);
+            txtID.TabIndex = 38;
+            txtID.TextAlign = HorizontalAlignment.Center;
             // 
             // NotaCargo
             // 
@@ -307,23 +307,23 @@
 
         private Panel panel1;
         private Button btnDeducciones;
-        private TextBox textBox6;
+        private TextBox txtImporte;
         private Label label7;
-        private TextBox textBox5;
+        private TextBox txtPrecio;
         private Label label6;
-        private TextBox textBox4;
+        private TextBox txtToneladas;
         private Label label5;
         private Button button2;
         private Label label4;
-        private TextBox textBox3;
+        private TextBox txtCultivo;
         private Button button1;
         private Label label3;
-        private TextBox textBox2;
+        private TextBox txtCliente;
         private Label label2;
         private DateTimePicker dateTimePicker1;
         private Label label1;
-        private TextBox textBox1;
-        private TextBox textBox7;
+        private TextBox txtID;
+        private TextBox txtDeducciones;
         private Button button3;
     }
 }

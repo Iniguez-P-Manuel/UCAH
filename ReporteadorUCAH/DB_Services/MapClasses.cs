@@ -1,4 +1,5 @@
 ﻿using Microsoft.Data.Sqlite;
+using ReporteadorUCAH.Formas;
 using ReporteadorUCAH.Modelos;
 using System;
 using System.Collections.Generic;
@@ -10,7 +11,7 @@ namespace ReporteadorUCAH.DB_Services
 {
     public class MapClasses
     {
-        public static NotaCargo MapToNotaCargo(SqliteDataReader reader)
+        public static Modelos.NotaCargo MapToNotaCargo(SqliteDataReader reader)
         {
             Cliente _cliente = new Cliente();
             Cultivo _cultivo = new Cultivo();
@@ -32,7 +33,7 @@ namespace ReporteadorUCAH.DB_Services
                 }
             }
 
-            return new NotaCargo
+            return new Modelos.NotaCargo
             {
                 Id = reader.GetInt32(reader.GetOrdinal("id")),
                 Fecha = GetDateTimeOrNull(reader, "FECHA"),
@@ -89,14 +90,31 @@ namespace ReporteadorUCAH.DB_Services
 
         public static Modelos.DeduccionNota MapToDeduccionNota(SqliteDataReader reader)
         {
+            Modelos.TipoDeduccion _tipoDeduccion = new Modelos.TipoDeduccion();
+
+            using (DatabaseConnection varCon = new DatabaseConnection())
+            {
+                using (TiposDeduccion DB_TipoDeduccion = new TiposDeduccion(varCon))
+                {
+                    _tipoDeduccion = DB_TipoDeduccion.GetTipoDeduccionByID(reader.GetInt32(reader.GetOrdinal("idDeduccion")));
+                }
+            }
             return new Modelos.DeduccionNota
             {
                 Id = reader.GetInt32(reader.GetOrdinal("id")),
-                _Deduccion = new TipoDeduccion(),
+                _Deduccion = _tipoDeduccion,
                 Importe = reader.GetDouble(reader.GetOrdinal("Importe"))
             };
         }
-
+        public static Modelos.TipoDeduccion MapToTipoDeduccion(SqliteDataReader reader)
+        {
+            return new Modelos.TipoDeduccion
+            {
+                Id = reader.GetInt32(reader.GetOrdinal("id")),
+                _Grupo = new GrupoDeducciones(),
+                Nombre = GetStringOrNull(reader, "Nombre")
+            };
+        }
         private static int GetInt32OrNull(SqliteDataReader reader, string columnName)
         {
             int ordinal = reader.GetOrdinal(columnName);

@@ -28,9 +28,11 @@
         /// </summary>
         private void InitializeComponent()
         {
+            DataGridViewCellStyle dataGridViewCellStyle1 = new DataGridViewCellStyle();
+            DataGridViewCellStyle dataGridViewCellStyle2 = new DataGridViewCellStyle();
             panel1 = new Panel();
             button1 = new Button();
-            textBox1 = new TextBox();
+            txtBusqueda = new TextBox();
             dgvNotas = new DataGridView();
             colidNota = new DataGridViewTextBoxColumn();
             colFecha = new DataGridViewTextBoxColumn();
@@ -45,7 +47,7 @@
             // 
             panel1.BackColor = Color.White;
             panel1.Controls.Add(button1);
-            panel1.Controls.Add(textBox1);
+            panel1.Controls.Add(txtBusqueda);
             panel1.Controls.Add(dgvNotas);
             panel1.Dock = DockStyle.Fill;
             panel1.Location = new Point(3, 32);
@@ -55,21 +57,24 @@
             // 
             // button1
             // 
-            button1.Location = new Point(547, 17);
+            button1.BackgroundImage = Properties.Resources.icons8_letra_pequeña_20;
+            button1.BackgroundImageLayout = ImageLayout.Stretch;
+            button1.Location = new Point(544, 15);
             button1.Name = "button1";
-            button1.Size = new Size(27, 23);
+            button1.Size = new Size(32, 29);
             button1.TabIndex = 2;
             button1.UseVisualStyleBackColor = true;
             button1.Click += button1_Click;
             // 
-            // textBox1
+            // txtBusqueda
             // 
-            textBox1.Anchor = AnchorStyles.Left | AnchorStyles.Right;
-            textBox1.Location = new Point(3, 18);
-            textBox1.Name = "textBox1";
-            textBox1.PlaceholderText = "Busqueda...";
-            textBox1.Size = new Size(539, 23);
-            textBox1.TabIndex = 1;
+            txtBusqueda.Anchor = AnchorStyles.Left | AnchorStyles.Right;
+            txtBusqueda.Location = new Point(3, 18);
+            txtBusqueda.Name = "txtBusqueda";
+            txtBusqueda.PlaceholderText = "Buscar cliente...";
+            txtBusqueda.Size = new Size(539, 23);
+            txtBusqueda.TabIndex = 1;
+            txtBusqueda.KeyDown += txtBusqueda_KeyDown;
             // 
             // dgvNotas
             // 
@@ -84,12 +89,16 @@
             dgvNotas.Location = new Point(3, 47);
             dgvNotas.Name = "dgvNotas";
             dgvNotas.RowHeadersVisible = false;
+            dgvNotas.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
             dgvNotas.Size = new Size(573, 266);
             dgvNotas.TabIndex = 0;
+            dgvNotas.CellDoubleClick += dgvNotas_CellDoubleClick;
             // 
             // colidNota
             // 
             colidNota.AutoSizeMode = DataGridViewAutoSizeColumnMode.None;
+            dataGridViewCellStyle1.Alignment = DataGridViewContentAlignment.MiddleCenter;
+            colidNota.DefaultCellStyle = dataGridViewCellStyle1;
             colidNota.HeaderText = "#";
             colidNota.Name = "colidNota";
             colidNota.ReadOnly = true;
@@ -120,6 +129,8 @@
             // colTons
             // 
             colTons.AutoSizeMode = DataGridViewAutoSizeColumnMode.None;
+            dataGridViewCellStyle2.Alignment = DataGridViewContentAlignment.MiddleRight;
+            colTons.DefaultCellStyle = dataGridViewCellStyle2;
             colTons.HeaderText = "Toneladas";
             colTons.Name = "colTons";
             colTons.ReadOnly = true;
@@ -143,7 +154,7 @@
         #endregion
 
         private Panel panel1;
-        private TextBox textBox1;
+        private TextBox txtBusqueda;
         private DataGridView dgvNotas;
         private Button button1;
         private DataGridViewTextBoxColumn colidNota;

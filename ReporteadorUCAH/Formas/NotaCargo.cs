@@ -7,6 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using static ReporteadorUCAH.Formas.BusquedaNotas;
 
 namespace ReporteadorUCAH.Formas
 {
@@ -16,6 +17,7 @@ namespace ReporteadorUCAH.Formas
         {
             InitializeComponent();
         }
+        Modelos.NotaCargo NotaActual = new Modelos.NotaCargo();
 
         public override void Guardar()
         {
@@ -25,13 +27,29 @@ namespace ReporteadorUCAH.Formas
         private void btnDeducciones_Click(object sender, EventArgs e)
         {
             DeduccionesNota formDeducciones = new DeduccionesNota();
-            formDeducciones.Show();
+            formDeducciones.lstDeduccionesNota = this.NotaActual.Deducciones;
+            formDeducciones.ShowDialog();
         }
 
         private void button3_Click(object sender, EventArgs e)
         {
             BusquedaNotas formBusqueda = new BusquedaNotas();
-            formBusqueda.Show();
+            formBusqueda.ObjetoSeleccionado += BusquedaSeleccionada;
+            formBusqueda.ShowDialog();
+        }
+        private void BusquedaSeleccionada(object sender, ObjetoSeleccionadoEventArgs e)
+        {
+            NotaActual = e.ObjetoSeleccionado;
+            double totalDeducciones = NotaActual.Deducciones?.Sum(d => d.Importe) ?? 0;
+
+            txtCliente.Text = NotaActual._Cliente.Nombre;
+            txtCultivo.Text = NotaActual._Cultivo.Nombre;
+            txtDeducciones.Text = Math.Round(totalDeducciones, 2).ToString();
+            txtID.Text = NotaActual.Id.ToString();
+            txtImporte.Text = NotaActual.Importe.ToString();
+            txtPrecio.Text = NotaActual.Precio.ToString();
+            txtToneladas.Text = NotaActual.Tons.ToString();
+
         }
     }
 }

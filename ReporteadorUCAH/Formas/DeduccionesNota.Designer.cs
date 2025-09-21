@@ -83,6 +83,7 @@
             // 
             // colImporte
             // 
+            dataGridViewCellStyle1.Alignment = DataGridViewContentAlignment.MiddleRight;
             dataGridViewCellStyle1.BackColor = Color.FromArgb(192, 255, 192);
             colImporte.DefaultCellStyle = dataGridViewCellStyle1;
             colImporte.HeaderText = "Importe";

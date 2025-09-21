@@ -16,6 +16,38 @@ namespace ReporteadorUCAH.DB_Services
             _dbConnection = dbConnection;
         }
 
+        public List<NotaCargo> BuscarNotas(string Busqueda)
+        {
+            var Notas = new List<NotaCargo>();
+
+            try
+            {
+                using (var conn = _dbConnection.GetConnection())
+                using (var command = conn.CreateCommand())
+                {
+                    command.CommandText = "SELECT LiquidacionNotasCargo.* FROM LiquidacionNotasCargo " +
+                                           "INNER JOIN Clientes ON Clientes.id = LiquidacionNotasCargo.idCliente " +
+                                           "WHERE Clientes.Nombre LIKE '%' || @Busqueda || '%'";
+                    command.Parameters.AddWithValue("@Busqueda", Busqueda);
+
+                    using (var reader = command.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            var Nota = MapClasses.MapToNotaCargo(reader);
+                            Notas.Add(Nota);
+                        }
+                    }
+                }
+            }
+            catch (SqliteException ex)
+            {
+                Console.WriteLine($"Error al obtener notas: {ex.Message}");
+                throw;
+            }
+
+            return Notas;
+        }
         public List<NotaCargo> GetAllNotas()
         {
             var Notas = new List<NotaCargo>();
