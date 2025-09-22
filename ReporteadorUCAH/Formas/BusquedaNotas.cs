@@ -50,6 +50,7 @@ namespace ReporteadorUCAH.Formas
                     lstNotas = await EjecutarConLoading(() => {
                         return DB_Notas.BuscarNotas(Busqueda);
                     });
+
                 }
             }
 

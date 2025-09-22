@@ -76,6 +76,67 @@ namespace ReporteadorUCAH.DB_Services
             return Cultivos;
         }
 
+        public void AgregarCultivo(Cultivo cultivo)
+        {
+            try
+            {
+                using (var conn = _dbConnection.GetConnection())
+                using (var command = conn.CreateCommand())
+                {
+                    command.CommandText = "INSERT INTO Cultivos (Nombre, Cultivo, CONS) VALUES (@Nombre, @CultivoTipo, @CONS);";
+                    command.Parameters.AddWithValue("@Nombre", cultivo.Nombre ?? "");
+                    command.Parameters.AddWithValue("@CultivoTipo", cultivo.CultivoTipo ?? "");
+                    command.Parameters.AddWithValue("@CONS", cultivo.CONS ?? "");
+                    command.ExecuteNonQuery();
+                }
+            }
+            catch (SqliteException ex)
+            {
+                Console.WriteLine($"Error al agregar cultivo: {ex.Message}");
+                throw;
+            }
+        }
+
+        public void ActualizarCultivo(Cultivo cultivo)
+        {
+            try
+            {
+                using (var conn = _dbConnection.GetConnection())
+                using (var command = conn.CreateCommand())
+                {
+                    command.CommandText = "UPDATE Cultivos SET Nombre = @Nombre, Cultivo = @CultivoTipo, CONS = @CONS WHERE Id = @Id;";
+                    command.Parameters.AddWithValue("@Nombre", cultivo.Nombre ?? "");
+                    command.Parameters.AddWithValue("@CultivoTipo", cultivo.CultivoTipo ?? "");
+                    command.Parameters.AddWithValue("@CONS", cultivo.CONS ?? "");
+                    command.Parameters.AddWithValue("@Id", cultivo.Id);
+                    command.ExecuteNonQuery();
+                }
+            }
+            catch (SqliteException ex)
+            {
+                Console.WriteLine($"Error al actualizar cultivo: {ex.Message}");
+                throw;
+            }
+        }
+        public void EliminarCultivo(int id)
+        {
+            try
+            {
+                using (var conn = _dbConnection.GetConnection())
+                using (var command = conn.CreateCommand())
+                {
+                    command.CommandText = "DELETE FROM Cultivos WHERE Id = @Id;";
+                    command.Parameters.AddWithValue("@Id", id);
+                    command.ExecuteNonQuery();
+                }
+            }
+            catch (SqliteException ex)
+            {
+                Console.WriteLine($"Error al eliminar cultivo: {ex.Message}");
+                throw;
+            }
+        }
+
 
 
         public void Dispose()

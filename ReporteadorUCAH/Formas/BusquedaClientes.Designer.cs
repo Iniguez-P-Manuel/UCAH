@@ -49,18 +49,20 @@
             panel1.Controls.Add(txtBusqueda);
             panel1.Controls.Add(dgvClientes);
             panel1.Dock = DockStyle.Fill;
-            panel1.Location = new Point(3, 32);
+            panel1.Location = new Point(6, 56);
+            panel1.Margin = new Padding(4, 5, 4, 5);
             panel1.Name = "panel1";
-            panel1.Size = new Size(620, 319);
+            panel1.Size = new Size(882, 528);
             panel1.TabIndex = 5;
             // 
             // button1
             // 
             button1.BackgroundImage = Properties.Resources.icons8_letra_pequeña_20;
             button1.BackgroundImageLayout = ImageLayout.Stretch;
-            button1.Location = new Point(586, 14);
+            button1.Location = new Point(837, 23);
+            button1.Margin = new Padding(4, 5, 4, 5);
             button1.Name = "button1";
-            button1.Size = new Size(32, 29);
+            button1.Size = new Size(46, 48);
             button1.TabIndex = 2;
             button1.UseVisualStyleBackColor = true;
             button1.Click += button1_Click;
@@ -68,10 +70,11 @@
             // txtBusqueda
             // 
             txtBusqueda.Anchor = AnchorStyles.Left | AnchorStyles.Right;
-            txtBusqueda.Location = new Point(3, 18);
+            txtBusqueda.Location = new Point(4, 28);
+            txtBusqueda.Margin = new Padding(4, 5, 4, 5);
             txtBusqueda.Name = "txtBusqueda";
             txtBusqueda.PlaceholderText = "Buscar cliente...";
-            txtBusqueda.Size = new Size(580, 23);
+            txtBusqueda.Size = new Size(823, 31);
             txtBusqueda.TabIndex = 1;
             txtBusqueda.KeyDown += txtBusqueda_KeyDown;
             // 
@@ -85,11 +88,13 @@
             dgvClientes.ColumnHeadersBorderStyle = DataGridViewHeaderBorderStyle.Single;
             dgvClientes.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             dgvClientes.Columns.AddRange(new DataGridViewColumn[] { colidNota, colNombre, colCalle, colRFC });
-            dgvClientes.Location = new Point(3, 47);
+            dgvClientes.Location = new Point(4, 76);
+            dgvClientes.Margin = new Padding(4, 5, 4, 5);
             dgvClientes.Name = "dgvClientes";
             dgvClientes.RowHeadersVisible = false;
+            dgvClientes.RowHeadersWidth = 62;
             dgvClientes.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
-            dgvClientes.Size = new Size(614, 266);
+            dgvClientes.Size = new Size(873, 443);
             dgvClientes.TabIndex = 0;
             dgvClientes.CellDoubleClick += dgvNotas_CellDoubleClick;
             // 
@@ -99,6 +104,7 @@
             dataGridViewCellStyle1.Alignment = DataGridViewContentAlignment.MiddleCenter;
             colidNota.DefaultCellStyle = dataGridViewCellStyle1;
             colidNota.HeaderText = "#";
+            colidNota.MinimumWidth = 8;
             colidNota.Name = "colidNota";
             colidNota.ReadOnly = true;
             colidNota.Width = 60;
@@ -107,6 +113,7 @@
             // 
             colNombre.AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
             colNombre.HeaderText = "Nombres";
+            colNombre.MinimumWidth = 8;
             colNombre.Name = "colNombre";
             colNombre.ReadOnly = true;
             // 
@@ -116,6 +123,7 @@
             dataGridViewCellStyle2.Alignment = DataGridViewContentAlignment.MiddleRight;
             colCalle.DefaultCellStyle = dataGridViewCellStyle2;
             colCalle.HeaderText = "Calle";
+            colCalle.MinimumWidth = 8;
             colCalle.Name = "colCalle";
             colCalle.ReadOnly = true;
             colCalle.Width = 150;
@@ -124,17 +132,20 @@
             // 
             colRFC.AutoSizeMode = DataGridViewAutoSizeColumnMode.None;
             colRFC.HeaderText = "RFC";
+            colRFC.MinimumWidth = 8;
             colRFC.Name = "colRFC";
             colRFC.ReadOnly = true;
             colRFC.Width = 150;
             // 
             // BusquedaClientes
             // 
-            AutoScaleDimensions = new SizeF(7F, 15F);
+            AutoScaleDimensions = new SizeF(10F, 25F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(626, 395);
+            ClientSize = new Size(894, 658);
             Controls.Add(panel1);
+            Margin = new Padding(6, 8, 6, 8);
             Name = "BusquedaClientes";
+            Padding = new Padding(6, 8, 6, 8);
             Text = "Busqueda Notas";
             Controls.SetChildIndex(panel1, 0);
             panel1.ResumeLayout(false);
