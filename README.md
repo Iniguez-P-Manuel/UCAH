@@ -25,6 +25,8 @@ Cambiar [ ] por [x]
 - [ ] Guardar
 - [ ] Modificar
 - [ ] Borrar
+- [ ] Seleccionar Cliente
+- [ ] Seleccionar Cultivo
 - [ ] Reporte igual al del pdf
 
 ## `DATOS`
