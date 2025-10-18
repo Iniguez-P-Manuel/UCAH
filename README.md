@@ -1,14 +1,18 @@
-✔️
 # Sistema de Gestión de Pendientes - Desarrollo Software
 
 ## 📋 PENDIENTES
 
+<!-- ============================================
+INSTRUCCIONES DE USO:
+Cambiar [ ] por [x]
+============================================ -->
 
+--
 ### 🌱 CULTIVOS
 - [ ] Ventana Busqueda cultivos poder usar ENTER para buscar
 
 ### ⚙️ GENERAL
-- [X] FormModel hacer bring to front on focus
+- [ ] FormModel hacer bring to front on focus
 - [ ] Buscar validaciones faltantes
 
 ### 👥 CLIENTES
