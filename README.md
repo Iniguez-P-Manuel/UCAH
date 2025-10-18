@@ -1,3 +1,46 @@
+✔️
+# Sistema de Gestión de Pendientes - Desarrollo Software
+
+## 📋 PENDIENTES
+
+
+### 🌱 CULTIVOS
+- [ ] Ventana Busqueda cultivos poder usar ENTER para buscar
+
+### ⚙️ GENERAL
+- [ ] FormModel hacer bring to front on focus
+- [ ] Buscar validaciones faltantes
+
+### 👥 CLIENTES
+- [ ] Guardar
+- [ ] Modificar
+- [ ] Borrar
+
+### 📋 NOTAS CARGO
+- [ ] Guardar
+- [ ] Modificar
+- [ ] Borrar
+- [ ] Reporte igual al del pdf
+
+### 🗄️ BD CORREGIR
+- [ ] Diagrama Cosecha (nuevo)
+- [ ] Cosecha (nuevo)
+      id
+      fecha inicial
+      fecha final
+- [ ] Diagrama Grupo familiar (nuevo)
+- [ ] Grupo familiar (nuevo)
+      id
+      Nombre
+      NotaCargo 
+  - [ ] Agregar idCosecha
+  - [ ] Agregar idGrupoFamiliar
+  - [ ] Eliminar Referencia ❌
+
+
+
+
+
 Administrador para sqlite:<br>
 https://sqliteonline.com/<br>
 ModeloDB<br>
