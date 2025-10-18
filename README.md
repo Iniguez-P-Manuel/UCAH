@@ -39,10 +39,10 @@ Cambiar [ ] por [x]
 - [ ] Grupo familiar (nuevo)
       id
       Nombre
-      NotaCargo 
-  - [ ] Agregar idCosecha
-  - [ ] Agregar idGrupoFamiliar
-  - [ ] Eliminar Referencia ❌
+- [ ] NotaCargo 
+      Agregar idCosecha
+      Agregar idGrupoFamiliar
+      Eliminar Referencia ❌
 
 
 
