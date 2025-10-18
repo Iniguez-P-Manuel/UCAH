@@ -31,18 +31,18 @@ Cambiar [ ] por [x]
 
 ### 🗄️ BD CORREGIR
 - [ ] Diagrama Cosecha (nuevo)
-- [ ] Cosecha (nuevo)
-      id
-      fecha inicial
-      fecha final
+- [ ] Cosecha (nuevo)<br>
+      *id<br>
+      *fecha inicial<br>
+      *fecha final<br>
 - [ ] Diagrama Grupo familiar (nuevo)
 - [ ] Grupo familiar (nuevo)<br>
-      id<br>
-      Nombre<br>
+      *id<br>
+      *Nombre<br>
 - [ ] NotaCargo <br>
-      Agregar idCosecha<br>
-      Agregar idGrupoFamiliar<br>
-      Eliminar Referencia ❌<br>
+      *Agregar idCosecha<br>
+      *Agregar idGrupoFamiliar<br>
+      *Eliminar Referencia ❌<br>
 
 
 
