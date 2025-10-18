@@ -1,11 +1,13 @@
-# Sistema de Gestión de Pendientes - Desarrollo Software
+# 📋 PENDIENTES
 
-## 📋 PENDIENTES
+
 
 <!-- ============================================
 INSTRUCCIONES DE USO:
 Cambiar [ ] por [x]
 ============================================ -->
+
+## `C#`
 
 ### 🌱 CULTIVOS
 - [ ] Ventana Busqueda cultivos poder usar ENTER para buscar
@@ -25,6 +27,8 @@ Cambiar [ ] por [x]
 - [ ] Borrar
 - [ ] Reporte igual al del pdf
 
+## `DATOS`
+
 ### 🗄️ BD CORREGIR
 - [ ] Diagrama Cosecha (nuevo)
 - [ ] Cosecha (nuevo)
@@ -42,7 +46,7 @@ Cambiar [ ] por [x]
 
 
 
-
+# 
 
 Administrador para sqlite:<br>
 https://sqliteonline.com/<br>
