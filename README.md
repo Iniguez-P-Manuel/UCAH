@@ -8,7 +8,7 @@
 - [ ] Ventana Busqueda cultivos poder usar ENTER para buscar
 
 ### ⚙️ GENERAL
-- [ ] FormModel hacer bring to front on focus
+- [X] FormModel hacer bring to front on focus
 - [ ] Buscar validaciones faltantes
 
 ### 👥 CLIENTES
