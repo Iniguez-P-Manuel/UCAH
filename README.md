@@ -7,7 +7,6 @@ INSTRUCCIONES DE USO:
 Cambiar [ ] por [x]
 ============================================ -->
 
---
 ### 🌱 CULTIVOS
 - [ ] Ventana Busqueda cultivos poder usar ENTER para buscar
 
