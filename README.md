@@ -36,13 +36,13 @@ Cambiar [ ] por [x]
       fecha inicial
       fecha final
 - [ ] Diagrama Grupo familiar (nuevo)
-- [ ] Grupo familiar (nuevo)
-      id
-      Nombre
-- [ ] NotaCargo 
-      Agregar idCosecha
-      Agregar idGrupoFamiliar
-      Eliminar Referencia ❌
+- [ ] Grupo familiar (nuevo)<br>
+      id<br>
+      Nombre<br>
+- [ ] NotaCargo <br>
+      Agregar idCosecha<br>
+      Agregar idGrupoFamiliar<br>
+      Eliminar Referencia ❌<br>
 
 
 
