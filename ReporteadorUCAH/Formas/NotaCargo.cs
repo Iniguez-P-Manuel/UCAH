@@ -46,6 +46,7 @@ namespace ReporteadorUCAH.Formas
             txtPrecio.Text = NotaActual.Precio.ToString();
             txtToneladas.Text = NotaActual.Tons.ToString();
 
+            dpFecha.Value = NotaActual.Fecha;
         }
         public override void Nuevo()
         {

@@ -45,7 +45,7 @@
             label3 = new Label();
             txtCliente = new TextBox();
             label2 = new Label();
-            dateTimePicker1 = new DateTimePicker();
+            dpFecha = new DateTimePicker();
             label1 = new Label();
             txtID = new TextBox();
             panel1.SuspendLayout();
@@ -70,13 +70,13 @@
             panel1.Controls.Add(label3);
             panel1.Controls.Add(txtCliente);
             panel1.Controls.Add(label2);
-            panel1.Controls.Add(dateTimePicker1);
+            panel1.Controls.Add(dpFecha);
             panel1.Controls.Add(label1);
             panel1.Controls.Add(txtID);
             panel1.Dock = DockStyle.Fill;
             panel1.Location = new Point(3, 32);
             panel1.Name = "panel1";
-            panel1.Size = new Size(457, 235);
+            panel1.Size = new Size(457, 226);
             panel1.TabIndex = 5;
             // 
             // button3
@@ -84,7 +84,7 @@
             button3.Anchor = AnchorStyles.Left;
             button3.BackgroundImage = Properties.Resources.icons8_letra_pequeña_20;
             button3.BackgroundImageLayout = ImageLayout.Stretch;
-            button3.Location = new Point(146, 4);
+            button3.Location = new Point(146, 0);
             button3.Name = "button3";
             button3.Size = new Size(33, 31);
             button3.TabIndex = 56;
@@ -96,7 +96,7 @@
             txtDeducciones.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
             txtDeducciones.BackColor = SystemColors.Info;
             txtDeducciones.Cursor = Cursors.No;
-            txtDeducciones.Location = new Point(342, 175);
+            txtDeducciones.Location = new Point(342, 166);
             txtDeducciones.Name = "txtDeducciones";
             txtDeducciones.ReadOnly = true;
             txtDeducciones.Size = new Size(108, 23);
@@ -113,7 +113,7 @@
             btnDeducciones.FlatStyle = FlatStyle.Flat;
             btnDeducciones.Image = Properties.Resources.icons8_efectivo_20;
             btnDeducciones.ImageAlign = ContentAlignment.MiddleRight;
-            btnDeducciones.Location = new Point(228, 173);
+            btnDeducciones.Location = new Point(228, 164);
             btnDeducciones.Name = "btnDeducciones";
             btnDeducciones.Size = new Size(108, 25);
             btnDeducciones.TabIndex = 54;
@@ -127,7 +127,7 @@
             txtImporte.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
             txtImporte.BackColor = SystemColors.Info;
             txtImporte.Cursor = Cursors.No;
-            txtImporte.Location = new Point(342, 204);
+            txtImporte.Location = new Point(342, 195);
             txtImporte.Name = "txtImporte";
             txtImporte.ReadOnly = true;
             txtImporte.Size = new Size(108, 23);
@@ -139,7 +139,7 @@
             // 
             label7.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
             label7.AutoSize = true;
-            label7.Location = new Point(287, 207);
+            label7.Location = new Point(287, 198);
             label7.Name = "label7";
             label7.Size = new Size(49, 15);
             label7.TabIndex = 52;
@@ -148,7 +148,7 @@
             // txtPrecio
             // 
             txtPrecio.Anchor = AnchorStyles.Left;
-            txtPrecio.Location = new Point(270, 122);
+            txtPrecio.Location = new Point(270, 118);
             txtPrecio.Name = "txtPrecio";
             txtPrecio.PlaceholderText = "0.00";
             txtPrecio.Size = new Size(108, 23);
@@ -159,7 +159,7 @@
             // 
             label6.Anchor = AnchorStyles.Left;
             label6.AutoSize = true;
-            label6.Location = new Point(224, 125);
+            label6.Location = new Point(224, 121);
             label6.Name = "label6";
             label6.Size = new Size(40, 15);
             label6.TabIndex = 50;
@@ -168,7 +168,7 @@
             // txtToneladas
             // 
             txtToneladas.Anchor = AnchorStyles.Left;
-            txtToneladas.Location = new Point(71, 122);
+            txtToneladas.Location = new Point(71, 118);
             txtToneladas.Name = "txtToneladas";
             txtToneladas.PlaceholderText = "0.00";
             txtToneladas.Size = new Size(108, 23);
@@ -179,7 +179,7 @@
             // 
             label5.Anchor = AnchorStyles.Left;
             label5.AutoSize = true;
-            label5.Location = new Point(6, 125);
+            label5.Location = new Point(6, 121);
             label5.Name = "label5";
             label5.Size = new Size(59, 15);
             label5.TabIndex = 48;
@@ -190,7 +190,7 @@
             button2.Anchor = AnchorStyles.Left;
             button2.BackgroundImage = Properties.Resources.icons8_brote_32;
             button2.BackgroundImageLayout = ImageLayout.Stretch;
-            button2.Location = new Point(384, 88);
+            button2.Location = new Point(384, 84);
             button2.Name = "button2";
             button2.Size = new Size(33, 31);
             button2.TabIndex = 47;
@@ -200,7 +200,7 @@
             // 
             label4.Anchor = AnchorStyles.Left;
             label4.AutoSize = true;
-            label4.Location = new Point(20, 96);
+            label4.Location = new Point(20, 92);
             label4.Name = "label4";
             label4.Size = new Size(45, 15);
             label4.TabIndex = 46;
@@ -211,7 +211,7 @@
             txtCultivo.Anchor = AnchorStyles.Left;
             txtCultivo.BackColor = SystemColors.Info;
             txtCultivo.Cursor = Cursors.No;
-            txtCultivo.Location = new Point(71, 93);
+            txtCultivo.Location = new Point(71, 89);
             txtCultivo.Name = "txtCultivo";
             txtCultivo.ReadOnly = true;
             txtCultivo.Size = new Size(307, 23);
@@ -222,7 +222,7 @@
             button1.Anchor = AnchorStyles.Left;
             button1.BackgroundImage = Properties.Resources.icons8_encuentra_hombre_usuario_32;
             button1.BackgroundImageLayout = ImageLayout.Stretch;
-            button1.Location = new Point(384, 59);
+            button1.Location = new Point(384, 55);
             button1.Name = "button1";
             button1.Size = new Size(33, 31);
             button1.TabIndex = 44;
@@ -232,7 +232,7 @@
             // 
             label3.Anchor = AnchorStyles.Left;
             label3.AutoSize = true;
-            label3.Location = new Point(20, 67);
+            label3.Location = new Point(20, 63);
             label3.Name = "label3";
             label3.Size = new Size(44, 15);
             label3.TabIndex = 43;
@@ -243,7 +243,7 @@
             txtCliente.Anchor = AnchorStyles.Left;
             txtCliente.BackColor = SystemColors.Info;
             txtCliente.Cursor = Cursors.No;
-            txtCliente.Location = new Point(71, 64);
+            txtCliente.Location = new Point(71, 60);
             txtCliente.Name = "txtCliente";
             txtCliente.ReadOnly = true;
             txtCliente.Size = new Size(307, 23);
@@ -259,14 +259,14 @@
             label2.TabIndex = 41;
             label2.Text = "Fecha";
             // 
-            // dateTimePicker1
+            // dpFecha
             // 
-            dateTimePicker1.Anchor = AnchorStyles.Top | AnchorStyles.Right;
-            dateTimePicker1.Format = DateTimePickerFormat.Short;
-            dateTimePicker1.Location = new Point(354, 7);
-            dateTimePicker1.Name = "dateTimePicker1";
-            dateTimePicker1.Size = new Size(96, 23);
-            dateTimePicker1.TabIndex = 40;
+            dpFecha.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+            dpFecha.Format = DateTimePickerFormat.Short;
+            dpFecha.Location = new Point(354, 7);
+            dpFecha.Name = "dpFecha";
+            dpFecha.Size = new Size(96, 23);
+            dpFecha.TabIndex = 40;
             // 
             // label1
             // 
@@ -320,7 +320,7 @@
         private Label label3;
         private TextBox txtCliente;
         private Label label2;
-        private DateTimePicker dateTimePicker1;
+        private DateTimePicker dpFecha;
         private Label label1;
         private TextBox txtID;
         private TextBox txtDeducciones;
