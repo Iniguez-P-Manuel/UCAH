@@ -21,20 +21,19 @@ Cambiar [ ] por [x]
 - [ ] Modificar
 
 ### ⚙️ MODELOS 
-- [ ] NotaCargo <br>
+- [X] NotaCargo <br>
       *Agregar Modelo.Cosecha<br>
       *Agregar Modelo.GrupoFamiliar<br>
-      *Eliminar Referencia ❌<br>
-- [ ] Corregir mapeo BD  Nota Cargo
-- [ ] Grupo familiar (nuevo)<br>
+- [X] Corregir mapeo BD  Nota Cargo
+- [X] Grupo familiar (nuevo)<br>
       *id<br>
       *Nombre<br>
-- [ ] Mapeo BD Grupo Familiar
-- [ ] Cosecha (nuevo)<br>
+- [X] Mapeo BD Grupo Familiar
+- [X] Cosecha (nuevo)<br>
       *id<br>
       *fecha inicial<br>
       *fecha final<br>
-- [ ] Mapeo BD Cosecha
+- [X] Mapeo BD Cosecha
 
 
 ### 📋 NOTA DEDUCCIONES
