@@ -43,6 +43,7 @@ Cambiar [ ] por [x]
 - [ ] Borrar
 - [ ] Seleccionar Cliente
 - [ ] Seleccionar Cultivo
+- [ ] Cambiar total importe con evento al escribir sobre cantidad y precio, o al cambiar la cantidad de deducciones (cantidad * precio - deducciones)
 - [ ] Reporte igual al del pdf
 
 
