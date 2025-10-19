@@ -16,13 +16,23 @@ namespace ReporteadorUCAH.DB_Services
             Cliente _cliente = new Cliente();
             Cultivo _cultivo = new Cultivo();
             List<DeduccionNota> _deducciones = new List<DeduccionNota>();
+            Cosecha _cosecha = new Cosecha();
+            GrupoFamiliar _grupoFamiliar = new GrupoFamiliar();
 
             using (DatabaseConnection varCon = new DatabaseConnection())
             {
                 using (Cultivos DB_Cultivo = new Cultivos(varCon)) 
                     _cultivo = DB_Cultivo.GetCultivoById(reader.GetInt32(reader.GetOrdinal("idCultivo")));
+
                 using (Clientes DB_Clientes = new Clientes(varCon))
                     _cliente = DB_Clientes.GetClienteById(reader.GetInt32(reader.GetOrdinal("idCliente")));
+
+                using (Cosechas DB_Cosechas = new Cosechas(varCon))
+                    _cosecha = DB_Cosechas.GetCosechaById(reader.GetInt32(reader.GetOrdinal("idCosecha")));
+
+                using (GruposFamiliares DB_GrupoFamiliar = new GruposFamiliares(varCon))
+                    _grupoFamiliar = DB_GrupoFamiliar.GetGrupoFamiliarById(reader.GetInt32(reader.GetOrdinal("idGrupoFamiliar")));
+
                 using (DeduccionesNota DB_Deducciones = new DeduccionesNota(varCon))
                     _deducciones = DB_Deducciones.GetDeduccionesByNota(reader.GetInt32(reader.GetOrdinal("id")));
             }
@@ -34,11 +44,13 @@ namespace ReporteadorUCAH.DB_Services
                 FacturaFolio = GetStringOrNull(reader, "FacturaFolio"),
                 _Cliente = _cliente,
                 _Cultivo = _cultivo,
+                _Cosecha = _cosecha,
                 Tons = reader.GetDouble(reader.GetOrdinal("TONS")),
                 Precio = reader.GetDouble(reader.GetOrdinal("PRECIO")),
                 Importe = reader.GetDouble(reader.GetOrdinal("IMPORTE")),
                 FacturaUUID = GetStringOrNull(reader, "CFDI"),
-                Deducciones = _deducciones
+                Deducciones = _deducciones,
+                _GrupoFamiliar = _grupoFamiliar,
             };
         }
         public static Cliente MapToCliente(SqliteDataReader reader)
@@ -101,7 +113,23 @@ namespace ReporteadorUCAH.DB_Services
                 CONS = GetStringOrNull(reader, "CONS")
             };
         }
-
+        public static GrupoFamiliar MapToGrupoFamiliar(SqliteDataReader reader)
+        {
+            return new GrupoFamiliar
+            {
+                Id = reader.GetInt32(reader.GetOrdinal("id")),
+                Nombre = GetStringOrNull(reader, "nombre")
+            };
+        }
+        public static Cosecha MapToCosecha(SqliteDataReader reader)
+        {
+            return new Cosecha
+            {
+                Id = reader.GetInt32(reader.GetOrdinal("id")),
+                FechaInicial = GetDateTimeOrNull(reader, "fechaInicial"),
+                FechaFinal = GetDateTimeOrNull(reader, "fechaFinal"),
+            };
+        }
         public static Modelos.DeduccionNota MapToDeduccionNota(SqliteDataReader reader)
         {
             Modelos.TipoDeduccion _tipoDeduccion = new Modelos.TipoDeduccion();

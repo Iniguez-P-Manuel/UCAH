@@ -8,30 +8,30 @@ using System.Threading.Tasks;
 
 namespace ReporteadorUCAH.DB_Services
 {
-    internal class Cultivos : IDisposable
+    internal class GruposFamiliares : IDisposable
     {
         private readonly DatabaseConnection _dbConnection;
-        public Cultivos(DatabaseConnection dbConnection)
+        public GruposFamiliares(DatabaseConnection dbConnection)
         {
             _dbConnection = dbConnection;
         }
 
-        
-        public Cultivo GetCultivoById(int id)
+
+        public GrupoFamiliar GetGrupoFamiliarById(int id)
         {
             try
             {
                 using (var conn = _dbConnection.GetConnection())
                 using (var command = conn.CreateCommand())
                 {
-                    command.CommandText = "SELECT * FROM Cultivos WHERE Id = @Id";
+                    command.CommandText = "SELECT * FROM GrupoFamiliar WHERE id = @Id";
                     command.Parameters.AddWithValue("@Id", id);
 
                     using (var reader = command.ExecuteReader())
                     {
                         if (reader.Read())
                         {
-                            return MapClasses.MapToCultivo(reader);
+                            return MapClasses.MapToGrupoFamiliar(reader);
                         }
                     }
                 }
@@ -41,42 +41,42 @@ namespace ReporteadorUCAH.DB_Services
             }
             catch (SqliteException ex)
             {
-                Console.WriteLine($"Error al obtener Cultivo por ID: {ex.Message}");
+                Console.WriteLine($"Error al obtener Grupo Familiar por ID: {ex.Message}");
                 throw;
             }
         }
 
-        public List<Cultivo> GetAllCultivos()
+        public List<GrupoFamiliar> GetAllGruposFamiliares()
         {
-            var Cultivos = new List<Cultivo>();
+            var gruposFamiliares = new List<GrupoFamiliar>();
 
             try
             {
                 using (var conn = _dbConnection.GetConnection())
                 using (var command = conn.CreateCommand())
                 {
-                    command.CommandText = "SELECT * FROM Cultivos";
+                    command.CommandText = "SELECT * FROM GrupoFamiliar";
 
                     using (var reader = command.ExecuteReader())
                     {
                         while (reader.Read())
                         {
-                            var Cultivo = MapClasses.MapToCultivo(reader);
-                            Cultivos.Add(Cultivo);
+                            var grupoFamiliar = MapClasses.MapToGrupoFamiliar(reader);
+                            gruposFamiliares.Add(grupoFamiliar);
                         }
                     }
                 }
             }
             catch (SqliteException ex)
             {
-                Console.WriteLine($"Error al obtener Cultivos: {ex.Message}");
+                Console.WriteLine($"Error al obtener Grupos Familiares: {ex.Message}");
                 throw;
             }
 
-            return Cultivos;
+            return gruposFamiliares;
         }
 
-        public int AgregarCultivo(Cultivo cultivo)
+        public int AgregarGrupoFamiliar(GrupoFamiliar grupoFamiliar)
         {
             try
             {
@@ -84,37 +84,32 @@ namespace ReporteadorUCAH.DB_Services
                 using (var command = conn.CreateCommand())
                 {
                     command.CommandText = @"
-                INSERT INTO Cultivos (Nombre, Cultivo, CONS) 
-                VALUES (@Nombre, @CultivoTipo, @CONS);
+                INSERT INTO GrupoFamiliar (nombre) 
+                VALUES (@nombre);
                 SELECT last_insert_rowid();";
 
-                    command.Parameters.AddWithValue("@Nombre", cultivo.Nombre ?? "");
-                    command.Parameters.AddWithValue("@CultivoTipo", cultivo.CultivoTipo ?? "");
-                    command.Parameters.AddWithValue("@CONS", cultivo.CONS ?? "");
+                    command.Parameters.AddWithValue("@nombre", grupoFamiliar.Nombre ?? "");
 
-                    var id = Convert.ToInt32(command.ExecuteScalar());
-                    return id;
+                    return Convert.ToInt32(command.ExecuteScalar());
                 }
             }
             catch (SqliteException ex)
             {
-                Console.WriteLine($"Error al agregar cultivo: {ex.Message}");
+                Console.WriteLine($"Error al agregar grupo familiar: {ex.Message}");
                 return 0;
             }
         }
 
-        public int ActualizarCultivo(Cultivo cultivo)
+        public int ActualizarGrupoFamiliar(GrupoFamiliar grupoFamiliar)
         {
             try
             {
                 using (var conn = _dbConnection.GetConnection())
                 using (var command = conn.CreateCommand())
                 {
-                    command.CommandText = "UPDATE Cultivos SET Nombre = @Nombre, Cultivo = @CultivoTipo, CONS = @CONS WHERE Id = @Id;";
-                    command.Parameters.AddWithValue("@Nombre", cultivo.Nombre ?? "");
-                    command.Parameters.AddWithValue("@CultivoTipo", cultivo.CultivoTipo ?? "");
-                    command.Parameters.AddWithValue("@CONS", cultivo.CONS ?? "");
-                    command.Parameters.AddWithValue("@Id", cultivo.Id);
+                    command.CommandText = "UPDATE GrupoFamiliar SET nombre = @nombre WHERE id = @Id;";
+                    command.Parameters.AddWithValue("@nombre", grupoFamiliar.Nombre ?? "");
+                    command.Parameters.AddWithValue("@Id", grupoFamiliar.Id);
 
                     int filasAfectadas = command.ExecuteNonQuery();
                     return filasAfectadas;
@@ -122,30 +117,31 @@ namespace ReporteadorUCAH.DB_Services
             }
             catch (SqliteException ex)
             {
-                Console.WriteLine($"Error al actualizar cultivo: {ex.Message}");
+                Console.WriteLine($"Error al actualizar grupo familiar: {ex.Message}");
                 return 0;
             }
         }
-        public void EliminarCultivo(int id)
+
+        public int EliminarGrupoFamiliar(int id)
         {
             try
             {
                 using (var conn = _dbConnection.GetConnection())
                 using (var command = conn.CreateCommand())
                 {
-                    command.CommandText = "DELETE FROM Cultivos WHERE Id = @Id;";
+                    command.CommandText = "DELETE FROM GrupoFamiliar WHERE id = @Id;";
                     command.Parameters.AddWithValue("@Id", id);
-                    command.ExecuteNonQuery();
+
+                    int filasAfectadas = command.ExecuteNonQuery();
+                    return filasAfectadas;
                 }
             }
             catch (SqliteException ex)
             {
-                Console.WriteLine($"Error al eliminar cultivo: {ex.Message}");
+                Console.WriteLine($"Error al eliminar grupo familiar: {ex.Message}");
                 throw;
             }
         }
-
-
 
         public void Dispose()
         {

@@ -8,30 +8,30 @@ using System.Threading.Tasks;
 
 namespace ReporteadorUCAH.DB_Services
 {
-    internal class Cultivos : IDisposable
+    internal class Cosechas : IDisposable
     {
         private readonly DatabaseConnection _dbConnection;
-        public Cultivos(DatabaseConnection dbConnection)
+        public Cosechas(DatabaseConnection dbConnection)
         {
             _dbConnection = dbConnection;
         }
 
         
-        public Cultivo GetCultivoById(int id)
+        public Cosecha GetCosechaById(int id)
         {
             try
             {
                 using (var conn = _dbConnection.GetConnection())
                 using (var command = conn.CreateCommand())
                 {
-                    command.CommandText = "SELECT * FROM Cultivos WHERE Id = @Id";
+                    command.CommandText = "SELECT * FROM Cosecha WHERE id = @Id";
                     command.Parameters.AddWithValue("@Id", id);
 
                     using (var reader = command.ExecuteReader())
                     {
                         if (reader.Read())
                         {
-                            return MapClasses.MapToCultivo(reader);
+                            return MapClasses.MapToCosecha(reader);
                         }
                     }
                 }
@@ -41,98 +41,104 @@ namespace ReporteadorUCAH.DB_Services
             }
             catch (SqliteException ex)
             {
-                Console.WriteLine($"Error al obtener Cultivo por ID: {ex.Message}");
+                Console.WriteLine($"Error al obtener Cosecha por ID: {ex.Message}");
                 throw;
             }
         }
 
-        public List<Cultivo> GetAllCultivos()
+        public List<Cosecha> GetAllCosechas()
         {
-            var Cultivos = new List<Cultivo>();
+            var Cosechas = new List<Cosecha>();
 
             try
             {
                 using (var conn = _dbConnection.GetConnection())
                 using (var command = conn.CreateCommand())
                 {
-                    command.CommandText = "SELECT * FROM Cultivos";
+                    command.CommandText = "SELECT * FROM Cosecha";
 
                     using (var reader = command.ExecuteReader())
                     {
                         while (reader.Read())
                         {
-                            var Cultivo = MapClasses.MapToCultivo(reader);
-                            Cultivos.Add(Cultivo);
+                            var cosecha = MapClasses.MapToCosecha(reader);
+                            Cosechas.Add(cosecha);
                         }
                     }
                 }
             }
             catch (SqliteException ex)
             {
-                Console.WriteLine($"Error al obtener Cultivos: {ex.Message}");
+                Console.WriteLine($"Error al obtener Cosechas: {ex.Message}");
                 throw;
             }
 
-            return Cultivos;
+            return Cosechas;
         }
 
-        public void AgregarCultivo(Cultivo cultivo)
+        public int AgregarCosecha(Cosecha cosecha)
         {
             try
             {
                 using (var conn = _dbConnection.GetConnection())
                 using (var command = conn.CreateCommand())
                 {
-                    command.CommandText = "INSERT INTO Cultivos (Nombre, Cultivo, CONS) VALUES (@Nombre, @CultivoTipo, @CONS);";
-                    command.Parameters.AddWithValue("@Nombre", cultivo.Nombre ?? "");
-                    command.Parameters.AddWithValue("@CultivoTipo", cultivo.CultivoTipo ?? "");
-                    command.Parameters.AddWithValue("@CONS", cultivo.CONS ?? "");
-                    command.ExecuteNonQuery();
+                    command.CommandText = @"
+                INSERT INTO Cosecha (fechaInicial, fechaFinal) 
+                VALUES (@fechaInicial, @fechaFinal);
+                SELECT last_insert_rowid();";
+
+                    command.Parameters.AddWithValue("@fechaInicial", cosecha.FechaInicial);
+                    command.Parameters.AddWithValue("@fechaFinal", cosecha.FechaFinal);
+
+                    return Convert.ToInt32(command.ExecuteScalar());
                 }
             }
             catch (SqliteException ex)
             {
-                Console.WriteLine($"Error al agregar cultivo: {ex.Message}");
-                throw;
+                Console.WriteLine($"Error al agregar cosecha: {ex.Message}");
+                return 0;
             }
         }
-
-        public void ActualizarCultivo(Cultivo cultivo)
+        public int ActualizarCosecha(Cosecha cosecha)
         {
             try
             {
                 using (var conn = _dbConnection.GetConnection())
                 using (var command = conn.CreateCommand())
                 {
-                    command.CommandText = "UPDATE Cultivos SET Nombre = @Nombre, Cultivo = @CultivoTipo, CONS = @CONS WHERE Id = @Id;";
-                    command.Parameters.AddWithValue("@Nombre", cultivo.Nombre ?? "");
-                    command.Parameters.AddWithValue("@CultivoTipo", cultivo.CultivoTipo ?? "");
-                    command.Parameters.AddWithValue("@CONS", cultivo.CONS ?? "");
-                    command.Parameters.AddWithValue("@Id", cultivo.Id);
-                    command.ExecuteNonQuery();
+                    command.CommandText = "UPDATE Cosecha SET fechaInicial = @fechaInicial, fechaFinal = @fechaFinal WHERE id = @Id;";
+                    command.Parameters.AddWithValue("@fechaInicial", cosecha.FechaInicial);
+                    command.Parameters.AddWithValue("@fechaFinal", cosecha.FechaFinal);
+                    command.Parameters.AddWithValue("@Id", cosecha.Id);
+
+                    int filasAfectadas = command.ExecuteNonQuery();
+                    return filasAfectadas;
                 }
             }
             catch (SqliteException ex)
             {
-                Console.WriteLine($"Error al actualizar cultivo: {ex.Message}");
-                throw;
+                Console.WriteLine($"Error al actualizar cosecha: {ex.Message}");
+                return 0;
             }
         }
-        public void EliminarCultivo(int id)
+        public int EliminarCosecha(int id)
         {
             try
             {
                 using (var conn = _dbConnection.GetConnection())
                 using (var command = conn.CreateCommand())
                 {
-                    command.CommandText = "DELETE FROM Cultivos WHERE Id = @Id;";
+                    command.CommandText = "DELETE FROM Cosecha WHERE id = @Id;";
                     command.Parameters.AddWithValue("@Id", id);
-                    command.ExecuteNonQuery();
+
+                    int filasAfectadas = command.ExecuteNonQuery();
+                    return filasAfectadas;
                 }
             }
             catch (SqliteException ex)
             {
-                Console.WriteLine($"Error al eliminar cultivo: {ex.Message}");
+                Console.WriteLine($"Error al eliminar cosecha: {ex.Message}");
                 throw;
             }
         }
