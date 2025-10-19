@@ -19,7 +19,6 @@ Cambiar [ ] por [x]
 ### 👥 CLIENTES
 - [ ] Guardar
 - [ ] Modificar
-- [ ] Borrar
 
 ### ⚙️ MODELOS 
 - [ ] NotaCargo <br>
@@ -44,7 +43,6 @@ Cambiar [ ] por [x]
 ### 📋 NOTAS CARGO
 - [ ] Guardar
 - [ ] Modificar
-- [ ] Borrar
 - [ ] Seleccionar Cliente
 - [ ] Seleccionar Cultivo
 - [ ] Cambiar total importe con evento al escribir sobre cantidad y precio, o al cambiar la cantidad de deducciones<br>
