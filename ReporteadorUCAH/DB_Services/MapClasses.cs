@@ -11,6 +11,93 @@ namespace ReporteadorUCAH.DB_Services
 {
     public class MapClasses
     {
+        public static Modelos.NotaCargo MapToNotaCargoConJoins(SqliteDataReader reader)
+        {
+            return new Modelos.NotaCargo
+            {
+                Id = reader.GetInt32(reader.GetOrdinal("id")),
+                Fecha = GetDateTimeOrNull(reader, "FECHA"),
+                FacturaFolio = GetStringOrNull(reader, "FacturaFolio"),
+                Tons = reader.GetDouble(reader.GetOrdinal("TONS")),
+                Precio = reader.GetDouble(reader.GetOrdinal("PRECIO")),
+                Importe = reader.GetDouble(reader.GetOrdinal("IMPORTE")),
+                FacturaUUID = GetStringOrNull(reader, "FacturaUUID"),
+
+                _Cliente = new Cliente
+                {
+                    Id = reader.GetInt32(reader.GetOrdinal("ClienteId")),
+                    Nombre = GetStringOrNull(reader, "ClienteNombre"),
+                    TipoPersona = new TipoPersonaFiscal
+                    {
+                        Id = GetInt32OrNull(reader, "idTipoPersona"),
+                        Nombre = GetStringOrNull(reader, "TipoPersonaNombre"),
+                        NombreCorto = GetStringOrNull(reader, "TipoPersonaNombreCorto")
+                    },
+                    ApellidoPaterno = GetStringOrNull(reader, "apellidoPaterno"),
+                    ApellidoMaterno = GetStringOrNull(reader, "apellidoMaterno"),
+                    Nombres = GetStringOrNull(reader, "nombres"),
+                    Rfc = GetStringOrNull(reader, "ClienteRfc"),
+                    Curp = GetStringOrNull(reader, "curp"),
+                    PaisNumero = reader.GetInt32(reader.GetOrdinal("paisNumero")),
+                    CodigoPostal = GetStringOrNull(reader, "codigoPostal"),
+                    Calle = GetStringOrNull(reader, "calle"),
+                    NoInterior = GetStringOrNull(reader, "noInterior"),
+                    NoExterior = GetStringOrNull(reader, "noExterior"),
+                    Referencia = GetStringOrNull(reader, "referencia"),
+                    Correo = GetStringOrNull(reader, "correo"),
+                    Telefono = GetStringOrNull(reader, "Telefono"),
+                    CondicionPago = GetStringOrNull(reader, "condicionPago"),
+                    MetodoPago = GetStringOrNull(reader, "metodoPago"),
+                    LimiteCredito = GetInt32OrNull(reader, "limiteCredito"),
+                    Moneda = GetInt32OrNull(reader, "moneda"),
+                    CreditoSuspendido = GetInt32OrNull(reader, "creditoSuspendido"),
+                    _Colonia = new Colonia
+                    {
+                        Id = GetInt32OrNull(reader, "idColonia"),
+                        Nombre = GetStringOrNull(reader, "ColoniaNombre"),
+                        _Ciudad = new Ciudad
+                        {
+                            Id = GetInt32OrNull(reader, "idCiudad"),
+                            Nombre = GetStringOrNull(reader, "CiudadNombre"),
+                            _Municipio = new Municipio
+                            {
+                                Id = GetInt32OrNull(reader, "idMunicipio"),
+                                Nombre = GetStringOrNull(reader, "MunicipioNombre"),
+                                _Estado = new Estado
+                                {
+                                    Id = GetInt32OrNull(reader, "idEstado"),
+                                    EstadoNumero = GetStringOrNull(reader, "estadoNumero"),
+                                    Nombre = GetStringOrNull(reader, "EstadoNombre")
+                                }
+                            }
+                        }
+                    }
+                },
+
+                _Cultivo = new Cultivo
+                {
+                    Id = GetInt32OrNull(reader, "CultivoId"),
+                    Nombre = GetStringOrNull(reader, "CultivoNombre"),
+                    CultivoTipo = GetStringOrNull(reader, "CultivoTipo"),
+                    CONS = GetStringOrNull(reader, "CONS")
+                },
+
+                _Cosecha = new Cosecha
+                {
+                    Id = GetInt32OrNull(reader, "CosechaId"),
+                    FechaInicial = GetDateTimeOrNull(reader, "fechaInicial"),
+                    FechaFinal = GetDateTimeOrNull(reader, "fechaFinal")
+                },
+
+                _GrupoFamiliar = new GrupoFamiliar
+                {
+                    Id = GetInt32OrNull(reader, "GrupoFamiliarId"),
+                    Nombre = GetStringOrNull(reader, "GrupoFamiliarNombre")
+                },
+
+                Deducciones = new List<DeduccionNota>() // Se llena después
+            };
+        }
         public static Modelos.NotaCargo MapToNotaCargo(SqliteDataReader reader)
         {
             Cliente _cliente = new Cliente();
@@ -237,7 +324,7 @@ namespace ReporteadorUCAH.DB_Services
                 Nombre = GetStringOrNull(reader, "Nombre")
             };
         }
-        private static int GetInt32OrNull(SqliteDataReader reader, string columnName)
+        public static int GetInt32OrNull(SqliteDataReader reader, string columnName)
         {
             int ordinal = reader.GetOrdinal(columnName);
             return reader.IsDBNull(ordinal) ? 0 : reader.GetInt32(ordinal);
@@ -247,7 +334,7 @@ namespace ReporteadorUCAH.DB_Services
             int ordinal = reader.GetOrdinal(columnName);
             return reader.IsDBNull(ordinal) ? 0 : reader.GetDouble(ordinal);
         }
-        private static string GetStringOrNull(SqliteDataReader reader, string columnName)
+        public static string GetStringOrNull(SqliteDataReader reader, string columnName)
         {
             int ordinal = reader.GetOrdinal(columnName);
             return reader.IsDBNull(ordinal) ? null : reader.GetString(ordinal);
