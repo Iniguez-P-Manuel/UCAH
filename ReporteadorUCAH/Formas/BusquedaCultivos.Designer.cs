@@ -49,6 +49,7 @@
             txtBusqueda.PlaceholderText = "Buscar cultivo...";
             txtBusqueda.Size = new Size(1112, 31);
             txtBusqueda.TabIndex = 5;
+            txtBusqueda.KeyDown += txtBusqueda_KeyDown;
             // 
             // button1
             // 

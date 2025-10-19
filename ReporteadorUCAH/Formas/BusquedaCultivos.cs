@@ -26,6 +26,8 @@ namespace ReporteadorUCAH.Formas
             Color NuevoColor = Color.Khaki;
             this.CambiarColor(NuevoColor);
 
+            this.AcceptButton = this.button1;
+            txtBusqueda.KeyDown += txtBusqueda_KeyDown;
 
         }
 
@@ -101,6 +103,17 @@ namespace ReporteadorUCAH.Formas
 
         private void dgvCultivos_CellContentClick(object sender, DataGridViewCellEventArgs e)
         {
+
+        }
+
+        private void txtBusqueda_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.KeyCode == Keys.Enter)
+            {
+                e.Handled = true;
+                e.SuppressKeyPress = true;
+                Buscar();
+            }
 
         }
     }
