@@ -33,7 +33,10 @@ Cambiar [ ] por [x]
       *id<br>
       *fecha inicial<br>
       *fecha final<br>
-      
+
+### 📋 NOTA DEDUCCIONES
+- [ ] Guardar (Solo viaja el objeto hacia la nota)
+
 ### 📋 NOTAS CARGO
 - [ ] Guardar
 - [ ] Modificar
