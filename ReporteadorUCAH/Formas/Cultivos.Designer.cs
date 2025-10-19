@@ -53,17 +53,19 @@
             panel1.Controls.Add(label2);
             panel1.Controls.Add(label1);
             panel1.Dock = DockStyle.Fill;
-            panel1.Location = new Point(3, 51);
+            panel1.Location = new Point(2, 19);
+            panel1.Margin = new Padding(2, 2, 2, 2);
             panel1.Name = "panel1";
-            panel1.Size = new Size(671, 213);
+            panel1.Size = new Size(470, 154);
             panel1.TabIndex = 5;
             // 
             // label4
             // 
             label4.AutoSize = true;
-            label4.Location = new Point(597, 30);
+            label4.Location = new Point(418, 18);
+            label4.Margin = new Padding(2, 0, 2, 0);
             label4.Name = "label4";
-            label4.Size = new Size(63, 25);
+            label4.Size = new Size(42, 15);
             label4.TabIndex = 9;
             label4.Text = "Buscar";
             // 
@@ -71,9 +73,10 @@
             // 
             button1.BackgroundImage = (Image)resources.GetObject("button1.BackgroundImage");
             button1.BackgroundImageLayout = ImageLayout.Stretch;
-            button1.Location = new Point(544, 18);
+            button1.Location = new Point(381, 11);
+            button1.Margin = new Padding(2, 2, 2, 2);
             button1.Name = "button1";
-            button1.Size = new Size(47, 52);
+            button1.Size = new Size(33, 31);
             button1.TabIndex = 6;
             button1.UseVisualStyleBackColor = true;
             button1.Click += button1_Click;
@@ -81,63 +84,69 @@
             // txtboxCONS
             // 
             txtboxCONS.BackColor = SystemColors.Info;
-            txtboxCONS.Location = new Point(356, 73);
+            txtboxCONS.Location = new Point(249, 44);
+            txtboxCONS.Margin = new Padding(2, 2, 2, 2);
             txtboxCONS.Name = "txtboxCONS";
-            txtboxCONS.Size = new Size(168, 31);
+            txtboxCONS.Size = new Size(119, 23);
             txtboxCONS.TabIndex = 5;
             // 
             // txtboxCultivo
             // 
             txtboxCultivo.BackColor = SystemColors.Info;
-            txtboxCultivo.Location = new Point(101, 73);
+            txtboxCultivo.Location = new Point(71, 44);
+            txtboxCultivo.Margin = new Padding(2, 2, 2, 2);
             txtboxCultivo.Name = "txtboxCultivo";
-            txtboxCultivo.Size = new Size(173, 31);
+            txtboxCultivo.Size = new Size(122, 23);
             txtboxCultivo.TabIndex = 4;
             // 
             // txtboxNombreCultivo
             // 
             txtboxNombreCultivo.BackColor = SystemColors.Info;
-            txtboxNombreCultivo.Location = new Point(101, 27);
+            txtboxNombreCultivo.Location = new Point(71, 16);
+            txtboxNombreCultivo.Margin = new Padding(2, 2, 2, 2);
             txtboxNombreCultivo.Name = "txtboxNombreCultivo";
-            txtboxNombreCultivo.Size = new Size(423, 31);
+            txtboxNombreCultivo.Size = new Size(297, 23);
             txtboxNombreCultivo.TabIndex = 3;
             // 
             // label3
             // 
             label3.AutoSize = true;
-            label3.Location = new Point(290, 78);
+            label3.Location = new Point(203, 47);
+            label3.Margin = new Padding(2, 0, 2, 0);
             label3.Name = "label3";
-            label3.Size = new Size(60, 25);
+            label3.Size = new Size(39, 15);
             label3.TabIndex = 2;
             label3.Text = "CONS";
             // 
             // label2
             // 
             label2.AutoSize = true;
-            label2.Location = new Point(29, 78);
+            label2.Location = new Point(20, 47);
+            label2.Margin = new Padding(2, 0, 2, 0);
             label2.Name = "label2";
-            label2.Size = new Size(67, 25);
+            label2.Size = new Size(45, 15);
             label2.TabIndex = 1;
             label2.Text = "Cultivo";
             // 
             // label1
             // 
             label1.AutoSize = true;
-            label1.Location = new Point(19, 33);
+            label1.Location = new Point(13, 20);
+            label1.Margin = new Padding(2, 0, 2, 0);
             label1.Name = "label1";
-            label1.Size = new Size(78, 25);
+            label1.Size = new Size(51, 15);
             label1.TabIndex = 0;
             label1.Text = "Nombre";
             // 
             // Cultivos
             // 
-            AutoScaleDimensions = new SizeF(10F, 25F);
+            AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(677, 333);
+            ClientSize = new Size(474, 201);
             Controls.Add(panel1);
-            Margin = new Padding(3);
+            Margin = new Padding(2, 2, 2, 2);
             Name = "Cultivos";
-            Padding = new Padding(3);
+            Padding = new Padding(2, 2, 2, 2);
             Text = "Cultivos";
             Controls.SetChildIndex(panel1, 0);
             panel1.ResumeLayout(false);
