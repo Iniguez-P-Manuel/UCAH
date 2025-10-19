@@ -45,6 +45,10 @@ Cambiar [ ] por [x]
 - [ ] Seleccionar Cultivo
 - [ ] Cambiar total importe con evento al escribir sobre cantidad y precio, o al cambiar la cantidad de deducciones<br>
       *(cantidad * precio - deducciones)<br>
+- [ ] Agregar controles de rango de fechas para guardar el objeto cosecha ()
+- [ ] Agregar grupo familiar con un combo box<br>
+      *con autoacompletado<br>
+      *buscar opcion para agregar nuevo grupo familiar <br>
 - [ ] Reporte igual al del pdf
 
 
