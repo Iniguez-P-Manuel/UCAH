@@ -21,6 +21,19 @@ Cambiar [ ] por [x]
 - [ ] Modificar
 - [ ] Borrar
 
+## ⚙️ MODELOS 
+- [ ] NotaCargo <br>
+      *Agregar Modelo.Cosecha<br>
+      *Agregar Modelo.GrupoFamiliar<br>
+      *Eliminar Referencia ❌<br>
+- [ ] Grupo familiar (nuevo)<br>
+      *id<br>
+      *Nombre<br>
+- [ ] Cosecha (nuevo)<br>
+      *id<br>
+      *fecha inicial<br>
+      *fecha final<br>
+      
 ### 📋 NOTAS CARGO
 - [ ] Guardar
 - [ ] Modificar
@@ -28,6 +41,7 @@ Cambiar [ ] por [x]
 - [ ] Seleccionar Cliente
 - [ ] Seleccionar Cultivo
 - [ ] Reporte igual al del pdf
+
 
 ## `DATOS`
 
