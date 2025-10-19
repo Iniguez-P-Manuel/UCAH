@@ -39,6 +39,7 @@ namespace ReporteadorUCAH
                 Nuevoform.Location = new Point((PanelVentana.Width - Nuevoform.Width) / 2, (PanelVentana.Height - Nuevoform.Height) / 2);
                 PanelVentana.Controls.Add(Nuevoform);
                 Nuevoform.Show();
+                Nuevoform.BringToFront();
             }
         }
 
@@ -51,6 +52,7 @@ namespace ReporteadorUCAH
                 if (thisForm.Name.Equals(FormoNuevo.Name))
                 {
                     thisForm.Focus();
+                    thisForm.BringToFront();
                     return true;
                 }
             }
