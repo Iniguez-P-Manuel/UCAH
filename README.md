@@ -10,7 +10,7 @@ Cambiar [ ] por [x]
 ## `C#`
 
 ### 🌱 CULTIVOS
-- [ ] Ventana Busqueda cultivos poder usar ENTER para buscar
+- [X] Ventana Busqueda cultivos poder usar ENTER para buscar
 
 ### ⚙️ GENERAL
 - [X] FormModel hacer bring to front on focus
@@ -37,7 +37,7 @@ Cambiar [ ] por [x]
 
 
 ### 📋 NOTA DEDUCCIONES
-- [ ] Guardar (Solo viaja el objeto hacia la nota)
+- [X] Guardar (Solo viaja el objeto hacia la nota)
 
 ### 📋 NOTAS CARGO
 - [ ] Guardar
