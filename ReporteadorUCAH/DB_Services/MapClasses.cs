@@ -135,7 +135,7 @@ namespace ReporteadorUCAH.DB_Services
                 Tons = reader.GetDouble(reader.GetOrdinal("TONS")),
                 Precio = reader.GetDouble(reader.GetOrdinal("PRECIO")),
                 Importe = reader.GetDouble(reader.GetOrdinal("IMPORTE")),
-                FacturaUUID = GetStringOrNull(reader, "CFDI"),
+                FacturaUUID = GetStringOrNull(reader, "FacturaUUID"),
                 Deducciones = _deducciones,
                 _GrupoFamiliar = _grupoFamiliar,
             };

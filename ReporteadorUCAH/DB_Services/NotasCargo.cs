@@ -33,7 +33,6 @@ namespace ReporteadorUCAH.DB_Services
                     lnc.TONS,
                     lnc.PRECIO,
                     lnc.IMPORTE,
-                    lnc.CFDI,
                     lnc.FacturaUUID,
                     
                     -- Datos del Cliente
@@ -303,8 +302,8 @@ namespace ReporteadorUCAH.DB_Services
                         {
                             command.CommandText = @"
                         INSERT INTO LiquidacionNotasCargo 
-                        (FECHA, FacturaFolio, idCliente, idCultivo, idCosecha, idGrupoFamiliar, TONS, PRECIO, IMPORTE, CFDI, FacturaUUID) 
-                        VALUES (@Fecha, @FacturaFolio, @idCliente, @idCultivo, @idCosecha, @idGrupoFamiliar, @Tons, @Precio, @Importe, @CFDI, @FacturaUUID);
+                        (FECHA, FacturaFolio, idCliente, idCultivo, idCosecha, idGrupoFamiliar, TONS, PRECIO, IMPORTE, FacturaUUID) 
+                        VALUES (@Fecha, @FacturaFolio, @idCliente, @idCultivo, @idCosecha, @idGrupoFamiliar, @Tons, @Precio, @Importe, @FacturaUUID);
                         SELECT last_insert_rowid();";
 
                             command.Parameters.AddWithValue("@Fecha", notaCargo.Fecha);
@@ -316,7 +315,6 @@ namespace ReporteadorUCAH.DB_Services
                             command.Parameters.AddWithValue("@Tons", notaCargo.Tons);
                             command.Parameters.AddWithValue("@Precio", notaCargo.Precio);
                             command.Parameters.AddWithValue("@Importe", notaCargo.Importe);
-                            command.Parameters.AddWithValue("@CFDI", ""); // Si no tienes este dato en el objeto
                             command.Parameters.AddWithValue("@FacturaUUID", notaCargo.FacturaUUID ?? "");
 
                             notaCargoId = Convert.ToInt32(command.ExecuteScalar());
@@ -403,7 +401,6 @@ namespace ReporteadorUCAH.DB_Services
                             TONS = @Tons, 
                             PRECIO = @Precio, 
                             IMPORTE = @Importe, 
-                            CFDI = @CFDI, 
                             FacturaUUID = @FacturaUUID
                         WHERE id = @Id";
 
@@ -416,7 +413,6 @@ namespace ReporteadorUCAH.DB_Services
                             command.Parameters.AddWithValue("@Tons", notaCargo.Tons);
                             command.Parameters.AddWithValue("@Precio", notaCargo.Precio);
                             command.Parameters.AddWithValue("@Importe", notaCargo.Importe);
-                            command.Parameters.AddWithValue("@CFDI", "");
                             command.Parameters.AddWithValue("@FacturaUUID", notaCargo.FacturaUUID ?? "");
                             command.Parameters.AddWithValue("@Id", notaCargo.Id);
 

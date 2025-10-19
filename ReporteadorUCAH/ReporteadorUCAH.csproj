@@ -34,6 +34,11 @@
       <AutoGen>True</AutoGen>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
+    <Compile Update="Reportes\dsNota.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>dsNota.xsd</DependentUpon>
+    </Compile>
   </ItemGroup>
 
   <ItemGroup>
@@ -44,6 +49,10 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Update="Reportes\dsNota.xsd">
+      <Generator>MSDataSetGenerator</Generator>
+      <LastGenOutput>dsNota.Designer.cs</LastGenOutput>
+    </None>
     <None Update="UCAH.db">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
