@@ -26,13 +26,17 @@ Cambiar [ ] por [x]
       *Agregar Modelo.Cosecha<br>
       *Agregar Modelo.GrupoFamiliar<br>
       *Eliminar Referencia ❌<br>
+- [ ] Corregir mapeo BD  Nota Cargo
 - [ ] Grupo familiar (nuevo)<br>
       *id<br>
       *Nombre<br>
+- [ ] Mapeo BD Grupo Familiar
 - [ ] Cosecha (nuevo)<br>
       *id<br>
       *fecha inicial<br>
       *fecha final<br>
+- [ ] Mapeo BD Cosecha
+
 
 ### 📋 NOTA DEDUCCIONES
 - [ ] Guardar (Solo viaja el objeto hacia la nota)
@@ -55,19 +59,18 @@ Cambiar [ ] por [x]
 ## `DATOS`
 
 ### 🗄️ BD CORREGIR
-- [ ] Diagrama Cosecha (nuevo)
-- [ ] Cosecha (nuevo)<br>
+- [X] Diagrama Cosecha (nuevo)
+- [X] Cosecha (nuevo)<br>
       *id<br>
       *fecha inicial<br>
       *fecha final<br>
-- [ ] Diagrama Grupo familiar (nuevo)
-- [ ] Grupo familiar (nuevo)<br>
+- [X] Diagrama Grupo familiar (nuevo)
+- [X] Grupo familiar (nuevo)<br>
       *id<br>
       *Nombre<br>
-- [ ] NotaCargo <br>
+- [X] NotaCargo <br>
       *Agregar idCosecha<br>
       *Agregar idGrupoFamiliar<br>
-      *Eliminar Referencia ❌<br>
 
 
 
