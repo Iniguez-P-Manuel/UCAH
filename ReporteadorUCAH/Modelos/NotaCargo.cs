@@ -14,7 +14,6 @@ namespace ReporteadorUCAH.Modelos
         public Cliente _Cliente { get; set; }
         public Cultivo _Cultivo { get; set; }
         public Cosecha _Cosecha { get; set; }
-        public GrupoFamiliar _GrupoFamiliar { get; set; }
         public double Tons { get; set; }
         public double Precio { get; set; }
         public double Importe { get; set; }

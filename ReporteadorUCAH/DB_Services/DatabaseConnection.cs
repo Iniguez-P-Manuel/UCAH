@@ -76,9 +76,10 @@ public class DatabaseConnection : IDisposable
                     MessageBox.Show("Base de datos invalida: " + _dbPath);
                     return false;
                 }
-                MessageBox.Show("Conexión exitosa a la base de datos" +
+               /* MessageBox.Show("Conexión exitosa a la base de datos" +
                     $"\nUbicación: {_dbPath}" +
                     $"\nTamaño: {GetDatabaseSize()} bytes");
+               */
                 return true;
             }
         }
