@@ -158,7 +158,7 @@ namespace ReporteadorUCAH.DB_Services
                     _estado = DB_Estado.GetEstadoByid(reader.GetInt32(reader.GetOrdinal("idEstado")));
 
                 using (GruposFamiliares DB_GrupoFamiliar = new GruposFamiliares(varCon))
-                    _grupoFamiliar = DB_GrupoFamiliar.GetGrupoFamiliarById(reader.GetInt32(reader.GetOrdinal("idGrupoFamiliar")));
+                    _grupoFamiliar = DB_GrupoFamiliar.GetGrupoFamiliarById(GetInt32OrNull(reader, "idGrupoFamiliar"));
 
             }
             return new Cliente
