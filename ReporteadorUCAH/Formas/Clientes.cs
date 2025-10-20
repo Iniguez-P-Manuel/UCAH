@@ -1,4 +1,5 @@
 ﻿using ReporteadorUCAH.DB_Services;
+using ReporteadorUCAH.Modelos;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -24,6 +25,30 @@ namespace ReporteadorUCAH.Formas
             BusquedaClientes formBusqueda = new BusquedaClientes();
             formBusqueda.ObjetoSeleccionado += BusquedaSeleccionada;
             formBusqueda.ShowDialog();
+            
+        }
+
+        public async void CargarComboGrupoFamiliar()
+        {
+            List<Modelos.GrupoFamiliar> lstGrupos = new List<Modelos.GrupoFamiliar>();
+
+            using (DatabaseConnection varCon = new DatabaseConnection())
+            {
+                using (var DB_service = new GruposFamiliares(varCon))
+                {
+                    lstGrupos = await EjecutarConLoading(() => {
+                        return DB_service.GetAllGruposFamiliares();
+                    });
+                }
+            }
+            // Configurar el ComboBox
+            cbxGrupoFamiliar.DataSource = lstGrupos;
+            cbxGrupoFamiliar.ValueMember = "Id";
+            cbxGrupoFamiliar.DisplayMember = "Nombre";
+            if (ClienteActual._GrupoFamiliar != null)
+                cbxGrupoFamiliar.SelectedValue = ClienteActual._GrupoFamiliar.Id;
+            else
+                cbxMunicipio.SelectedIndex = 1;
         }
 
         public async void CargarCombo()
@@ -38,11 +63,11 @@ namespace ReporteadorUCAH.Formas
                 using (var DB_service = new Colonias(varCon))
                     lstColonias = DB_service.GetAllColonias();
                 using (var DB_service = new Ciudades(varCon))
-                    lstCiudades =  DB_service.GetAllCiudades();
+                    lstCiudades = DB_service.GetAllCiudades();
                 using (var DB_service = new Municipios(varCon))
-                    lstMunicipios =  DB_service.GetAllMunicipios();
+                    lstMunicipios = DB_service.GetAllMunicipios();
                 using (var DB_service = new Estados(varCon))
-                    lstEstados =  DB_service.GetAllEstados();
+                    lstEstados = DB_service.GetAllEstados();
             }
 
             cbxColonia.DataSource = lstColonias;
@@ -80,7 +105,7 @@ namespace ReporteadorUCAH.Formas
             txtRFC.Text = ClienteActual.Rfc;
             txtTelefono.Text = ClienteActual.Telefono;
 
-            if(ClienteActual._Ciudad != null)
+            if (ClienteActual._Ciudad != null)
                 cbxCiudad.SelectedValue = ClienteActual._Ciudad.Id;
             else
                 cbxCiudad.SelectedIndex = -1;
@@ -97,6 +122,17 @@ namespace ReporteadorUCAH.Formas
 
             if (ClienteActual._Municipio != null)
                 cbxMunicipio.SelectedValue = ClienteActual._Municipio.Id;
+            else
+                cbxMunicipio.SelectedIndex = -1;
+
+        }
+        private void GrupoFamiliarSeleccionado(object sender, AgregarGrupoFamiliar.ObjetoSeleccionadoEventArgs e)
+        {
+            CargarComboGrupoFamiliar();
+            ClienteActual._GrupoFamiliar = e.ObjetoSeleccionado;
+
+            if (ClienteActual._GrupoFamiliar != null)
+                cbxGrupoFamiliar.SelectedValue = ClienteActual._GrupoFamiliar.Id;
             else
                 cbxMunicipio.SelectedIndex = -1;
 
@@ -129,6 +165,14 @@ namespace ReporteadorUCAH.Formas
         private void Clientes_Load(object sender, EventArgs e)
         {
             CargarCombo();
+            CargarComboGrupoFamiliar();
+        }
+
+        private void btnGrupoFamiliar_Click(object sender, EventArgs e)
+        {
+            AgregarGrupoFamiliar formGrupoFamiliar = new AgregarGrupoFamiliar();
+            formGrupoFamiliar.ObjetoSeleccionado += GrupoFamiliarSeleccionado;
+            formGrupoFamiliar.ShowDialog();
         }
     }
 }

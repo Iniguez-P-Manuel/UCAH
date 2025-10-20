@@ -15,7 +15,83 @@ namespace ReporteadorUCAH.DB_Services
         {
             _dbConnection = dbConnection;
         }
+        public int ActualizarGrupo(GrupoFamiliar grupo)
+        {
+            try
+            {
+                using (var conn = _dbConnection.GetConnection())
+                using (var command = conn.CreateCommand())
+                {
+                    command.CommandText = "UPDATE GrupoFamiliar SET Nombre = @Nombre WHERE id = @Id;";
+                    command.Parameters.AddWithValue("@Nombre", grupo.Nombre ?? "");
+                    command.Parameters.AddWithValue("@Id", grupo.Id);
 
+                    int filasAfectadas = command.ExecuteNonQuery();
+                    return filasAfectadas;
+                }
+            }
+            catch (SqliteException ex)
+            {
+                Console.WriteLine($"Error al actualizar grupo: {ex.Message}");
+                return 0;
+            }
+        }
+        public int AgregarGrupo(GrupoFamiliar grupo)
+        {
+            try
+            {
+                using (var conn = _dbConnection.GetConnection())
+                using (var command = conn.CreateCommand())
+                {
+                    command.CommandText = @"
+                INSERT INTO GrupoFamiliar (Nombre) 
+                VALUES (@Nombre);
+                SELECT last_insert_rowid();";
+
+                    command.Parameters.AddWithValue("@Nombre", grupo.Nombre ?? "");
+
+                    var id = Convert.ToInt32(command.ExecuteScalar());
+                    return id;
+                }
+            }
+            catch (SqliteException ex)
+            {
+                Console.WriteLine($"Error al agregar grupo: {ex.Message}");
+                return 0;
+            }
+        }
+        public List<GrupoFamiliar> BuscarGrupo(string Busqueda)
+        {
+            var GruposFamiliares = new List<GrupoFamiliar>();
+
+            try
+            {
+                using (var conn = _dbConnection.GetConnection())
+                using (var command = conn.CreateCommand())
+                {
+                    command.CommandText = "SELECT * FROM GrupoFamiliar " +
+                                           "WHERE nombre LIKE '%' || @Busqueda || '%' " +
+                                            "LIMIT 20";
+                    command.Parameters.AddWithValue("@Busqueda", Busqueda);
+
+                    using (var reader = command.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            var grupo = MapClasses.MapToGrupoFamiliar(reader);
+                            GruposFamiliares.Add(grupo);
+                        }
+                    }
+                }
+            }
+            catch (SqliteException ex)
+            {
+                Console.WriteLine($"Error al obtener notas: {ex.Message}");
+                throw;
+            }
+
+            return GruposFamiliares;
+        }
 
         public GrupoFamiliar GetGrupoFamiliarById(int id)
         {

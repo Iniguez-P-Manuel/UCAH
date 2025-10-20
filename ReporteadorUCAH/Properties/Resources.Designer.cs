@@ -183,6 +183,16 @@ namespace ReporteadorUCAH.Properties {
         /// <summary>
         ///   Busca un recurso adaptado de tipo System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap icons8_más_32 {
+            get {
+                object obj = ResourceManager.GetObject("icons8-más-32", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Busca un recurso adaptado de tipo System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap icons8_maximize_window_16 {
             get {
                 object obj = ResourceManager.GetObject("icons8-maximize-window-16", resourceCulture);

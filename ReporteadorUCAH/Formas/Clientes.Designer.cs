@@ -38,6 +38,9 @@
             label11 = new Label();
             label12 = new Label();
             panel1 = new Panel();
+            btnGrupoFamiliar = new Button();
+            cbxGrupoFamiliar = new ComboBox();
+            label18 = new Label();
             btnBuscar = new Button();
             groupBox1 = new GroupBox();
             txtCorreo = new TextBox();
@@ -163,6 +166,9 @@
             // panel1
             // 
             panel1.BackColor = Color.White;
+            panel1.Controls.Add(btnGrupoFamiliar);
+            panel1.Controls.Add(cbxGrupoFamiliar);
+            panel1.Controls.Add(label18);
             panel1.Controls.Add(btnBuscar);
             panel1.Controls.Add(groupBox1);
             panel1.Controls.Add(grpDireccion);
@@ -175,6 +181,38 @@
             panel1.Name = "panel1";
             panel1.Size = new Size(566, 393);
             panel1.TabIndex = 14;
+            // 
+            // btnGrupoFamiliar
+            // 
+            btnGrupoFamiliar.BackgroundImage = Properties.Resources.icons8_más_32;
+            btnGrupoFamiliar.BackgroundImageLayout = ImageLayout.Stretch;
+            btnGrupoFamiliar.FlatAppearance.BorderSize = 0;
+            btnGrupoFamiliar.FlatStyle = FlatStyle.Flat;
+            btnGrupoFamiliar.Location = new Point(524, 10);
+            btnGrupoFamiliar.Name = "btnGrupoFamiliar";
+            btnGrupoFamiliar.Size = new Size(27, 26);
+            btnGrupoFamiliar.TabIndex = 42;
+            btnGrupoFamiliar.UseVisualStyleBackColor = true;
+            btnGrupoFamiliar.Click += btnGrupoFamiliar_Click;
+            // 
+            // cbxGrupoFamiliar
+            // 
+            cbxGrupoFamiliar.AutoCompleteMode = AutoCompleteMode.Suggest;
+            cbxGrupoFamiliar.AutoCompleteSource = AutoCompleteSource.CustomSource;
+            cbxGrupoFamiliar.FormattingEnabled = true;
+            cbxGrupoFamiliar.Location = new Point(380, 10);
+            cbxGrupoFamiliar.Name = "cbxGrupoFamiliar";
+            cbxGrupoFamiliar.Size = new Size(138, 23);
+            cbxGrupoFamiliar.TabIndex = 41;
+            // 
+            // label18
+            // 
+            label18.AutoSize = true;
+            label18.Location = new Point(293, 14);
+            label18.Name = "label18";
+            label18.Size = new Size(83, 15);
+            label18.TabIndex = 40;
+            label18.Text = "Grupo familiar";
             // 
             // btnBuscar
             // 
@@ -521,5 +559,8 @@
         private Label label14;
         private ComboBox cbxCiudad;
         private Label label10;
+        private ComboBox cbxGrupoFamiliar;
+        private Label label18;
+        private Button btnGrupoFamiliar;
     }
 }
