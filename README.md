@@ -22,6 +22,7 @@ Cambiar [ ] por [x]
 - [X] Agregar grupo familiar con un combo box<br>
       *con autoacompletado<br>
       *buscar opcion para agregar nuevo grupo familiar <br>
+- [x] Ordenar tab index para un llenado fluido entre los campos
       
 ### ⚙️ MODELOS 
 - [X] NotaCargo <br>
@@ -46,6 +47,7 @@ Cambiar [ ] por [x]
 ### 📋 NOTAS CARGO
 - [ ] Guardar
 - [ ] Modificar
+- [ ] Ordenar tab index para un llenado fluido entre los campos
 - [X] Seleccionar Cliente
 - [X] Seleccionar Cultivo
 - [X] Cambiar total importe con evento al escribir sobre cantidad y precio, o al cambiar la cantidad de deducciones<br>
