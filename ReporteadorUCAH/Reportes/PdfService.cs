@@ -8,6 +8,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using QuestPDF.Infrastructure;
+using QuestPDF.Companion;
 using System.Diagnostics;
 namespace ReporteadorUCAH.Reportes
 {
@@ -29,6 +30,7 @@ namespace ReporteadorUCAH.Reportes
             {
                 var document = new ReporteNotaCargo(notaCargo);
                 document.GeneratePdf(outputPath);
+
             }
             catch (Exception ex)
             {
@@ -84,6 +86,7 @@ namespace ReporteadorUCAH.Reportes
 
                 GenerarYGuardarPdf(notaCargo, finalPath);
                 AbrirConVisorPredeterminado(finalPath);
+
             }
             catch (Exception ex)
             {

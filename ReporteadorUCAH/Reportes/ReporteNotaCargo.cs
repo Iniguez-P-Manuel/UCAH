@@ -39,7 +39,7 @@ public class ReporteNotaCargo : IDocument
 
                 if (File.Exists(imagePath))
                 {
-                    headerColumn.Item().AlignCenter().PaddingBottom(-10).Width(180).Height(80).Image(imagePath, ImageScaling.FitArea);
+                    headerColumn.Item().AlignCenter().Width(180).Height(60).Image(imagePath, ImageScaling.FitArea);
                 }
                 else
                 {
@@ -74,129 +74,135 @@ public class ReporteNotaCargo : IDocument
     {
         container.PaddingVertical(20).Column(column =>
         {
-            // Información del documento - CENTRADO
-            column.Item().AlignRight().PaddingRight(2, Unit.Centimetre).Column(docColumn =>
+            // Información del documento y FINIQUITO en el mismo renglón
+            column.Item().Row(row =>
             {
-                docColumn.Item().AlignRight().Text($"{_notaCargo.Fecha:dd/MM/yyyy}").FontSize(11);
-                docColumn.Item().AlignRight().Text($"Nota #{_notaCargo.Id}").FontSize(11);
-            });
-
-            // FINIQUITO - CORREGIDO
-            column.Item().Section("InformacionCliente").Column(sectionColumn =>
-            {
-                sectionColumn.Item().Text("FINIQUITO").Bold().FontSize(14);
-
-                // Reemplazar Grid obsoleto por Table
-                sectionColumn.Item().PaddingVertical(10).Table(table =>
+                // FINIQUITO centrado + información del cliente (lado izquierdo)
+                row.RelativeItem().Column(sectionColumn =>
                 {
-                    table.ColumnsDefinition(columns =>
+                    // FINIQUITO centrado
+                    sectionColumn.Item().AlignCenter().PaddingTop(-0.5f, Unit.Centimetre).Text("FINIQUITO").Bold().FontSize(20);
+
+                    // Table de información del cliente (a la izquierda)
+                    sectionColumn.Item().PaddingVertical(10).Table(table =>
                     {
-                        columns.RelativeColumn(); // Columna para etiquetas
-                        columns.RelativeColumn(); // Columna para valores
+                        table.ColumnsDefinition(columns =>
+                        {
+                            columns.ConstantColumn(100); // Ancho fijo para etiquetas
+                            columns.RelativeColumn();    // El resto del ancho para valores
+                        });
+
+                        // Fila 1: Nombre
+                        table.Cell().PaddingVertical(3).AlignRight().Text("Nombre:").Bold();
+                        table.Cell().PaddingVertical(3).AlignLeft().Text(_notaCargo._Cliente?.Nombre ?? "N/A");
+
+                        // Fila 2: RFC
+                        table.Cell().PaddingVertical(3).AlignRight().Text("RFC:").Bold();
+                        table.Cell().PaddingVertical(3).AlignLeft().Text(_notaCargo._Cliente?.Rfc ?? "N/A");
+
+                        // Fila 3: Dirección
+                        table.Cell().PaddingVertical(3).AlignRight().Text("Dirección:").Bold();
+                        table.Cell().PaddingVertical(3).AlignLeft().Text(_notaCargo._Cliente?.Calle ?? "N/A");
                     });
+                });
 
-                    // Fila 1: Nombre
-                    table.Cell().PaddingVertical(3).AlignRight().Text("Nombre:");
-                    table.Cell().PaddingVertical(3).AlignLeft().Text(_notaCargo._Cliente?.Nombre ?? "N/A");
-
-                    // Fila 2: RFC
-                    table.Cell().PaddingVertical(3).AlignRight().Text("RFC:");
-                    table.Cell().PaddingVertical(3).AlignLeft().Text(_notaCargo._Cliente?.Rfc ?? "N/A");
-
-                    // Fila 3: Dirección
-                    table.Cell().PaddingVertical(3).AlignRight().Text("Dirección:");
-                    table.Cell().PaddingVertical(3).AlignLeft().Text(_notaCargo._Cliente?.Calle ?? "N/A");
+                // Información del documento (lado derecho)
+                row.RelativeItem().AlignRight().PaddingRight(1, Unit.Centimetre).Column(docColumn =>
+                {
+                    docColumn.Item().PaddingTop(-0.5f, Unit.Centimetre).AlignRight().Text($"{_notaCargo.Fecha:dd/MM/yyyy}").FontSize(11).Underline();
+                    docColumn.Item().AlignRight().Text($"Nota #{_notaCargo.Id}").FontSize(12);
+                    docColumn.Item().AlignRight().Text($"Cosecha:{DateTime.MinValue.ToShortDateString()}-{DateTime.MaxValue.ToShortDateString()}").FontSize(9);
+                    //docColumn.Item().AlignRight().Text($"Cosecha:{_notaCargo._Cosecha.FechaInicial.ToShortDateString()}-{_notaCargo._Cosecha.FechaFinal.ToShortDateString()}").FontSize(9);
                 });
             });
 
-            // Información del Producto - CORREGIDO
-            column.Item().Section("InformacionProducto").Column(sectionColumn =>
+            column.Item().PaddingTop(-10).PaddingBottom(5).Row(row =>
             {
-                sectionColumn.Item().Text("INFORMACIÓN DEL PRODUCTO").Bold().FontSize(14);
-
-                // Reemplazar Grid obsoleto por Table
-                sectionColumn.Item().PaddingVertical(10).Table(table =>
-                {
-                    table.ColumnsDefinition(columns =>
-                    {
-                        columns.RelativeColumn(); // Cultivo
-                        columns.RelativeColumn(); // Variedad
-                        columns.RelativeColumn(); // Cosecha
-                    });
-
-                    table.Cell().PaddingVertical(3).Text($"Cultivo: {_notaCargo._Cultivo?.Nombre ?? "N/A"}");
-                    table.Cell().PaddingVertical(3).Text($"Variedad: {_notaCargo._Cultivo?.CultivoTipo ?? "N/A"}");
-                    table.Cell().PaddingVertical(3).Text($"Cosecha: {_notaCargo._Cosecha?.FechaInicial:dd/MM/yyyy} - {_notaCargo._Cosecha?.FechaFinal:dd/MM/yyyy}");
-                });
+                row.RelativeItem(0.5f); // 5% espacio izquierdo
+                row.RelativeItem(90f).LineHorizontal(0.5f).LineColor(Colors.Black); // 9% línea
+                row.RelativeItem(0.5f); // 5% espacio derecho
             });
-
-            // Detalles de la Transacción - CORREGIDO
-            column.Item().Section("DetallesTransaccion").Column(sectionColumn =>
+            // Articulo
+            column.Item().Section("Articulo").Column(sectionColumn =>
             {
-                sectionColumn.Item().Text("DETALLES DE LA TRANSACCIÓN").Bold().FontSize(14);
+                sectionColumn.Item().Text("ARTICULO").Bold().FontSize(14);
 
-                // Reemplazar Grid obsoleto por Table
                 sectionColumn.Item().PaddingVertical(10).Table(table =>
                 {
                     table.ColumnsDefinition(columns =>
                     {
-                        columns.RelativeColumn(); // Toneladas
-                        columns.RelativeColumn(); // Precio por Ton
-                        columns.RelativeColumn(); // Importe
-                        columns.RelativeColumn(); // Factura
+                        columns.RelativeColumn();
+                        columns.RelativeColumn();
+                        columns.RelativeColumn();
+                        columns.RelativeColumn();
                     });
 
                     // Header
                     table.Header(header =>
                     {
-                        header.Cell().Padding(5).Text("Toneladas").Bold();
-                        header.Cell().Padding(5).Text("Precio por Ton").Bold();
-                        header.Cell().Padding(5).Text("Importe").Bold();
-                        header.Cell().Padding(5).Text("Factura").Bold();
+                        header.Cell().Border(1).BorderColor(Colors.Black).Background(Colors.Grey.Lighten2).Padding(5).AlignCenter().Text("CULTIVO").Bold();
+                        header.Cell().Border(1).BorderColor(Colors.Black).Background(Colors.Grey.Lighten2).Padding(5).AlignCenter().Text("TONELADAS").Bold();
+                        header.Cell().Border(1).BorderColor(Colors.Black).Background(Colors.Grey.Lighten2).Padding(5).AlignCenter().Text("PRECIO").Bold();
+                        header.Cell().Border(1).BorderColor(Colors.Black).Background(Colors.Grey.Lighten2).Padding(5).AlignCenter().Text("IMPORTE").Bold();
                     });
 
                     // Datos
-                    table.Cell().Padding(5).Text(_notaCargo.Tons.ToString("F2"));
-                    table.Cell().Padding(5).Text(_notaCargo.Precio.ToString("C2"));
-                    table.Cell().Padding(5).Text(_notaCargo.Importe.ToString("C2"));
-                    table.Cell().Padding(5).Text(_notaCargo.FacturaFolio ?? "N/A");
+                    table.Cell().Border(1).BorderColor(Colors.Black).Padding(5).Text(_notaCargo._Cultivo?.CultivoTipo ?? "N/A");
+                    table.Cell().Border(1).BorderColor(Colors.Black).Padding(5).AlignRight().Text(_notaCargo.Tons.ToString("F2"));
+                    table.Cell().Border(1).BorderColor(Colors.Black).Padding(5).AlignRight().Text(_notaCargo.Precio.ToString("C2"));
+                    table.Cell().Border(1).BorderColor(Colors.Black).Padding(5).AlignRight().Text(_notaCargo.Importe.ToString("C2"));
                 });
             });
-
-            // Deducciones - CORREGIDO
+            // Deducciones
             if (_notaCargo.Deducciones?.Any() == true)
             {
                 column.Item().Section("Deducciones").Column(sectionColumn =>
                 {
                     sectionColumn.Item().Text("DEDUCCIONES APLICADAS").Bold().FontSize(14);
-                    sectionColumn.Item().PaddingVertical(10).Table(table =>
+
+                    var deducciones = _notaCargo.Deducciones.ToList();
+                    var columnas = 2; // Forzamos 2 columnas para 14 deducciones (7 y 7)
+
+                    sectionColumn.Item().PaddingVertical(10).Row(row =>
                     {
-                        table.ColumnsDefinition(columns =>
-                        {
-                            columns.RelativeColumn(3);
-                            columns.RelativeColumn(1);
-                        });
+                        var itemsPorColumna = (int)Math.Ceiling(deducciones.Count / (double)columnas);
 
-                        table.Header(header =>
+                        for (int i = 0; i < columnas; i++)
                         {
-                            header.Cell().Background(Colors.Grey.Lighten2).Padding(5).Text("Deducción").Bold();
-                            header.Cell().Background(Colors.Grey.Lighten2).Padding(5).Text("Importe").Bold();
-                        });
+                            if (i > 0) row.ConstantItem(15); // Espacio entre columnas
 
-                        foreach (var deduccion in _notaCargo.Deducciones)
-                        {
-                            table.Cell().BorderBottom(1).BorderColor(Colors.Grey.Lighten1).Padding(5).Text(deduccion._Deduccion.Nombre);
-                            table.Cell().BorderBottom(1).BorderColor(Colors.Grey.Lighten1).Padding(5).Text(deduccion.Importe.ToString("N2"));
+                            row.RelativeItem().Table(table =>
+                            {
+                                table.ColumnsDefinition(columns =>
+                                {
+                                    columns.RelativeColumn(2.5f);
+                                    columns.RelativeColumn(1.5f);
+                                });
+
+                                // MOSTRAR HEADER EN TODAS LAS COLUMNAS
+                                table.Header(header =>
+                                {
+                                    header.Cell().Background(Colors.Grey.Lighten2).Padding(5).Text("DEDUCCIÓN").Bold();
+                                    header.Cell().Background(Colors.Grey.Lighten2).Padding(5).Text("IMPORTE").Bold();
+                                });
+
+                                var itemsColumna = deducciones.Skip(i * itemsPorColumna).Take(itemsPorColumna);
+
+                                foreach (var deduccion in itemsColumna)
+                                {
+                                    table.Cell().BorderBottom(1).BorderColor(Colors.Grey.Lighten1).Padding(5).Text(deduccion._Deduccion.Nombre);
+                                    table.Cell().BorderBottom(1).BorderColor(Colors.Grey.Lighten1).Padding(5).Text(deduccion.Importe.ToString("N2"));
+                                }
+                            });
                         }
                     });
                 });
             }
 
-            // Resumen - CORREGIDO
-            column.Item().Section("Resumen").Column(sectionColumn =>
+            // Resumen
+            column.Item().Section("Resumen").PaddingTop(3, Unit.Centimetre).Column(sectionColumn =>
             {
-                sectionColumn.Item().Text("RESUMEN").Bold().FontSize(14);
-                sectionColumn.Item().PaddingVertical(10).Background(Colors.Grey.Lighten3).Padding(15).Column(col =>
+                sectionColumn.Item().PaddingVertical(10).Background(Colors.Grey.Lighten1 ).Padding(15).Column(col =>
                 {
                     var totalDeducciones = _notaCargo.Deducciones?.Sum(d => d.Importe) ?? 0;
                     var netoAPagar = _notaCargo.Importe - totalDeducciones;
@@ -216,7 +222,7 @@ public class ReporteNotaCargo : IDocument
             text.Span("UUID Factura: ").FontSize(8);
             text.Span(_notaCargo.FacturaUUID).Bold().FontSize(8);
             text.EmptyLine();
-            text.Span("Documento generado automáticamente - ").FontSize(8);
+            text.Span("Documento generado - ").FontSize(8);
             text.Span(DateTime.Now.ToString("dd/MM/yyyy HH:mm")).FontSize(8);
         });
     }
