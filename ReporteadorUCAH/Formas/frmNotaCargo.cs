@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Drawing;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Text.Json;
@@ -21,15 +22,50 @@ namespace ReporteadorUCAH.Formas
         public frmNotaCargo()
         {
             InitializeComponent();
+            this.Load += NotaCargo_Load;
         }
         Modelos.NotaCargo NotaActual = new Modelos.NotaCargo();
+
+        private string _prevToneladasText = "";
+        private string _prevPrecioText = "";
+
+        // Nueva bandera para suspender temporalmente los handlers cuando actualizamos programáticamente los TextBoxes
+        private bool _suspendTextChanged = false;
+
+        private void NotaCargo_Load(object sender, EventArgs e)
+        {
+            _prevToneladasText = (txtToneladas?.Text) ?? "";
+            _prevPrecioText = (txtPrecio?.Text) ?? "";
+
+            if (txtToneladas != null)
+            {
+                txtToneladas.KeyPress -= NumericTextBox_KeyPress;
+                txtToneladas.KeyPress += NumericTextBox_KeyPress;
+                txtToneladas.TextChanged -= TxtToneladas_TextChanged;
+                txtToneladas.TextChanged += TxtToneladas_TextChanged;
+            }
+
+            if (txtPrecio != null)
+            {
+                txtPrecio.KeyPress -= NumericTextBox_KeyPress;
+                txtPrecio.KeyPress += NumericTextBox_KeyPress;
+                txtPrecio.TextChanged -= TxtPrecio_TextChanged;
+                txtPrecio.TextChanged += TxtPrecio_TextChanged;
+            }
+        }
 
 
         private void btnDeducciones_Click(object sender, EventArgs e)
         {
             DeduccionesNota formDeducciones = new DeduccionesNota();
-            formDeducciones.lstDeduccionesNota = this.NotaActual.Deducciones;
-            formDeducciones.ShowDialog();
+            formDeducciones.lstDeduccionesNota = this.NotaActual.Deducciones ?? new List<Modelos.DeduccionNota>();
+
+            var result = formDeducciones.ShowDialog();
+            if (result == DialogResult.OK)
+            {
+                this.NotaActual.Deducciones = formDeducciones.lstDeduccionesNota ?? new List<Modelos.DeduccionNota>();
+                RecalcularImporte();
+            }
         }
 
         private void button3_Click(object sender, EventArgs e)
@@ -38,18 +74,68 @@ namespace ReporteadorUCAH.Formas
             formBusqueda.ObjetoSeleccionado += BusquedaSeleccionada;
             formBusqueda.ShowDialog();
         }
+
+        // ---------------------------
+        // Selección Cliente / Cultivo
+        // ---------------------------
+
+        // Método público/handler para abrir búsqueda de clientes desde el formulario
+
+        public void btnSeleccionarCliente_Click(object sender, EventArgs e)
+        {
+            BusquedaClientes formBusqueda = new BusquedaClientes();
+            formBusqueda.ObjetoSeleccionado += (s, ev) =>
+            {
+                // Al seleccionar en la ventana de búsqueda se asigna al objeto NotaActual
+                this.NotaActual._Cliente = ev.ObjetoSeleccionado;
+                // Actualizar UI
+                txtCliente.Text = this.NotaActual._Cliente?.Nombre ?? string.Empty;
+            };
+            formBusqueda.ShowDialog();
+        }
+
+        // Método público/handler para abrir búsqueda de cultivos desde el formulario
+        public void btnSeleccionarCultivo_Click(object sender, EventArgs e)
+        {
+            BusquedaCultivos formBusqueda = new BusquedaCultivos();
+            formBusqueda.ObjetoSeleccionado += (s, ev) =>
+            {
+                this.NotaActual._Cultivo = ev.ObjetoSeleccionado;
+                txtCultivo.Text = this.NotaActual._Cultivo?.Nombre ?? string.Empty;
+            };
+            formBusqueda.ShowDialog();
+        }
+
         private void BusquedaSeleccionada(object sender, BusquedaNotas.ObjetoSeleccionadoEventArgs e)
         {
+            // Suspendemos los handlers antes de asignar a los TextBoxes programáticamente
+            _suspendTextChanged = true;
+
             NotaActual = e.ObjetoSeleccionado;
             double totalDeducciones = NotaActual.Deducciones?.Sum(d => d.Importe) ?? 0;
 
-            txtCliente.Text = NotaActual._Cliente.Nombre;
-            txtCultivo.Text = NotaActual._Cultivo.Nombre;
-            txtDeducciones.Text = Math.Round(totalDeducciones, 2).ToString();
+            txtCliente.Text = NotaActual._Cliente?.Nombre ?? string.Empty;
+            txtCultivo.Text = NotaActual._Cultivo?.Nombre ?? string.Empty;
+            txtDeducciones.Text = Math.Round(totalDeducciones, 2).ToString("F2", CultureInfo.CurrentCulture);
             txtID.Text = NotaActual.Id.ToString();
-            txtImporte.Text = NotaActual.Importe.ToString();
-            txtPrecio.Text = NotaActual.Precio.ToString();
-            txtToneladas.Text = NotaActual.Tons.ToString();
+            txtImporte.Text = NotaActual.Importe.ToString("F2", CultureInfo.CurrentCulture);
+
+            // Asegurarnos de usar la culture actual al convertir a texto (evita que TextChanged haga parse invalido)
+            txtPrecio.Text = NotaActual.Precio.ToString(CultureInfo.CurrentCulture);
+            txtToneladas.Text = NotaActual.Tons.ToString(CultureInfo.CurrentCulture);
+
+            // Actualizar previos para que los handlers no restauren un valor antiguo
+            _prevPrecioText = txtPrecio.Text;
+            _prevToneladasText = txtToneladas.Text;
+
+            if (dpFecha != null && NotaActual.Fecha != DateTime.MinValue)
+                dpFecha.Value = NotaActual.Fecha;
+
+            // Rehabilitar handlers y recalcular importe
+            _suspendTextChanged = false;
+
+            // Recalcular importe explícitamente (por si hay diferencias de formato)
+            RecalcularImporte();
 
             dpFecha.Value = NotaActual.Fecha;
         }
@@ -66,6 +152,10 @@ namespace ReporteadorUCAH.Formas
             txtImporte.Text = "0.00";
             txtPrecio.Text = string.Empty;
             txtToneladas.Text = string.Empty;
+
+            // Resetear previos
+            _prevPrecioText = "";
+            _prevToneladasText = "";
         }
 
         public override void Reporte()
@@ -84,6 +174,233 @@ namespace ReporteadorUCAH.Formas
             service.GenerarYAbrir(NotaActual);
         }
 
+        public override void Eliminar()
+        {
+            base.Eliminar();
+        }
+
+        public override void Guardar()
+        {// Validaciones mínimas
+            if (NotaActual._Cliente == null || NotaActual._Cliente.Id == 0)
+            {
+                MessageBox.Show("Selecciona un cliente antes de guardar.", "Validación", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+            if (NotaActual._Cultivo == null || NotaActual._Cultivo.Id == 0)
+            {
+                MessageBox.Show("Selecciona un cultivo antes de guardar.", "Validación", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+
+            // Actualizar campos desde UI
+            NotaActual.Tons = double.TryParse(txtToneladas.Text, NumberStyles.Number, CultureInfo.CurrentCulture, out double t) ? t : 0;
+            NotaActual.Precio = double.TryParse(txtPrecio.Text, NumberStyles.Number, CultureInfo.CurrentCulture, out double p) ? p : 0;
+            NotaActual.Fecha = dpFecha?.Value ?? DateTime.Now;
+
+            // Si existen pickers de cosecha y NotaActual._Cosecha ya fue creada, actualizar fechas
+            var dpInicio = FindControlRecursive(this, "dpCosechaInicio") as DateTimePicker;
+            var dpFin = FindControlRecursive(this, "dpCosechaFin") as DateTimePicker;
+            if (dpInicio != null && dpFin != null)
+            {
+                if (NotaActual._Cosecha == null)
+                    NotaActual._Cosecha = new Modelos.Cosecha(); // no persistirá si no guardas cosecha en DB separately
+
+                NotaActual._Cosecha.FechaInicial = dpInicio.Value;
+                NotaActual._Cosecha.FechaFinal = dpFin.Value;
+            }
+
+            // Recalcular importe antes de persistir
+            RecalcularImporte();
+
+            try
+            {
+                using (DatabaseConnection varCon = new DatabaseConnection())
+                {
+                    using (DB_Services.NotasCargo db = new DB_Services.NotasCargo(varCon))
+                    {
+                        if (NotaActual.Id == 0)
+                        {
+                            int newId = db.AgregarNotaCargo(NotaActual);
+                            if (newId > 0)
+                            {
+                                NotaActual.Id = newId;
+                                txtID.Text = newId.ToString();
+                                MessageBox.Show("Nota de cargo agregada correctamente.", "Guardar", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                            }
+                            else
+                            {
+                                MessageBox.Show("Ocurrió un error al agregar la nota.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                            }
+                        }
+                        else
+                        {
+                            int filas = db.ActualizarNotaCargo(NotaActual);
+                            if (filas > 0)
+                            {
+                                MessageBox.Show("Nota de cargo actualizada correctamente.", "Actualizar", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                            }
+                            else
+                            {
+                                MessageBox.Show("No se encontró la nota para actualizar o no hubo cambios.", "Actualizar", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                            }
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Error al guardar nota: " + ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
+        // -----------------------------
+        // Helpers y handlers requeridos por el diseñador
+        // -----------------------------
+
+        // KeyPress: bloquea caracteres no numéricos (permite separador decimal)
+        private void NumericTextBox_KeyPress(object sender, KeyPressEventArgs e)
+        {
+            var decimalSeparator = Convert.ToChar(CultureInfo.CurrentCulture.NumberFormat.NumberDecimalSeparator);
+            var tb = sender as System.Windows.Forms.TextBox;
+
+            if (char.IsControl(e.KeyChar))
+                return;
+
+            if (char.IsDigit(e.KeyChar))
+                return;
+
+            if (e.KeyChar == decimalSeparator)
+            {
+                if (tb != null && tb.Text.IndexOf(decimalSeparator) == -1)
+                    return;
+            }
+
+            e.Handled = true;
+        }
+
+        // TextChanged handlers (nombres exactos que el diseñador buscó)
+        private void TxtToneladas_TextChanged(object sender, EventArgs e)
+        {
+            // Si estamos actualizando programáticamente, no ejecutar la lógica de sanitización/reemplazo
+            if (_suspendTextChanged) return;
+
+            var tb = sender as System.Windows.Forms.TextBox;
+            if (tb == null) return;
+
+            // Sanitizar el texto (quita letras y deja un solo separador decimal)
+            string sanitized = SanitizeDecimalText(tb.Text);
+            if (sanitized != tb.Text)
+            {
+                int oldSel = tb.SelectionStart;
+                tb.Text = sanitized;
+                tb.SelectionStart = Math.Min(sanitized.Length, Math.Max(0, oldSel - 1));
+            }
+
+            if (IsValidDecimalText(tb.Text))
+            {
+                _prevToneladasText = tb.Text;
+            }
+            else
+            {
+                int sel = Math.Min(_prevToneladasText.Length, tb.SelectionStart);
+                tb.Text = _prevToneladasText;
+                tb.SelectionStart = sel;
+            }
+
+            RecalcularImporte();
+        }
+
+        private void TxtPrecio_TextChanged(object sender, EventArgs e)
+        {
+            // Si estamos actualizando programáticamente, no ejecutar la lógica de sanitización/reemplazo
+            if (_suspendTextChanged) return;
+
+            var tb = sender as System.Windows.Forms.TextBox;
+            if (tb == null) return;
+
+            string sanitized = SanitizeDecimalText(tb.Text);
+            if (sanitized != tb.Text)
+            {
+                int oldSel = tb.SelectionStart;
+                tb.Text = sanitized;
+                tb.SelectionStart = Math.Min(sanitized.Length, Math.Max(0, oldSel - 1));
+            }
+
+            if (IsValidDecimalText(tb.Text))
+            {
+                _prevPrecioText = tb.Text;
+            }
+            else
+            {
+                int sel = Math.Min(_prevPrecioText.Length, tb.SelectionStart);
+                tb.Text = _prevPrecioText;
+                tb.SelectionStart = sel;
+            }
+
+            RecalcularImporte();
+        }
+
+        // Quita todo lo que no sea dígito o separador decimal y permite solo un separador
+        private string SanitizeDecimalText(string text)
+        {
+            if (string.IsNullOrEmpty(text)) return text ?? "";
+
+            var decimalSeparator = Convert.ToChar(CultureInfo.CurrentCulture.NumberFormat.NumberDecimalSeparator);
+            var sb = new StringBuilder();
+            bool hasDecimal = false;
+
+            foreach (char c in text)
+            {
+                if (char.IsDigit(c))
+                {
+                    sb.Append(c);
+                }
+                else if (c == decimalSeparator)
+                {
+                    if (!hasDecimal)
+                    {
+                        sb.Append(decimalSeparator);
+                        hasDecimal = true;
+                    }
+                }
+                // ignorar cualquier otro carácter
+            }
+
+            return sb.ToString();
+        }
+
+        // Permite vacío o número válido
+        private bool IsValidDecimalText(string text)
+        {
+            if (string.IsNullOrWhiteSpace(text)) return true;
+            return double.TryParse(text, NumberStyles.Number, CultureInfo.CurrentCulture, out _);
+        }
+
+        // Método que recalcula el importe; si ya existe en otra parte del form, puedes eliminar esta copia
+        private void RecalcularImporte()
+        {
+            double tons = 0;
+            double precio = 0;
+
+            double.TryParse(txtToneladas.Text, NumberStyles.Number, CultureInfo.CurrentCulture, out tons);
+            double.TryParse(txtPrecio.Text, NumberStyles.Number, CultureInfo.CurrentCulture, out precio);
+
+            double subtotal = tons * precio;
+            double totalDeducciones = (NotaActual?.Deducciones?.Sum(d => d.Importe)) ?? 0;
+
+            double importe = subtotal - totalDeducciones;
+
+            // Actualizar objeto y UI (asegúrate que txtImporte y txtDeducciones existan)
+            if (NotaActual != null)
+            {
+                NotaActual.Tons = tons;
+                NotaActual.Precio = precio;
+                NotaActual.Importe = importe;
+            }
+
+            if (txtImporte != null) txtImporte.Text = Math.Round(importe, 2).ToString("F2", CultureInfo.CurrentCulture);
+            if (txtDeducciones != null) txtDeducciones.Text = Math.Round(totalDeducciones, 2).ToString("F2", CultureInfo.CurrentCulture);
+        }
 
         public DataSet ConvertirNotaCargoADataset(NotaCargo notaCargo)
         {
@@ -241,5 +558,6 @@ namespace ReporteadorUCAH.Formas
             return string.Join(", ", partes);
         }
 
+        
     }
 }

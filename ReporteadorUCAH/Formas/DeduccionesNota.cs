@@ -80,6 +80,38 @@ namespace ReporteadorUCAH.Formas
             }
         }
 
+        // Construye la lista desde el DataGridView y la deja pública
+        public override void Guardar()
+        {
+            try
+            {
+                var lista = new List<DeduccionNota>();
+                foreach (DataGridViewRow row in dgvDeducciones.Rows)
+                {
+                    if (row.IsNewRow) continue;
+                    if (!int.TryParse(row.Cells[0].Value?.ToString(), out int idTipo)) continue;
+
+                    double importe = 0;
+                    double.TryParse(row.Cells[2].Value?.ToString(), out importe);
+
+                    lista.Add(new DeduccionNota
+                    {
+                        Id = 0,
+                        _Deduccion = new TipoDeduccion { Id = idTipo, Nombre = row.Cells[1].Value?.ToString() },
+                        Importe = importe
+                    });
+                }
+
+                lstDeduccionesNota = lista;
+                this.DialogResult = DialogResult.OK;
+                this.Close();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Error al guardar deducciones: " + ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
         private void NotaDeducciones_Leave(object sender, EventArgs e)
         {
             this.Dispose();
