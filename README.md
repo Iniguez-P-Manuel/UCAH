@@ -19,7 +19,7 @@ Cambiar [ ] por [x]
 ### 👥 CLIENTES
 - [ ] Guardar
 - [ ] Modificar
-- [ ] Agregar grupo familiar con un combo box<br>
+- [X] Agregar grupo familiar con un combo box<br>
       *con autoacompletado<br>
       *buscar opcion para agregar nuevo grupo familiar <br>
       
@@ -37,7 +37,7 @@ Cambiar [ ] por [x]
       *fecha inicial<br>
       *fecha final<br>
 - [X] Mapeo BD Cosecha
-- [ ] haha me equivoque grupo familiar va en clientes
+- [X] haha me equivoque grupo familiar va en clientes
 
 
 ### 📋 NOTA DEDUCCIONES
@@ -46,12 +46,12 @@ Cambiar [ ] por [x]
 ### 📋 NOTAS CARGO
 - [ ] Guardar
 - [ ] Modificar
-- [ ] Seleccionar Cliente
-- [ ] Seleccionar Cultivo
-- [ ] Cambiar total importe con evento al escribir sobre cantidad y precio, o al cambiar la cantidad de deducciones<br>
+- [X] Seleccionar Cliente
+- [X] Seleccionar Cultivo
+- [X] Cambiar total importe con evento al escribir sobre cantidad y precio, o al cambiar la cantidad de deducciones<br>
       *(cantidad * precio - deducciones)<br>
 - [ ] Agregar controles de rango de fechas para guardar el objeto cosecha ()
-- [ ] Reporte igual al del pdf
+- [X] Reporte igual al del pdf
 
 
 ## `DATOS`
@@ -69,7 +69,7 @@ Cambiar [ ] por [x]
 - [X] NotaCargo <br>
       *Agregar idCosecha<br>
       *Agregar idGrupoFamiliar<br>
-- [ ] haha me equivoque grupo familiar va en clientes
+- [X] haha me equivoque grupo familiar va en clientes
 
 
 
