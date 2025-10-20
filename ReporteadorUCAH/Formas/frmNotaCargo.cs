@@ -180,77 +180,8 @@ namespace ReporteadorUCAH.Formas
         }
 
         public override void Guardar()
-        {// Validaciones mínimas
-            if (NotaActual._Cliente == null || NotaActual._Cliente.Id == 0)
-            {
-                MessageBox.Show("Selecciona un cliente antes de guardar.", "Validación", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                return;
-            }
-            if (NotaActual._Cultivo == null || NotaActual._Cultivo.Id == 0)
-            {
-                MessageBox.Show("Selecciona un cultivo antes de guardar.", "Validación", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                return;
-            }
-
-            // Actualizar campos desde UI
-            NotaActual.Tons = double.TryParse(txtToneladas.Text, NumberStyles.Number, CultureInfo.CurrentCulture, out double t) ? t : 0;
-            NotaActual.Precio = double.TryParse(txtPrecio.Text, NumberStyles.Number, CultureInfo.CurrentCulture, out double p) ? p : 0;
-            NotaActual.Fecha = dpFecha?.Value ?? DateTime.Now;
-
-            // Si existen pickers de cosecha y NotaActual._Cosecha ya fue creada, actualizar fechas
-            var dpInicio = FindControlRecursive(this, "dpCosechaInicio") as DateTimePicker;
-            var dpFin = FindControlRecursive(this, "dpCosechaFin") as DateTimePicker;
-            if (dpInicio != null && dpFin != null)
-            {
-                if (NotaActual._Cosecha == null)
-                    NotaActual._Cosecha = new Modelos.Cosecha(); // no persistirá si no guardas cosecha en DB separately
-
-                NotaActual._Cosecha.FechaInicial = dpInicio.Value;
-                NotaActual._Cosecha.FechaFinal = dpFin.Value;
-            }
-
-            // Recalcular importe antes de persistir
-            RecalcularImporte();
-
-            try
-            {
-                using (DatabaseConnection varCon = new DatabaseConnection())
-                {
-                    using (DB_Services.NotasCargo db = new DB_Services.NotasCargo(varCon))
-                    {
-                        if (NotaActual.Id == 0)
-                        {
-                            int newId = db.AgregarNotaCargo(NotaActual);
-                            if (newId > 0)
-                            {
-                                NotaActual.Id = newId;
-                                txtID.Text = newId.ToString();
-                                MessageBox.Show("Nota de cargo agregada correctamente.", "Guardar", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                            }
-                            else
-                            {
-                                MessageBox.Show("Ocurrió un error al agregar la nota.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                            }
-                        }
-                        else
-                        {
-                            int filas = db.ActualizarNotaCargo(NotaActual);
-                            if (filas > 0)
-                            {
-                                MessageBox.Show("Nota de cargo actualizada correctamente.", "Actualizar", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                            }
-                            else
-                            {
-                                MessageBox.Show("No se encontró la nota para actualizar o no hubo cambios.", "Actualizar", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                            }
-                        }
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show("Error al guardar nota: " + ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-            }
+        {
+            base.Guardar();
         }
 
         // -----------------------------
