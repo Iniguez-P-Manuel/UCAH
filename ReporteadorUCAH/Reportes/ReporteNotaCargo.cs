@@ -191,7 +191,7 @@ public class ReporteNotaCargo : IDocument
                                 foreach (var deduccion in itemsColumna)
                                 {
                                     table.Cell().BorderBottom(1).BorderColor(Colors.Grey.Lighten1).Padding(5).Text(deduccion._Deduccion.Nombre);
-                                    table.Cell().BorderBottom(1).BorderColor(Colors.Grey.Lighten1).Padding(5).Text(deduccion.Importe.ToString("N2"));
+                                    table.Cell().BorderBottom(1).BorderColor(Colors.Grey.Lighten1).Padding(5).AlignRight().Text(deduccion.Importe.ToString("N2"));
                                 }
                             });
                         }
@@ -202,14 +202,28 @@ public class ReporteNotaCargo : IDocument
             // Resumen
             column.Item().Section("Resumen").PaddingTop(3, Unit.Centimetre).Column(sectionColumn =>
             {
-                sectionColumn.Item().PaddingVertical(10).Background(Colors.Grey.Lighten1 ).Padding(15).Column(col =>
+                sectionColumn.Item().PaddingVertical(10).Background(Colors.Grey.Lighten1).Padding(15).Table(table =>
                 {
+                    table.ColumnsDefinition(columns =>
+                    {
+                        columns.RelativeColumn(6); // Columna para etiquetas
+                        columns.RelativeColumn(1.5f); // Columna para cantidades
+                    });
+
                     var totalDeducciones = _notaCargo.Deducciones?.Sum(d => d.Importe) ?? 0;
                     var netoAPagar = _notaCargo.Importe - totalDeducciones;
 
-                    col.Item().AlignRight().Text($"Importe Bruto: {_notaCargo.Importe:C2}");
-                    col.Item().AlignRight().Text($"Total Deducciones: {totalDeducciones:C2}");
-                    col.Item().AlignRight().Text($"Neto a Pagar: {netoAPagar:C2}").Bold().FontSize(16);
+                    // Fila 1: Importe Bruto
+                    table.Cell().AlignRight().Text("Importe Bruto:");
+                    table.Cell().AlignRight().Text(_notaCargo.Importe.ToString("C2"));
+
+                    // Fila 2: Total Deducciones
+                    table.Cell().AlignRight().Text("Total Deducciones:");
+                    table.Cell().AlignRight().Text(totalDeducciones.ToString("C2"));
+
+                    // Fila 3: Neto a Pagar
+                    table.Cell().AlignRight().Text("Neto a Pagar:").Bold();
+                    table.Cell().AlignRight().Text(netoAPagar.ToString("C2")).Bold().FontSize(16);
                 });
             });
         });
@@ -220,7 +234,9 @@ public class ReporteNotaCargo : IDocument
         container.AlignCenter().Text(text =>
         {
             text.Span("UUID Factura: ").FontSize(8);
-            text.Span(_notaCargo.FacturaUUID).Bold().FontSize(8);
+            string uuidGenerico = "11111111-2222-3333-4444-555555555555";
+            text.Span(uuidGenerico).Bold().FontSize(8);
+            //text.Span(_notaCargo.FacturaUUID).Bold().FontSize(8);
             text.EmptyLine();
             text.Span("Documento generado - ").FontSize(8);
             text.Span(DateTime.Now.ToString("dd/MM/yyyy HH:mm")).FontSize(8);
