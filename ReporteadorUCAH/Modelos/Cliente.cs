@@ -25,7 +25,6 @@ namespace ReporteadorUCAH.Modelos
         public Ciudad _Ciudad { get; set; }
         public Municipio _Municipio { get; set; }
         public Estado _Estado { get; set; }
-        public string Referencia { get; set; }
         public string Correo { get; set; }
         public string Telefono { get; set; }
         public string CondicionPago { get; set; }

@@ -1,6 +1,6 @@
 ﻿namespace ReporteadorUCAH.Formas
 {
-    partial class NotaCargo
+    partial class frmNotaCargo
     {
         /// <summary>
         /// Required designer variable.

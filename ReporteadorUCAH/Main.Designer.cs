@@ -41,6 +41,7 @@
             btnCerrar = new Button();
             PanelVentana = new Panel();
             button1 = new Button();
+            button2 = new Button();
             panel1.SuspendLayout();
             barraPrincipal.SuspendLayout();
             SuspendLayout();
@@ -49,6 +50,7 @@
             // 
             panel1.BackColor = Color.PeachPuff;
             panel1.BorderStyle = BorderStyle.Fixed3D;
+            panel1.Controls.Add(button2);
             panel1.Controls.Add(btnCultivos);
             panel1.Controls.Add(btnClientes);
             panel1.Controls.Add(btnNotasCargo);
@@ -212,6 +214,21 @@
             button1.Text = "asdasdasd";
             button1.UseVisualStyleBackColor = true;
             // 
+            // button2
+            // 
+            button2.BackColor = Color.Chocolate;
+            button2.Dock = DockStyle.Top;
+            button2.FlatStyle = FlatStyle.Flat;
+            button2.Image = Properties.Resources.icons8_documento_20;
+            button2.ImageAlign = ContentAlignment.MiddleRight;
+            button2.Location = new Point(0, 168);
+            button2.Name = "button2";
+            button2.Size = new Size(171, 36);
+            button2.TabIndex = 5;
+            button2.Text = "test";
+            button2.UseVisualStyleBackColor = false;
+            button2.Click += button2_Click;
+            // 
             // Main
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
@@ -247,6 +264,7 @@
         private Button btnClientes;
         private Button btnCultivos;
         private Label lblTitulo;
+        private Button button2;
     }
 }
 

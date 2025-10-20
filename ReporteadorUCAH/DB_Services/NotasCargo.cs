@@ -53,7 +53,6 @@ namespace ReporteadorUCAH.DB_Services
                     c.idCiudad,
                     c.idMunicipio,
                     c.idEstado,
-                    c.referencia,
                     c.telefonos as Telefono,
                     c.correo,
                     c.condicionPago,
@@ -257,6 +256,7 @@ namespace ReporteadorUCAH.DB_Services
 
             return Notas;
         }
+
         public NotaCargo GetNotaCargoById(int id)
         {
             try

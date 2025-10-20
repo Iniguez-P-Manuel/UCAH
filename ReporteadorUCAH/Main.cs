@@ -1,14 +1,15 @@
-﻿using System;
+﻿using ReporteadorUCAH;
+using ReporteadorUCAH.DB_Services;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Drawing;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using System.Runtime.InteropServices;
-using ReporteadorUCAH;
 
 namespace ReporteadorUCAH
 {
@@ -90,7 +91,7 @@ namespace ReporteadorUCAH
 
         private void btnNotasCargo_Click(object sender, EventArgs e)
         {
-            Formas.NotaCargo form = new Formas.NotaCargo();
+            Formas.frmNotaCargo form = new Formas.frmNotaCargo();
             AgregarForm(form, "Test");
 
         }
@@ -156,6 +157,19 @@ namespace ReporteadorUCAH
             {
                 this.WindowState = FormWindowState.Maximized;
             }
+        }
+
+        private void button2_Click(object sender, EventArgs e)
+        {
+            Modelos.NotaCargo notaPrueba = new Modelos.NotaCargo();
+
+            using (DatabaseConnection varCon = new DatabaseConnection())
+            {
+                using (NotasCargo DB_Notas = new NotasCargo(varCon))
+                    notaPrueba = DB_Notas.BuscarNotas("a").First();
+            }
+            Reportes.PdfService service = new Reportes.PdfService();
+            service.GenerarYAbrir(notaPrueba);
         }
     }
 }
