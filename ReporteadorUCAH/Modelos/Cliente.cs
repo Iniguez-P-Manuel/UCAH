@@ -32,5 +32,6 @@ namespace ReporteadorUCAH.Modelos
         public int LimiteCredito { get; set; }
         public int Moneda { get; set; }
         public int CreditoSuspendido { get; set; }
+        public GrupoFamiliar _GrupoFamiliar { get; set; }
     }
 }

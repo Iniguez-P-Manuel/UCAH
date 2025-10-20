@@ -161,10 +161,10 @@ namespace ReporteadorUCAH.Formas
             }
 
             // Datos de Grupo Familiar
-            if (notaCargo._GrupoFamiliar != null)
+            if (notaCargo._Cliente._GrupoFamiliar != null)
             {
-                rowNota["GrupoFamiliarId"] = notaCargo._GrupoFamiliar.Id;
-                rowNota["GrupoFamiliarNombre"] = notaCargo._GrupoFamiliar.Nombre ?? "";
+                rowNota["GrupoFamiliarId"] = notaCargo._Cliente._GrupoFamiliar.Id;
+                rowNota["GrupoFamiliarNombre"] = notaCargo._Cliente._GrupoFamiliar.Nombre ?? "";
             }
 
             dtNota.Rows.Add(rowNota);

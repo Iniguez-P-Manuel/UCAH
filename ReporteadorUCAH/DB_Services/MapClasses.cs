@@ -50,6 +50,11 @@ namespace ReporteadorUCAH.DB_Services
                     LimiteCredito = GetInt32OrNull(reader, "limiteCredito"),
                     Moneda = GetInt32OrNull(reader, "moneda"),
                     CreditoSuspendido = GetInt32OrNull(reader, "creditoSuspendido"),
+                    _GrupoFamiliar = new GrupoFamiliar
+                    {
+                        Id = GetInt32OrNull(reader, "GrupoFamiliarId"),
+                        Nombre = GetStringOrNull(reader, "GrupoFamiliarNombre")
+                    },
                     _Colonia = new Colonia
                     {
                         Id = GetInt32OrNull(reader, "idColonia"),
@@ -88,12 +93,6 @@ namespace ReporteadorUCAH.DB_Services
                     FechaFinal = GetDateTimeOrNull(reader, "fechaFinal")
                 },
 
-                _GrupoFamiliar = new GrupoFamiliar
-                {
-                    Id = GetInt32OrNull(reader, "GrupoFamiliarId"),
-                    Nombre = GetStringOrNull(reader, "GrupoFamiliarNombre")
-                },
-
                 Deducciones = new List<DeduccionNota>() // Se llena después
             };
         }
@@ -103,7 +102,7 @@ namespace ReporteadorUCAH.DB_Services
             Cultivo _cultivo = new Cultivo();
             List<DeduccionNota> _deducciones = new List<DeduccionNota>();
             Cosecha _cosecha = new Cosecha();
-            GrupoFamiliar _grupoFamiliar = new GrupoFamiliar();
+            
 
             using (DatabaseConnection varCon = new DatabaseConnection())
             {
@@ -115,9 +114,6 @@ namespace ReporteadorUCAH.DB_Services
 
                 using (Cosechas DB_Cosechas = new Cosechas(varCon))
                     _cosecha = DB_Cosechas.GetCosechaById(reader.GetInt32(reader.GetOrdinal("idCosecha")));
-
-                using (GruposFamiliares DB_GrupoFamiliar = new GruposFamiliares(varCon))
-                    _grupoFamiliar = DB_GrupoFamiliar.GetGrupoFamiliarById(reader.GetInt32(reader.GetOrdinal("idGrupoFamiliar")));
 
                 using (DeduccionesNota DB_Deducciones = new DeduccionesNota(varCon))
                     _deducciones = DB_Deducciones.GetDeduccionesByNota(reader.GetInt32(reader.GetOrdinal("id")));
@@ -136,7 +132,6 @@ namespace ReporteadorUCAH.DB_Services
                 Importe = reader.GetDouble(reader.GetOrdinal("IMPORTE")),
                 FacturaUUID = GetStringOrNull(reader, "FacturaUUID"),
                 Deducciones = _deducciones,
-                _GrupoFamiliar = _grupoFamiliar,
             };
         }
         public static Cliente MapToCliente(SqliteDataReader reader)
@@ -147,6 +142,8 @@ namespace ReporteadorUCAH.DB_Services
             Ciudad _ciudad = new Ciudad();
             Municipio _municipio = new Municipio();
             Estado _estado = new Estado();
+            GrupoFamiliar _grupoFamiliar = new GrupoFamiliar();
+
             using (DatabaseConnection varCon = new DatabaseConnection())
             {
                 using (TiposPersona DB_TiposPersona = new TiposPersona(varCon))
@@ -159,7 +156,11 @@ namespace ReporteadorUCAH.DB_Services
                     _municipio = DB_Municipio.GetMunicipioByid(reader.GetInt32(reader.GetOrdinal("idMunicipio")));
                 using (Estados DB_Estado = new Estados(varCon))
                     _estado = DB_Estado.GetEstadoByid(reader.GetInt32(reader.GetOrdinal("idEstado")));
-                }
+
+                using (GruposFamiliares DB_GrupoFamiliar = new GruposFamiliares(varCon))
+                    _grupoFamiliar = DB_GrupoFamiliar.GetGrupoFamiliarById(reader.GetInt32(reader.GetOrdinal("idGrupoFamiliar")));
+
+            }
             return new Cliente
             {
                 Id = reader.GetInt32(reader.GetOrdinal("id")),
@@ -185,7 +186,8 @@ namespace ReporteadorUCAH.DB_Services
                 MetodoPago = GetStringOrNull(reader, "metodoPago"), 
                 LimiteCredito = GetInt32OrNull(reader, "limiteCredito"),
                 Moneda = GetInt32OrNull(reader, "moneda"),
-                CreditoSuspendido = GetInt32OrNull(reader, "creditoSuspendido")
+                CreditoSuspendido = GetInt32OrNull(reader, "creditoSuspendido"),
+                _GrupoFamiliar = _grupoFamiliar,
             };
         }
         public static Cultivo MapToCultivo(SqliteDataReader reader)

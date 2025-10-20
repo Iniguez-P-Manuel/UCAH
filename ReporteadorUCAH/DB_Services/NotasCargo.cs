@@ -60,6 +60,7 @@ namespace ReporteadorUCAH.DB_Services
                     c.limiteCredito,
                     c.moneda,
                     c.creditoSuspendido,
+                    c.idGrupoFamiliar
                     
                     -- Tipo Persona
                     tp.Nombre as TipoPersonaNombre,
@@ -100,7 +101,7 @@ namespace ReporteadorUCAH.DB_Services
                 -- Joins para otras entidades
                 LEFT JOIN Cultivos cult ON cult.id = lnc.idCultivo
                 LEFT JOIN Cosecha cos ON cos.id = lnc.idCosecha
-                LEFT JOIN GrupoFamiliar gf ON gf.id = lnc.idGrupoFamiliar
+                LEFT JOIN GrupoFamiliar gf ON gf.id = c.idGrupoFamiliar
 
                 WHERE c.Nombre LIKE '%' || @Busqueda || '%'
                 LIMIT 100";
@@ -302,8 +303,8 @@ namespace ReporteadorUCAH.DB_Services
                         {
                             command.CommandText = @"
                         INSERT INTO LiquidacionNotasCargo 
-                        (FECHA, FacturaFolio, idCliente, idCultivo, idCosecha, idGrupoFamiliar, TONS, PRECIO, IMPORTE, FacturaUUID) 
-                        VALUES (@Fecha, @FacturaFolio, @idCliente, @idCultivo, @idCosecha, @idGrupoFamiliar, @Tons, @Precio, @Importe, @FacturaUUID);
+                        (FECHA, FacturaFolio, idCliente, idCultivo, idCosecha, TONS, PRECIO, IMPORTE, FacturaUUID) 
+                        VALUES (@Fecha, @FacturaFolio, @idCliente, @idCultivo, @idCosecha, @Tons, @Precio, @Importe, @FacturaUUID);
                         SELECT last_insert_rowid();";
 
                             command.Parameters.AddWithValue("@Fecha", notaCargo.Fecha);
@@ -311,7 +312,6 @@ namespace ReporteadorUCAH.DB_Services
                             command.Parameters.AddWithValue("@idCliente", notaCargo._Cliente?.Id ?? 0);
                             command.Parameters.AddWithValue("@idCultivo", notaCargo._Cultivo?.Id ?? 0);
                             command.Parameters.AddWithValue("@idCosecha", notaCargo._Cosecha?.Id ?? 0);
-                            command.Parameters.AddWithValue("@idGrupoFamiliar", notaCargo._GrupoFamiliar?.Id ?? 0);
                             command.Parameters.AddWithValue("@Tons", notaCargo.Tons);
                             command.Parameters.AddWithValue("@Precio", notaCargo.Precio);
                             command.Parameters.AddWithValue("@Importe", notaCargo.Importe);
@@ -397,7 +397,6 @@ namespace ReporteadorUCAH.DB_Services
                             idCliente = @idCliente, 
                             idCultivo = @idCultivo, 
                             idCosecha = @idCosecha, 
-                            idGrupoFamiliar = @idGrupoFamiliar, 
                             TONS = @Tons, 
                             PRECIO = @Precio, 
                             IMPORTE = @Importe, 
@@ -409,7 +408,6 @@ namespace ReporteadorUCAH.DB_Services
                             command.Parameters.AddWithValue("@idCliente", notaCargo._Cliente?.Id ?? 0);
                             command.Parameters.AddWithValue("@idCultivo", notaCargo._Cultivo?.Id ?? 0);
                             command.Parameters.AddWithValue("@idCosecha", notaCargo._Cosecha?.Id ?? 0);
-                            command.Parameters.AddWithValue("@idGrupoFamiliar", notaCargo._GrupoFamiliar?.Id ?? 0);
                             command.Parameters.AddWithValue("@Tons", notaCargo.Tons);
                             command.Parameters.AddWithValue("@Precio", notaCargo.Precio);
                             command.Parameters.AddWithValue("@Importe", notaCargo.Importe);
