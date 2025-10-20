@@ -19,7 +19,10 @@ Cambiar [ ] por [x]
 ### 👥 CLIENTES
 - [ ] Guardar
 - [ ] Modificar
-
+- [ ] Agregar grupo familiar con un combo box<br>
+      *con autoacompletado<br>
+      *buscar opcion para agregar nuevo grupo familiar <br>
+      
 ### ⚙️ MODELOS 
 - [X] NotaCargo <br>
       *Agregar Modelo.Cosecha<br>
@@ -34,6 +37,7 @@ Cambiar [ ] por [x]
       *fecha inicial<br>
       *fecha final<br>
 - [X] Mapeo BD Cosecha
+- [ ] haha me equivoque grupo familiar va en clientes
 
 
 ### 📋 NOTA DEDUCCIONES
@@ -47,9 +51,6 @@ Cambiar [ ] por [x]
 - [ ] Cambiar total importe con evento al escribir sobre cantidad y precio, o al cambiar la cantidad de deducciones<br>
       *(cantidad * precio - deducciones)<br>
 - [ ] Agregar controles de rango de fechas para guardar el objeto cosecha ()
-- [ ] Agregar grupo familiar con un combo box<br>
-      *con autoacompletado<br>
-      *buscar opcion para agregar nuevo grupo familiar <br>
 - [ ] Reporte igual al del pdf
 
 
@@ -68,6 +69,7 @@ Cambiar [ ] por [x]
 - [X] NotaCargo <br>
       *Agregar idCosecha<br>
       *Agregar idGrupoFamiliar<br>
+- [ ] haha me equivoque grupo familiar va en clientes
 
 
 
