@@ -160,21 +160,25 @@ namespace ReporteadorUCAH.Formas
             if (cbxGrupoFamiliar.SelectedIndex == -1)
             {
                 MessageBox.Show("Selecciona grupo familiar valido.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                cbxGrupoFamiliar.Focus();
                 return false;
             }
             if (txtNombres.Text.Trim().Length < 3)
             {
                 MessageBox.Show("Campo Nombres debe contener al menos 3 caracteres.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                txtNombres.Focus();
                 return false;
             }
             if (txtCalle.Text.Trim().Length < 1)
             {
                 MessageBox.Show("Campo Calle vacio.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                txtCalle.Focus();
                 return false;
             }
             if (txtCodigoPostal.Text.Trim().Length < 1)
             {
                 MessageBox.Show("Campo Codigo postal vacio.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                txtCodigoPostal.Focus();
                 return false;
             }
 
@@ -335,8 +339,10 @@ namespace ReporteadorUCAH.Formas
             cbxColonia.SelectedIndex = -1;
             cbxEstado.SelectedIndex = 1;
             cbxMunicipio.SelectedIndex = -1;
-
             cbxGrupoFamiliar.SelectedIndex = -1;
+
+            //Radio default PF
+            radioPF.Checked = true;
         }
         private void Clientes_Load(object sender, EventArgs e)
         {

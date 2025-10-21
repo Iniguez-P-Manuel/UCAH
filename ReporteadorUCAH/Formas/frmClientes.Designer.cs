@@ -38,8 +38,8 @@
             label11 = new Label();
             label12 = new Label();
             panel1 = new Panel();
-            radioPM = new RadioButton();
             radioPF = new RadioButton();
+            radioPM = new RadioButton();
             btnGrupoFamiliar = new Button();
             cbxGrupoFamiliar = new ComboBox();
             label18 = new Label();
@@ -168,8 +168,8 @@
             // panel1
             // 
             panel1.BackColor = Color.White;
-            panel1.Controls.Add(radioPM);
             panel1.Controls.Add(radioPF);
+            panel1.Controls.Add(radioPM);
             panel1.Controls.Add(btnGrupoFamiliar);
             panel1.Controls.Add(cbxGrupoFamiliar);
             panel1.Controls.Add(label18);
@@ -186,34 +186,34 @@
             panel1.Size = new Size(564, 406);
             panel1.TabIndex = 140;
             // 
-            // radioPM
-            // 
-            radioPM.BackColor = Color.Gainsboro;
-            radioPM.Checked = true;
-            radioPM.Cursor = Cursors.Hand;
-            radioPM.Font = new Font("Segoe UI", 9F, FontStyle.Bold);
-            radioPM.Location = new Point(307, 4);
-            radioPM.Name = "radioPM";
-            radioPM.Size = new Size(66, 19);
-            radioPM.TabIndex = 28;
-            radioPM.TabStop = true;
-            radioPM.Text = "P Fisica";
-            radioPM.TextAlign = ContentAlignment.MiddleRight;
-            radioPM.UseVisualStyleBackColor = false;
-            // 
             // radioPF
             // 
-            radioPF.AutoSize = true;
             radioPF.BackColor = Color.Gainsboro;
+            radioPF.Checked = true;
             radioPF.Cursor = Cursors.Hand;
             radioPF.Font = new Font("Segoe UI", 9F, FontStyle.Bold);
-            radioPF.Location = new Point(307, 26);
+            radioPF.Location = new Point(307, 4);
             radioPF.Name = "radioPF";
-            radioPF.Size = new Size(67, 19);
-            radioPF.TabIndex = 143;
-            radioPF.Text = "P Moral";
+            radioPF.Size = new Size(66, 19);
+            radioPF.TabIndex = 28;
+            radioPF.TabStop = true;
+            radioPF.Text = "P Fisica";
             radioPF.TextAlign = ContentAlignment.MiddleRight;
             radioPF.UseVisualStyleBackColor = false;
+            // 
+            // radioPM
+            // 
+            radioPM.AutoSize = true;
+            radioPM.BackColor = Color.Gainsboro;
+            radioPM.Cursor = Cursors.Hand;
+            radioPM.Font = new Font("Segoe UI", 9F, FontStyle.Bold);
+            radioPM.Location = new Point(307, 26);
+            radioPM.Name = "radioPM";
+            radioPM.Size = new Size(67, 19);
+            radioPM.TabIndex = 143;
+            radioPM.Text = "P Moral";
+            radioPM.TextAlign = ContentAlignment.MiddleRight;
+            radioPM.UseVisualStyleBackColor = false;
             // 
             // btnGrupoFamiliar
             // 
@@ -599,7 +599,7 @@
         private ComboBox cbxGrupoFamiliar;
         private Label label18;
         private Button btnGrupoFamiliar;
-        private RadioButton radioPM;
         private RadioButton radioPF;
+        private RadioButton radioPM;
     }
 }

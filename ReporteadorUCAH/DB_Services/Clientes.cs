@@ -22,9 +22,7 @@ namespace ReporteadorUCAH.DB_Services
                 using (var conn = _dbConnection.GetConnection())
                 using (var command = conn.CreateCommand())
                 {
-                    // Si el ID es 0, dejamos que SQLite auto-genere el ID
-                    if (cliente.Id == 0)
-                    {
+
                         command.CommandText = @"INSERT INTO Clientes 
                 (Nombre, idTipoPersona, apellidoPaterno, apellidoMaterno, nombres, 
                  rfc, curp, paisNumero, codigoPostal, calle, noInterior, noExterior, 
@@ -38,29 +36,7 @@ namespace ReporteadorUCAH.DB_Services
                  @correo, @condicionPago, @metodoPago, @limiteCredito, @moneda, 
                  @creditoSuspendido, @idGrupoFamiliar);
                 SELECT last_insert_rowid();";
-                    }
-                    else
-                    {
-                        command.CommandText = @"INSERT INTO Clientes 
-                (id, Nombre, idTipoPersona, apellidoPaterno, apellidoMaterno, nombres, 
-                 rfc, curp, paisNumero, codigoPostal, calle, noInterior, noExterior, 
-                 idColonia, idCiudad, idMunicipio, idEstado, telefonos, 
-                 correo, condicionPago, metodoPago, limiteCredito, moneda, 
-                 creditoSuspendido, idGrupoFamiliar)
-                VALUES 
-                (@id, @Nombre, @idTipoPersona, @apellidoPaterno, @apellidoMaterno, @nombres, 
-                 @rfc, @curp, @paisNumero, @codigoPostal, @calle, @noInterior, @noExterior, 
-                 @idColonia, @idCiudad, @idMunicipio, @idEstado, @telefonos, 
-                 @correo, @condicionPago, @metodoPago, @limiteCredito, @moneda, 
-                 @creditoSuspendido, @idGrupoFamiliar);
-                SELECT last_insert_rowid();";
-                    }
 
-                    // Solo agregar el parámetro @id si no es 0
-                    if (cliente.Id != 0)
-                    {
-                        command.Parameters.AddWithValue("@id", cliente.Id);
-                    }
 
                     command.Parameters.AddWithValue("@Nombre", cliente.Nombre ?? (object)DBNull.Value);
                     command.Parameters.AddWithValue("@idTipoPersona", cliente.TipoPersona?.Id ?? (object)DBNull.Value);
