@@ -17,8 +17,8 @@ Cambiar [ ] por [x]
 - [ ] Buscar validaciones faltantes
 
 ### 👥 CLIENTES
-- [ ] Guardar
-- [ ] Modificar
+- [X] Guardar
+- [X] Modificar
 - [X] Agregar grupo familiar con un combo box<br>
       *con autoacompletado<br>
       *buscar opcion para agregar nuevo grupo familiar <br>
