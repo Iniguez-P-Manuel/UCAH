@@ -84,11 +84,11 @@ public class ReporteNotaCargo : IDocument
                     sectionColumn.Item().AlignCenter().PaddingTop(-0.5f, Unit.Centimetre).Text("FINIQUITO").Bold().FontSize(20);
 
                     // Table de información del cliente (a la izquierda)
-                    sectionColumn.Item().PaddingVertical(10).Table(table =>
+                    sectionColumn.Item().PaddingVertical(10).PaddingLeft(10).Table(table =>
                     {
                         table.ColumnsDefinition(columns =>
                         {
-                            columns.ConstantColumn(100); // Ancho fijo para etiquetas
+                            columns.ConstantColumn(80); // Ancho fijo para etiquetas
                             columns.RelativeColumn();    // El resto del ancho para valores
                         });
 
@@ -219,7 +219,10 @@ public class ReporteNotaCargo : IDocument
 
                     // Fila 2: Total Deducciones
                     table.Cell().AlignRight().Text("Total Deducciones:");
-                    table.Cell().AlignRight().Text(totalDeducciones.ToString("C2"));
+                    // Para texto rojo 
+                    table.Cell().AlignRight().Text(text => {
+                        text.Span("-"+totalDeducciones.ToString("C2")).FontColor(Colors.Red.Medium);
+                    });
 
                     // Fila 3: Neto a Pagar
                     table.Cell().AlignRight().Text("Neto a Pagar:").Bold();
