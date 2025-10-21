@@ -287,6 +287,7 @@
             txtCorreo.BackColor = SystemColors.Info;
             txtCorreo.Location = new Point(111, 126);
             txtCorreo.Margin = new Padding(2);
+            txtCorreo.MaxLength = 50;
             txtCorreo.Name = "txtCorreo";
             txtCorreo.Size = new Size(163, 23);
             txtCorreo.TabIndex = 7;
@@ -306,6 +307,7 @@
             txtTelefono.BackColor = SystemColors.Info;
             txtTelefono.Location = new Point(365, 126);
             txtTelefono.Margin = new Padding(2);
+            txtTelefono.MaxLength = 16;
             txtTelefono.Name = "txtTelefono";
             txtTelefono.Size = new Size(150, 23);
             txtTelefono.TabIndex = 8;
@@ -327,6 +329,7 @@
             txtCURP.BackColor = SystemColors.Info;
             txtCURP.Location = new Point(365, 92);
             txtCURP.Margin = new Padding(2);
+            txtCURP.MaxLength = 50;
             txtCURP.Name = "txtCURP";
             txtCURP.Size = new Size(149, 23);
             txtCURP.TabIndex = 6;
@@ -336,6 +339,7 @@
             txtRFC.BackColor = SystemColors.Info;
             txtRFC.Location = new Point(111, 92);
             txtRFC.Margin = new Padding(2);
+            txtRFC.MaxLength = 50;
             txtRFC.Name = "txtRFC";
             txtRFC.Size = new Size(163, 23);
             txtRFC.TabIndex = 5;
@@ -345,6 +349,7 @@
             txtNombres.BackColor = SystemColors.Info;
             txtNombres.Location = new Point(111, 57);
             txtNombres.Margin = new Padding(2);
+            txtNombres.MaxLength = 100;
             txtNombres.Name = "txtNombres";
             txtNombres.Size = new Size(404, 23);
             txtNombres.TabIndex = 4;
@@ -354,6 +359,7 @@
             txtApellidoMat.BackColor = SystemColors.Info;
             txtApellidoMat.Location = new Point(365, 28);
             txtApellidoMat.Margin = new Padding(2);
+            txtApellidoMat.MaxLength = 50;
             txtApellidoMat.Name = "txtApellidoMat";
             txtApellidoMat.Size = new Size(150, 23);
             txtApellidoMat.TabIndex = 3;
@@ -363,6 +369,7 @@
             txtApellidoPat.BackColor = SystemColors.Info;
             txtApellidoPat.Location = new Point(111, 27);
             txtApellidoPat.Margin = new Padding(2);
+            txtApellidoPat.MaxLength = 50;
             txtApellidoPat.Name = "txtApellidoPat";
             txtApellidoPat.Size = new Size(139, 23);
             txtApellidoPat.TabIndex = 2;
@@ -397,6 +404,7 @@
             txtNumExterior.BackColor = SystemColors.Info;
             txtNumExterior.Location = new Point(176, 52);
             txtNumExterior.Margin = new Padding(2);
+            txtNumExterior.MaxLength = 8;
             txtNumExterior.Name = "txtNumExterior";
             txtNumExterior.Size = new Size(72, 23);
             txtNumExterior.TabIndex = 4;
@@ -489,6 +497,7 @@
             txtNumInterior.BackColor = SystemColors.Info;
             txtNumInterior.Location = new Point(60, 52);
             txtNumInterior.Margin = new Padding(2);
+            txtNumInterior.MaxLength = 8;
             txtNumInterior.Name = "txtNumInterior";
             txtNumInterior.Size = new Size(72, 23);
             txtNumInterior.TabIndex = 3;
@@ -509,6 +518,7 @@
             txtCalle.BackColor = SystemColors.Info;
             txtCalle.Location = new Point(60, 25);
             txtCalle.Margin = new Padding(2);
+            txtCalle.MaxLength = 64;
             txtCalle.Name = "txtCalle";
             txtCalle.Size = new Size(315, 23);
             txtCalle.TabIndex = 1;
@@ -518,10 +528,12 @@
             txtCodigoPostal.BackColor = SystemColors.Info;
             txtCodigoPostal.Location = new Point(466, 25);
             txtCodigoPostal.Margin = new Padding(2);
+            txtCodigoPostal.MaxLength = 8;
             txtCodigoPostal.Name = "txtCodigoPostal";
             txtCodigoPostal.Size = new Size(72, 23);
             txtCodigoPostal.TabIndex = 2;
             txtCodigoPostal.TextAlign = HorizontalAlignment.Center;
+            txtCodigoPostal.KeyPress += txtCodigoPostal_KeyPress;
             // 
             // txtID
             // 

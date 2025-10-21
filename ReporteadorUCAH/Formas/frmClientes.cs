@@ -127,8 +127,8 @@ namespace ReporteadorUCAH.Formas
             else
                 radioPM.Checked = true;
 
-                // Uso:
-                SetComboValue(cbxEstado, ClienteActual._Estado?.Id);
+            // Uso:
+            SetComboValue(cbxEstado, ClienteActual._Estado?.Id);
             SetComboValue(cbxMunicipio, ClienteActual._Municipio?.Id);
             SetComboValue(cbxCiudad, ClienteActual._Ciudad?.Id);
             SetComboValue(cbxColonia, ClienteActual._Colonia?.Id);
@@ -190,7 +190,7 @@ namespace ReporteadorUCAH.Formas
             if (!ValidarGuardado())
                 return;
 
-            if (txtID.Text.Trim().Contains(""))
+            if (txtID.Text.Trim().Length < 1)
             {
                 LlenarClienteActual();
                 using (DatabaseConnection varCon = new DatabaseConnection())
@@ -222,6 +222,7 @@ namespace ReporteadorUCAH.Formas
                     {
                         MessageBox.Show("Los datos se actualizaron correctamente.", "Éxito", MessageBoxButtons.OK, MessageBoxIcon.Information);
                     }
+                    else
                     {
                         MessageBox.Show("Error al actualizar cliente.", "SQLITE", MessageBoxButtons.OK, MessageBoxIcon.Error);
                     }
@@ -349,6 +350,9 @@ namespace ReporteadorUCAH.Formas
             CargarCombo();
             CargarComboGrupoFamiliar();
             CargarTiposPersona();
+
+            this.BotonEliminar(false);
+            this.BotonReporte(false);
 
         }
 
@@ -492,6 +496,21 @@ namespace ReporteadorUCAH.Formas
             {
                 txtApellidoPat.Focus();
                 e.IsInputKey = true; // Esto marca la tecla como manejada
+            }
+        }
+
+        private void txtCodigoPostal_KeyPress(object sender, KeyPressEventArgs e)
+        {
+            // Permitir números, tecla de retroceso y tecla de eliminar
+            if (!char.IsControl(e.KeyChar) && !char.IsDigit(e.KeyChar))
+            {
+                e.Handled = true; // Ignorar el carácter
+            }
+
+            // Permitir el guión si necesitas formato #####-####
+            if (e.KeyChar == '-' && !txtCodigoPostal.Text.Contains("-"))
+            {
+                 e.Handled = false;
             }
         }
     }
