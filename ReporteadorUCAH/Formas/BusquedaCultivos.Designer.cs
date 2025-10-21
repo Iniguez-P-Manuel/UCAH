@@ -43,11 +43,10 @@
             // txtBusqueda
             // 
             txtBusqueda.Anchor = AnchorStyles.Left | AnchorStyles.Right;
-            txtBusqueda.Location = new Point(12, 69);
-            txtBusqueda.Margin = new Padding(4, 5, 4, 5);
+            txtBusqueda.Location = new Point(8, 41);
             txtBusqueda.Name = "txtBusqueda";
             txtBusqueda.PlaceholderText = "Buscar cultivo...";
-            txtBusqueda.Size = new Size(1112, 31);
+            txtBusqueda.Size = new Size(780, 23);
             txtBusqueda.TabIndex = 5;
             txtBusqueda.KeyDown += txtBusqueda_KeyDown;
             // 
@@ -55,10 +54,9 @@
             // 
             button1.BackgroundImage = Properties.Resources.icons8_letra_pequeña_20;
             button1.BackgroundImageLayout = ImageLayout.Stretch;
-            button1.Location = new Point(1124, 8);
-            button1.Margin = new Padding(4, 5, 4, 5);
+            button1.Location = new Point(788, 4);
             button1.Name = "button1";
-            button1.Size = new Size(46, 48);
+            button1.Size = new Size(32, 29);
             button1.TabIndex = 6;
             button1.UseVisualStyleBackColor = true;
             button1.Click += button1_Click;
@@ -69,9 +67,10 @@
             panel1.Controls.Add(dgvCultivos);
             panel1.Controls.Add(button1);
             panel1.Dock = DockStyle.Fill;
-            panel1.Location = new Point(4, 53);
+            panel1.Location = new Point(2, 19);
+            panel1.Margin = new Padding(2, 2, 2, 2);
             panel1.Name = "panel1";
-            panel1.Size = new Size(1174, 471);
+            panel1.Size = new Size(823, 310);
             panel1.TabIndex = 7;
             // 
             // dgvCultivos
@@ -83,11 +82,12 @@
             dgvCultivos.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             dgvCultivos.Columns.AddRange(new DataGridViewColumn[] { Column1, Column2, Column3, Column4 });
             dgvCultivos.Dock = DockStyle.Bottom;
-            dgvCultivos.Location = new Point(0, 64);
+            dgvCultivos.Location = new Point(0, 66);
+            dgvCultivos.Margin = new Padding(2, 2, 2, 2);
             dgvCultivos.Name = "dgvCultivos";
             dgvCultivos.RowHeadersVisible = false;
             dgvCultivos.RowHeadersWidth = 62;
-            dgvCultivos.Size = new Size(1174, 407);
+            dgvCultivos.Size = new Size(823, 244);
             dgvCultivos.TabIndex = 7;
             dgvCultivos.CellContentClick += dgvCultivos_CellContentClick;
             dgvCultivos.CellDoubleClick += dgvCultivos_CellDoubleClick;
@@ -122,12 +122,14 @@
             // 
             // BusquedaCultivos
             // 
-            AutoScaleDimensions = new SizeF(10F, 25F);
+            AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(1182, 595);
+            ClientSize = new Size(827, 357);
             Controls.Add(txtBusqueda);
             Controls.Add(panel1);
+            Margin = new Padding(2, 2, 2, 2);
             Name = "BusquedaCultivos";
+            Padding = new Padding(2, 2, 2, 2);
             Text = "BusquedaCultivos";
             Controls.SetChildIndex(panel1, 0);
             Controls.SetChildIndex(txtBusqueda, 0);

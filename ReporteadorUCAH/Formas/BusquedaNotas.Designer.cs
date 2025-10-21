@@ -50,20 +50,18 @@
             panel1.Controls.Add(txtBusqueda);
             panel1.Controls.Add(dgvNotas);
             panel1.Dock = DockStyle.Fill;
-            panel1.Location = new Point(6, 56);
-            panel1.Margin = new Padding(4, 5, 4, 5);
+            panel1.Location = new Point(4, 34);
             panel1.Name = "panel1";
-            panel1.Size = new Size(827, 513);
+            panel1.Size = new Size(579, 306);
             panel1.TabIndex = 5;
             // 
             // button1
             // 
             button1.BackgroundImage = Properties.Resources.icons8_letra_pequeña_20;
             button1.BackgroundImageLayout = ImageLayout.Stretch;
-            button1.Location = new Point(777, 12);
-            button1.Margin = new Padding(4, 5, 4, 5);
+            button1.Location = new Point(544, 8);
             button1.Name = "button1";
-            button1.Size = new Size(46, 48);
+            button1.Size = new Size(32, 29);
             button1.TabIndex = 2;
             button1.UseVisualStyleBackColor = true;
             button1.Click += button1_Click;
@@ -71,11 +69,10 @@
             // txtBusqueda
             // 
             txtBusqueda.Anchor = AnchorStyles.Left | AnchorStyles.Right;
-            txtBusqueda.Location = new Point(4, 21);
-            txtBusqueda.Margin = new Padding(4, 5, 4, 5);
+            txtBusqueda.Location = new Point(3, 12);
             txtBusqueda.Name = "txtBusqueda";
             txtBusqueda.PlaceholderText = "Buscar cliente...";
-            txtBusqueda.Size = new Size(769, 31);
+            txtBusqueda.Size = new Size(540, 23);
             txtBusqueda.TabIndex = 1;
             txtBusqueda.KeyDown += txtBusqueda_KeyDown;
             // 
@@ -89,13 +86,12 @@
             dgvNotas.ColumnHeadersBorderStyle = DataGridViewHeaderBorderStyle.Single;
             dgvNotas.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             dgvNotas.Columns.AddRange(new DataGridViewColumn[] { colidNota, colFecha, colCliente, colCultivo, colTons });
-            dgvNotas.Location = new Point(4, 70);
-            dgvNotas.Margin = new Padding(4, 5, 4, 5);
+            dgvNotas.Location = new Point(3, 41);
             dgvNotas.Name = "dgvNotas";
             dgvNotas.RowHeadersVisible = false;
             dgvNotas.RowHeadersWidth = 62;
             dgvNotas.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
-            dgvNotas.Size = new Size(819, 443);
+            dgvNotas.Size = new Size(573, 266);
             dgvNotas.TabIndex = 0;
             dgvNotas.CellDoubleClick += dgvNotas_CellDoubleClick;
             // 
@@ -149,13 +145,13 @@
             // 
             // BusquedaNotas
             // 
-            AutoScaleDimensions = new SizeF(10F, 25F);
+            AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(839, 643);
+            ClientSize = new Size(587, 386);
             Controls.Add(panel1);
-            Margin = new Padding(6, 8, 6, 8);
+            Margin = new Padding(4, 5, 4, 5);
             Name = "BusquedaNotas";
-            Padding = new Padding(6, 8, 6, 8);
+            Padding = new Padding(4, 5, 4, 5);
             Text = "Busqueda Notas";
             Controls.SetChildIndex(panel1, 0);
             panel1.ResumeLayout(false);

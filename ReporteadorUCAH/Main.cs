@@ -119,7 +119,7 @@ namespace ReporteadorUCAH
 
         private void btnClientes_Click(object sender, EventArgs e)
         {
-            Formas.Clientes form = new Formas.Clientes();
+            Formas.frmClientes form = new Formas.frmClientes();
             AgregarForm(form, "Test");
         }
 
