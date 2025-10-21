@@ -200,7 +200,7 @@ public class ReporteNotaCargo : IDocument
             }
 
             // Resumen
-            column.Item().Section("Resumen").PaddingTop(3, Unit.Centimetre).Column(sectionColumn =>
+            column.Item().Section("Resumen").PaddingTop(2, Unit.Centimetre).Column(sectionColumn =>
             {
                 sectionColumn.Item().PaddingVertical(10).Background(Colors.Grey.Lighten1).Padding(15).Table(table =>
                 {
