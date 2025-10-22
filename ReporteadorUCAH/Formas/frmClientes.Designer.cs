@@ -1,6 +1,6 @@
 ﻿namespace ReporteadorUCAH.Formas
 {
-    partial class Clientes
+    partial class frmClientes
     {
         /// <summary>
         /// Required designer variable.
@@ -38,6 +38,8 @@
             label11 = new Label();
             label12 = new Label();
             panel1 = new Panel();
+            radioPF = new RadioButton();
+            radioPM = new RadioButton();
             btnGrupoFamiliar = new Button();
             cbxGrupoFamiliar = new ComboBox();
             label18 = new Label();
@@ -166,6 +168,8 @@
             // panel1
             // 
             panel1.BackColor = Color.White;
+            panel1.Controls.Add(radioPF);
+            panel1.Controls.Add(radioPM);
             panel1.Controls.Add(btnGrupoFamiliar);
             panel1.Controls.Add(cbxGrupoFamiliar);
             panel1.Controls.Add(label18);
@@ -179,8 +183,37 @@
             panel1.Location = new Point(4, 34);
             panel1.Margin = new Padding(2);
             panel1.Name = "panel1";
-            panel1.Size = new Size(566, 393);
-            panel1.TabIndex = 14;
+            panel1.Size = new Size(564, 406);
+            panel1.TabIndex = 140;
+            // 
+            // radioPF
+            // 
+            radioPF.BackColor = Color.Gainsboro;
+            radioPF.Checked = true;
+            radioPF.Cursor = Cursors.Hand;
+            radioPF.Font = new Font("Segoe UI", 9F, FontStyle.Bold);
+            radioPF.Location = new Point(307, 4);
+            radioPF.Name = "radioPF";
+            radioPF.Size = new Size(66, 19);
+            radioPF.TabIndex = 28;
+            radioPF.TabStop = true;
+            radioPF.Text = "P Fisica";
+            radioPF.TextAlign = ContentAlignment.MiddleRight;
+            radioPF.UseVisualStyleBackColor = false;
+            // 
+            // radioPM
+            // 
+            radioPM.AutoSize = true;
+            radioPM.BackColor = Color.Gainsboro;
+            radioPM.Cursor = Cursors.Hand;
+            radioPM.Font = new Font("Segoe UI", 9F, FontStyle.Bold);
+            radioPM.Location = new Point(307, 26);
+            radioPM.Name = "radioPM";
+            radioPM.Size = new Size(67, 19);
+            radioPM.TabIndex = 143;
+            radioPM.Text = "P Moral";
+            radioPM.TextAlign = ContentAlignment.MiddleRight;
+            radioPM.UseVisualStyleBackColor = false;
             // 
             // btnGrupoFamiliar
             // 
@@ -188,27 +221,28 @@
             btnGrupoFamiliar.BackgroundImageLayout = ImageLayout.Stretch;
             btnGrupoFamiliar.FlatAppearance.BorderSize = 0;
             btnGrupoFamiliar.FlatStyle = FlatStyle.Flat;
-            btnGrupoFamiliar.Location = new Point(524, 10);
+            btnGrupoFamiliar.Location = new Point(526, 44);
             btnGrupoFamiliar.Name = "btnGrupoFamiliar";
             btnGrupoFamiliar.Size = new Size(27, 26);
-            btnGrupoFamiliar.TabIndex = 42;
+            btnGrupoFamiliar.TabIndex = 142;
             btnGrupoFamiliar.UseVisualStyleBackColor = true;
             btnGrupoFamiliar.Click += btnGrupoFamiliar_Click;
             // 
             // cbxGrupoFamiliar
             // 
-            cbxGrupoFamiliar.AutoCompleteMode = AutoCompleteMode.Suggest;
-            cbxGrupoFamiliar.AutoCompleteSource = AutoCompleteSource.CustomSource;
+            cbxGrupoFamiliar.AutoCompleteMode = AutoCompleteMode.SuggestAppend;
+            cbxGrupoFamiliar.AutoCompleteSource = AutoCompleteSource.ListItems;
             cbxGrupoFamiliar.FormattingEnabled = true;
-            cbxGrupoFamiliar.Location = new Point(380, 10);
+            cbxGrupoFamiliar.Location = new Point(382, 47);
             cbxGrupoFamiliar.Name = "cbxGrupoFamiliar";
             cbxGrupoFamiliar.Size = new Size(138, 23);
-            cbxGrupoFamiliar.TabIndex = 41;
+            cbxGrupoFamiliar.TabIndex = 1;
+            cbxGrupoFamiliar.PreviewKeyDown += cbxGrupoFamiliar_PreviewKeyDown;
             // 
             // label18
             // 
             label18.AutoSize = true;
-            label18.Location = new Point(293, 14);
+            label18.Location = new Point(293, 50);
             label18.Name = "label18";
             label18.Size = new Size(83, 15);
             label18.TabIndex = 40;
@@ -221,7 +255,7 @@
             btnBuscar.Location = new Point(188, 3);
             btnBuscar.Name = "btnBuscar";
             btnBuscar.Size = new Size(35, 35);
-            btnBuscar.TabIndex = 31;
+            btnBuscar.TabIndex = 141;
             btnBuscar.UseVisualStyleBackColor = true;
             btnBuscar.Click += btnBuscar_Click;
             // 
@@ -241,9 +275,9 @@
             groupBox1.Controls.Add(label5);
             groupBox1.Controls.Add(txtApellidoMat);
             groupBox1.Controls.Add(txtApellidoPat);
-            groupBox1.Location = new Point(15, 44);
+            groupBox1.Location = new Point(10, 73);
             groupBox1.Name = "groupBox1";
-            groupBox1.Size = new Size(538, 158);
+            groupBox1.Size = new Size(543, 158);
             groupBox1.TabIndex = 30;
             groupBox1.TabStop = false;
             groupBox1.Text = "Información personal";
@@ -253,9 +287,10 @@
             txtCorreo.BackColor = SystemColors.Info;
             txtCorreo.Location = new Point(111, 126);
             txtCorreo.Margin = new Padding(2);
+            txtCorreo.MaxLength = 50;
             txtCorreo.Name = "txtCorreo";
             txtCorreo.Size = new Size(163, 23);
-            txtCorreo.TabIndex = 29;
+            txtCorreo.TabIndex = 7;
             // 
             // label16
             // 
@@ -272,9 +307,12 @@
             txtTelefono.BackColor = SystemColors.Info;
             txtTelefono.Location = new Point(365, 126);
             txtTelefono.Margin = new Padding(2);
+            txtTelefono.MaxLength = 16;
             txtTelefono.Name = "txtTelefono";
             txtTelefono.Size = new Size(150, 23);
-            txtTelefono.TabIndex = 28;
+            txtTelefono.TabIndex = 8;
+            txtTelefono.KeyDown += txtTelefono_KeyDown;
+            txtTelefono.PreviewKeyDown += txtTelefono_PreviewKeyDown;
             // 
             // label17
             // 
@@ -291,45 +329,50 @@
             txtCURP.BackColor = SystemColors.Info;
             txtCURP.Location = new Point(365, 92);
             txtCURP.Margin = new Padding(2);
+            txtCURP.MaxLength = 50;
             txtCURP.Name = "txtCURP";
             txtCURP.Size = new Size(149, 23);
-            txtCURP.TabIndex = 25;
+            txtCURP.TabIndex = 6;
             // 
             // txtRFC
             // 
             txtRFC.BackColor = SystemColors.Info;
             txtRFC.Location = new Point(111, 92);
             txtRFC.Margin = new Padding(2);
+            txtRFC.MaxLength = 50;
             txtRFC.Name = "txtRFC";
             txtRFC.Size = new Size(163, 23);
-            txtRFC.TabIndex = 24;
+            txtRFC.TabIndex = 5;
             // 
             // txtNombres
             // 
             txtNombres.BackColor = SystemColors.Info;
             txtNombres.Location = new Point(111, 57);
             txtNombres.Margin = new Padding(2);
+            txtNombres.MaxLength = 100;
             txtNombres.Name = "txtNombres";
             txtNombres.Size = new Size(404, 23);
-            txtNombres.TabIndex = 22;
+            txtNombres.TabIndex = 4;
             // 
             // txtApellidoMat
             // 
             txtApellidoMat.BackColor = SystemColors.Info;
             txtApellidoMat.Location = new Point(365, 28);
             txtApellidoMat.Margin = new Padding(2);
+            txtApellidoMat.MaxLength = 50;
             txtApellidoMat.Name = "txtApellidoMat";
             txtApellidoMat.Size = new Size(150, 23);
-            txtApellidoMat.TabIndex = 21;
+            txtApellidoMat.TabIndex = 3;
             // 
             // txtApellidoPat
             // 
             txtApellidoPat.BackColor = SystemColors.Info;
             txtApellidoPat.Location = new Point(111, 27);
             txtApellidoPat.Margin = new Padding(2);
+            txtApellidoPat.MaxLength = 50;
             txtApellidoPat.Name = "txtApellidoPat";
             txtApellidoPat.Size = new Size(139, 23);
-            txtApellidoPat.TabIndex = 20;
+            txtApellidoPat.TabIndex = 2;
             // 
             // grpDireccion
             // 
@@ -349,7 +392,7 @@
             grpDireccion.Controls.Add(txtCalle);
             grpDireccion.Controls.Add(txtCodigoPostal);
             grpDireccion.Controls.Add(label11);
-            grpDireccion.Location = new Point(10, 208);
+            grpDireccion.Location = new Point(10, 237);
             grpDireccion.Name = "grpDireccion";
             grpDireccion.Size = new Size(543, 163);
             grpDireccion.TabIndex = 29;
@@ -361,9 +404,10 @@
             txtNumExterior.BackColor = SystemColors.Info;
             txtNumExterior.Location = new Point(176, 52);
             txtNumExterior.Margin = new Padding(2);
+            txtNumExterior.MaxLength = 8;
             txtNumExterior.Name = "txtNumExterior";
             txtNumExterior.Size = new Size(72, 23);
-            txtNumExterior.TabIndex = 39;
+            txtNumExterior.TabIndex = 4;
             txtNumExterior.TextAlign = HorizontalAlignment.Center;
             // 
             // label15
@@ -383,7 +427,7 @@
             cbxEstado.Location = new Point(267, 120);
             cbxEstado.Name = "cbxEstado";
             cbxEstado.Size = new Size(147, 23);
-            cbxEstado.TabIndex = 37;
+            cbxEstado.TabIndex = 16;
             // 
             // label13
             // 
@@ -401,7 +445,7 @@
             cbxMunicipio.Location = new Point(75, 120);
             cbxMunicipio.Name = "cbxMunicipio";
             cbxMunicipio.Size = new Size(138, 23);
-            cbxMunicipio.TabIndex = 35;
+            cbxMunicipio.TabIndex = 15;
             // 
             // label14
             // 
@@ -419,7 +463,7 @@
             cbxCiudad.Location = new Point(267, 96);
             cbxCiudad.Name = "cbxCiudad";
             cbxCiudad.Size = new Size(147, 23);
-            cbxCiudad.TabIndex = 33;
+            cbxCiudad.TabIndex = 14;
             // 
             // label10
             // 
@@ -437,7 +481,7 @@
             cbxColonia.Location = new Point(75, 95);
             cbxColonia.Name = "cbxColonia";
             cbxColonia.Size = new Size(138, 23);
-            cbxColonia.TabIndex = 31;
+            cbxColonia.TabIndex = 13;
             // 
             // label3
             // 
@@ -453,9 +497,10 @@
             txtNumInterior.BackColor = SystemColors.Info;
             txtNumInterior.Location = new Point(60, 52);
             txtNumInterior.Margin = new Padding(2);
+            txtNumInterior.MaxLength = 8;
             txtNumInterior.Name = "txtNumInterior";
             txtNumInterior.Size = new Size(72, 23);
-            txtNumInterior.TabIndex = 29;
+            txtNumInterior.TabIndex = 3;
             txtNumInterior.TextAlign = HorizontalAlignment.Center;
             // 
             // label1
@@ -473,19 +518,22 @@
             txtCalle.BackColor = SystemColors.Info;
             txtCalle.Location = new Point(60, 25);
             txtCalle.Margin = new Padding(2);
+            txtCalle.MaxLength = 64;
             txtCalle.Name = "txtCalle";
             txtCalle.Size = new Size(315, 23);
-            txtCalle.TabIndex = 27;
+            txtCalle.TabIndex = 1;
             // 
             // txtCodigoPostal
             // 
             txtCodigoPostal.BackColor = SystemColors.Info;
             txtCodigoPostal.Location = new Point(466, 25);
             txtCodigoPostal.Margin = new Padding(2);
+            txtCodigoPostal.MaxLength = 8;
             txtCodigoPostal.Name = "txtCodigoPostal";
             txtCodigoPostal.Size = new Size(72, 23);
-            txtCodigoPostal.TabIndex = 26;
+            txtCodigoPostal.TabIndex = 2;
             txtCodigoPostal.TextAlign = HorizontalAlignment.Center;
+            txtCodigoPostal.KeyPress += txtCodigoPostal_KeyPress;
             // 
             // txtID
             // 
@@ -495,19 +543,20 @@
             txtID.Margin = new Padding(2);
             txtID.Name = "txtID";
             txtID.PlaceholderText = "0";
+            txtID.ReadOnly = true;
             txtID.Size = new Size(92, 23);
             txtID.TabIndex = 18;
             txtID.TextAlign = HorizontalAlignment.Center;
             // 
-            // Clientes
+            // frmClientes
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             BackColor = Color.Peru;
-            ClientSize = new Size(574, 473);
+            ClientSize = new Size(572, 486);
             Controls.Add(panel1);
             Margin = new Padding(2);
-            Name = "Clientes";
+            Name = "frmClientes";
             Padding = new Padding(4, 5, 4, 5);
             Text = "Clientes";
             Load += Clientes_Load;
@@ -562,5 +611,7 @@
         private ComboBox cbxGrupoFamiliar;
         private Label label18;
         private Button btnGrupoFamiliar;
+        private RadioButton radioPF;
+        private RadioButton radioPM;
     }
 }

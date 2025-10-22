@@ -49,20 +49,18 @@
             panel1.Controls.Add(txtBusqueda);
             panel1.Controls.Add(dgvClientes);
             panel1.Dock = DockStyle.Fill;
-            panel1.Location = new Point(6, 56);
-            panel1.Margin = new Padding(4, 5, 4, 5);
+            panel1.Location = new Point(4, 34);
             panel1.Name = "panel1";
-            panel1.Size = new Size(882, 528);
+            panel1.Size = new Size(622, 315);
             panel1.TabIndex = 5;
             // 
             // button1
             // 
             button1.BackgroundImage = Properties.Resources.icons8_letra_pequeña_20;
             button1.BackgroundImageLayout = ImageLayout.Stretch;
-            button1.Location = new Point(837, 23);
-            button1.Margin = new Padding(4, 5, 4, 5);
+            button1.Location = new Point(587, 12);
             button1.Name = "button1";
-            button1.Size = new Size(46, 48);
+            button1.Size = new Size(32, 29);
             button1.TabIndex = 2;
             button1.UseVisualStyleBackColor = true;
             button1.Click += button1_Click;
@@ -70,11 +68,10 @@
             // txtBusqueda
             // 
             txtBusqueda.Anchor = AnchorStyles.Left | AnchorStyles.Right;
-            txtBusqueda.Location = new Point(4, 28);
-            txtBusqueda.Margin = new Padding(4, 5, 4, 5);
+            txtBusqueda.Location = new Point(3, 16);
             txtBusqueda.Name = "txtBusqueda";
             txtBusqueda.PlaceholderText = "Buscar cliente...";
-            txtBusqueda.Size = new Size(823, 31);
+            txtBusqueda.Size = new Size(582, 23);
             txtBusqueda.TabIndex = 1;
             txtBusqueda.KeyDown += txtBusqueda_KeyDown;
             // 
@@ -88,13 +85,12 @@
             dgvClientes.ColumnHeadersBorderStyle = DataGridViewHeaderBorderStyle.Single;
             dgvClientes.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             dgvClientes.Columns.AddRange(new DataGridViewColumn[] { colidNota, colNombre, colCalle, colRFC });
-            dgvClientes.Location = new Point(4, 76);
-            dgvClientes.Margin = new Padding(4, 5, 4, 5);
+            dgvClientes.Location = new Point(3, 45);
             dgvClientes.Name = "dgvClientes";
             dgvClientes.RowHeadersVisible = false;
             dgvClientes.RowHeadersWidth = 62;
             dgvClientes.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
-            dgvClientes.Size = new Size(873, 443);
+            dgvClientes.Size = new Size(616, 266);
             dgvClientes.TabIndex = 0;
             dgvClientes.CellDoubleClick += dgvNotas_CellDoubleClick;
             // 
@@ -139,14 +135,14 @@
             // 
             // BusquedaClientes
             // 
-            AutoScaleDimensions = new SizeF(10F, 25F);
+            AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(894, 658);
+            ClientSize = new Size(630, 395);
             Controls.Add(panel1);
-            Margin = new Padding(6, 8, 6, 8);
+            Margin = new Padding(4, 5, 4, 5);
             Name = "BusquedaClientes";
-            Padding = new Padding(6, 8, 6, 8);
-            Text = "Busqueda Notas";
+            Padding = new Padding(4, 5, 4, 5);
+            Text = "Busqueda clientes";
             Controls.SetChildIndex(panel1, 0);
             panel1.ResumeLayout(false);
             panel1.PerformLayout();

@@ -26,85 +26,85 @@ namespace ReporteadorUCAH.DB_Services
                 {
                     command.CommandText = @"
                         SELECT 
-                            -- Datos principales de NotaCargo
-                            lnc.id,
-                            lnc.FECHA,
-                            lnc.FacturaFolio,
-                            lnc.TONS,
-                            lnc.PRECIO,
-                            lnc.IMPORTE,
-                            lnc.FacturaUUID,
-                    
-                            -- Datos del Cliente
-                            c.id as ClienteId,
-                            c.Nombre as ClienteNombre,
-                            c.idTipoPersona,
-                            c.apellidoPaterno,
-                            c.apellidoMaterno,
-                            c.nombres,
-                            c.rfc as ClienteRfc,
-                            c.curp,
-                            c.paisNumero,
-                            c.codigoPostal,
-                            c.calle,
-                            c.noInterior,
-                            c.noExterior,
-                            c.idColonia,
-                            c.idCiudad,
-                            c.idMunicipio,
-                            c.idEstado,
-                            c.telefonos as Telefono,
-                            c.correo,
-                            c.condicionPago,
-                            c.metodoPago,
-                            c.limiteCredito,
-                            c.moneda,
-                            c.creditoSuspendido,
-                            c.idGrupoFamiliar,
-                    
-                            -- Tipo Persona
-                            tp.Nombre as TipoPersonaNombre,
-                            tp.NombreCorto as TipoPersonaNombreCorto,
-                    
-                            -- Dirección del Cliente
-                            col.Nombre as ColoniaNombre,
-                            ciu.Nombre as CiudadNombre,
-                            mun.Nombre as MunicipioNombre,
-                            est.Nombre as EstadoNombre,
-                            est.estadoNumero,
-                    
-                            -- Cultivo
-                            cult.id as CultivoId,
-                            cult.Nombre as CultivoNombre,
-                            cult.Cultivo as CultivoTipo,
-                            cult.CONS,
-                    
-                            -- Cosecha
-                            cos.id as CosechaId,
-                            cos.fechaInicial,
-                            cos.fechaFinal,
-                    
-                            -- Grupo Familiar
-                            gf.id as GrupoFamiliarId,
-                            gf.nombre as GrupoFamiliarNombre
+                        -- Datos principales de NotaCargo
+                        lnc.id,
+                        lnc.FECHA,
+                        lnc.FacturaFolio,
+                        lnc.TONS,
+                        lnc.PRECIO,
+                        lnc.IMPORTE,
+                        lnc.FacturaUUID,
+    
+                        -- Datos del Cliente
+                        c.id as ClienteId,
+                        c.Nombre as ClienteNombre,
+                        c.idTipoPersona,
+                        c.apellidoPaterno,
+                        c.apellidoMaterno,
+                        c.nombres,
+                        c.rfc as ClienteRfc,
+                        c.curp,
+                        c.paisNumero,
+                        c.codigoPostal,
+                        c.calle,
+                        c.noInterior,
+                        c.noExterior,
+                        c.idColonia,
+                        c.idCiudad,
+                        c.idMunicipio,
+                        c.idEstado,
+                        c.telefonos as Telefono,
+                        c.correo,
+                        c.condicionPago,
+                        c.metodoPago,
+                        c.limiteCredito,
+                        c.moneda,
+                        c.creditoSuspendido,
+                        c.idGrupoFamiliar,
+    
+                        -- Tipo Persona
+                        tp.Nombre as TipoPersonaNombre,
+                        tp.NombreCorto as TipoPersonaNombreCorto,
+    
+                        -- Dirección del Cliente
+                        col.Nombre as ColoniaNombre,
+                        ciu.Nombre as CiudadNombre,
+                        mun.Nombre as MunicipioNombre,
+                        est.Nombre as EstadoNombre,
+                        est.estadoNumero,
+    
+                        -- Cultivo
+                        cult.id as CultivoId,
+                        cult.Nombre as CultivoNombre,
+                        cult.Cultivo as CultivoTipo,
+                        cult.CONS,
+    
+                        -- Cosecha
+                        cos.id as CosechaId,
+                        cos.fechaInicial,
+                        cos.fechaFinal,
+    
+                        -- Grupo Familiar
+                        gf.id as GrupoFamiliarId,
+                        gf.nombre as GrupoFamiliarNombre
 
-                        FROM LiquidacionNotasCargo lnc
+                    FROM LiquidacionNotasCargo lnc
 
-                        -- Joins para Cliente y su información completa
-                        INNER JOIN Clientes c ON c.id = lnc.idCliente
-                        LEFT JOIN TipoPersona tp ON tp.id = c.idTipoPersona
-                        LEFT JOIN Colonia col ON col.id = c.idColonia
-                        LEFT JOIN Ciudades ciu ON ciu.id = c.idCiudad
-                        LEFT JOIN Municipios mun ON mun.id = c.idMunicipio
-                        LEFT JOIN Estados est ON est.id = c.idEstado
+                    -- Joins para Cliente y su información completa
+                    INNER JOIN Clientes c ON c.id = lnc.idCliente
+                    LEFT JOIN TipoPersona tp ON tp.id = c.idTipoPersona
+                    LEFT JOIN Colonia col ON col.id = c.idColonia
+                    LEFT JOIN Ciudades ciu ON ciu.id = c.idCiudad
+                    LEFT JOIN Municipios mun ON mun.id = c.idMunicipio
+                    LEFT JOIN Estados est ON est.id = c.idEstado
+                    LEFT JOIN GrupoFamiliar gf ON gf.id = c.idGrupoFamiliar  -- ¡CORREGIDO!
 
-                        -- Joins para otras entidades
-                        LEFT JOIN Cultivos cult ON cult.id = lnc.idCultivo
-                        LEFT JOIN Cosecha cos ON cos.id = lnc.idCosecha
-                        LEFT JOIN GrupoFamiliar gf ON gf.id = c.idGrupoFamiliar
+                    -- Joins para otras entidades
+                    LEFT JOIN Cultivos cult ON cult.id = lnc.idCultivo
+                    LEFT JOIN Cosecha cos ON cos.id = lnc.idCosecha
 
-                        WHERE c.Nombre LIKE '%' || @Busqueda || '%'
-                        LIMIT 100";
+                    WHERE c.Nombre LIKE '%' || @Busqueda || '%'
+                    LIMIT 100";
 
                     command.Parameters.AddWithValue("@Busqueda", busqueda);
 

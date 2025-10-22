@@ -149,16 +149,16 @@ namespace ReporteadorUCAH.DB_Services
                 using (TiposPersona DB_TiposPersona = new TiposPersona(varCon))
                     _tipoPersona = DB_TiposPersona.GetTipoPersonaByID(reader.GetInt32(reader.GetOrdinal("idTipoPersona")));
                 using (Colonias DB_Colonia = new Colonias(varCon))
-                    _colonia = DB_Colonia.GetColoniaByid(reader.GetInt32(reader.GetOrdinal("idColonia")));
+                    _colonia = DB_Colonia.GetColoniaByid(GetInt32OrNull(reader, "idColonia"));
                 using (Ciudades DB_Ciudad = new Ciudades(varCon))
-                    _ciudad = DB_Ciudad.GetCiudadByid(reader.GetInt32(reader.GetOrdinal("idCiudad")));
+                    _ciudad = DB_Ciudad.GetCiudadByid(GetInt32OrNull(reader, "idCiudad"));
                 using (Municipios DB_Municipio = new Municipios(varCon))
-                    _municipio = DB_Municipio.GetMunicipioByid(reader.GetInt32(reader.GetOrdinal("idMunicipio")));
+                    _municipio = DB_Municipio.GetMunicipioByid(GetInt32OrNull(reader, "idMunicipio"));
                 using (Estados DB_Estado = new Estados(varCon))
                     _estado = DB_Estado.GetEstadoByid(reader.GetInt32(reader.GetOrdinal("idEstado")));
 
                 using (GruposFamiliares DB_GrupoFamiliar = new GruposFamiliares(varCon))
-                    _grupoFamiliar = DB_GrupoFamiliar.GetGrupoFamiliarById(reader.GetInt32(reader.GetOrdinal("idGrupoFamiliar")));
+                    _grupoFamiliar = DB_GrupoFamiliar.GetGrupoFamiliarById(GetInt32OrNull(reader, "idGrupoFamiliar"));
 
             }
             return new Cliente
