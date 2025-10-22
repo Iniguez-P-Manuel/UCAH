@@ -116,6 +116,9 @@ namespace ReporteadorUCAH.Formas
 
             txtCliente.Text = NotaActual._Cliente?.Nombre ?? string.Empty;
             txtCultivo.Text = NotaActual._Cultivo?.Nombre ?? string.Empty;
+            txtIdCosecha.Text = NotaActual._Cosecha?.Id.ToString() ?? "0";
+            dpFechaInicial.Value = (NotaActual._Cosecha?.FechaInicial > dpFechaInicial.MinDate ? NotaActual._Cosecha.FechaInicial : DateTime.Today);
+            dpFechaFinal.Value = (NotaActual._Cosecha?.FechaFinal > dpFechaFinal.MinDate ? NotaActual._Cosecha.FechaFinal : DateTime.Today);
             txtDeducciones.Text = Math.Round(totalDeducciones, 2).ToString("F2", CultureInfo.CurrentCulture);
             txtID.Text = NotaActual.Id.ToString();
             txtImporte.Text = NotaActual.Importe.ToString("F2", CultureInfo.CurrentCulture);
@@ -138,6 +141,18 @@ namespace ReporteadorUCAH.Formas
             RecalcularImporte();
 
             dpFecha.Value = NotaActual.Fecha;
+
+            // Mostrar rango de cosecha
+            if (NotaActual._Cosecha != null)
+            {
+                dpFechaInicial.Value = NotaActual._Cosecha.FechaInicial != DateTime.MinValue ? NotaActual._Cosecha.FechaInicial : DateTime.Today;
+                dpFechaFinal.Value = NotaActual._Cosecha.FechaFinal != DateTime.MinValue ? NotaActual._Cosecha.FechaFinal : DateTime.Today;
+            }
+            else
+            {
+                dpFechaInicial.Value = DateTime.Today;
+                dpFechaFinal.Value = DateTime.Today;
+            }
         }
         public override void Nuevo()
         {
@@ -145,13 +160,17 @@ namespace ReporteadorUCAH.Formas
             NotaActual = new Modelos.NotaCargo();
 
             // Limpiar TextBoxes
+            NotaActual = new NotaCargo();
+            txtID.Text = string.Empty;
             txtCliente.Text = string.Empty;
             txtCultivo.Text = string.Empty;
+            txtToneladas.Text = "0.00";
+            txtPrecio.Text = "0.00";
             txtDeducciones.Text = "0.00";
-            txtID.Text = string.Empty;
             txtImporte.Text = "0.00";
-            txtPrecio.Text = string.Empty;
-            txtToneladas.Text = string.Empty;
+            dpFecha.Value = DateTime.Today;
+            dpFechaInicial.Value = DateTime.Today;
+            dpFechaFinal.Value = DateTime.Today;
 
             // Resetear previos
             _prevPrecioText = "";
@@ -181,7 +200,90 @@ namespace ReporteadorUCAH.Formas
 
         public override void Guardar()
         {
-            base.Guardar();
+            
+            // Validar datos obligatorios
+            if (NotaActual._Cliente == null)
+            {
+                MessageBox.Show("Debes seleccionar un cliente.", "Validación", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+            if (NotaActual._Cultivo == null)
+            {
+                MessageBox.Show("Debes seleccionar un cultivo.", "Validación", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+
+            // Asignar datos del formulario
+            NotaActual.Fecha = dpFecha.Value;
+            NotaActual.Tons = double.TryParse(txtToneladas.Text, out double tons) ? tons : 0;
+            NotaActual.Precio = double.TryParse(txtPrecio.Text, out double precio) ? precio : 0;
+            NotaActual.Importe = double.TryParse(txtImporte.Text, out double importe) ? importe : 0;
+
+            if (NotaActual._Cosecha == null)
+                NotaActual._Cosecha = new Cosecha();
+
+            NotaActual._Cosecha.FechaInicial = dpFechaInicial.Value;
+            NotaActual._Cosecha.FechaFinal = dpFechaFinal.Value;
+
+            // === Guardar la cosecha primero, con su propia conexión ===
+            using (var con = new DatabaseConnection())
+            {
+                using (var dbCosechas = new DB_Services.Cosechas(con))
+                {
+                    if (NotaActual._Cosecha == null)
+                        NotaActual._Cosecha = new Cosecha();
+
+                    NotaActual._Cosecha.FechaInicial = dpFechaInicial.Value;
+                    NotaActual._Cosecha.FechaFinal = dpFechaFinal.Value;
+
+                    if (NotaActual._Cosecha.Id == 0)
+                    {
+                        NotaActual._Cosecha.Id = dbCosechas.AgregarCosecha(NotaActual._Cosecha);
+                        txtIdCosecha.Text = NotaActual._Cosecha.Id.ToString();
+                    }
+                    else
+                    {
+                        var existe = dbCosechas.GetCosechaById(NotaActual._Cosecha.Id);
+                        if (existe == null)
+                        {
+                            NotaActual._Cosecha.Id = dbCosechas.AgregarCosecha(NotaActual._Cosecha);
+                            txtIdCosecha.Text = NotaActual._Cosecha.Id.ToString();
+                        }
+                        else
+                        {
+                            dbCosechas.ActualizarCosecha(NotaActual._Cosecha);
+                        }
+                    }
+                }
+            }
+
+            // === Guardar / actualizar la nota, ya con un idCosecha válido ===
+            using (var con = new DatabaseConnection())
+            {
+                using (var dbNotas = new DB_Services.NotasCargo(con))
+                {
+                    if (NotaActual.Id == 0)
+                    {
+                        int nuevoId = dbNotas.AgregarNotaCargo(NotaActual);
+                        NotaActual.Id = nuevoId;
+                        txtID.Text = nuevoId.ToString();
+                        MessageBox.Show("Nota de cargo guardada correctamente.");
+                    }
+                    else
+                    {
+                        dbNotas.ActualizarNotaCargo(NotaActual);
+                        MessageBox.Show("Nota de cargo actualizada correctamente.");
+                    }
+                }
+            }
+
+            MessageBox.Show(
+                $"Datos guardados:\n\n" +
+                $"NotaCargo ID: {NotaActual.Id}\n" +
+                $"Cosecha ID: {NotaActual._Cosecha.Id}\n" +
+                $"Fechas: {NotaActual._Cosecha.FechaInicial:dd/MM/yyyy} - {NotaActual._Cosecha.FechaFinal:dd/MM/yyyy}",
+                "Verificación Guardado", MessageBoxButtons.OK, MessageBoxIcon.Information
+            );
         }
 
         // -----------------------------
@@ -489,6 +591,9 @@ namespace ReporteadorUCAH.Formas
             return string.Join(", ", partes);
         }
 
-        
+        private void panel1_Paint(object sender, PaintEventArgs e)
+        {
+
+        }
     }
 }

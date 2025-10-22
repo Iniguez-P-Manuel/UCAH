@@ -79,7 +79,7 @@ namespace ReporteadorUCAH.Formas
             {
                 // Disparar el evento
                 ObjetoSeleccionado?.Invoke(this, new ObjetoSeleccionadoEventArgs(objetoSeleccionado));
-
+                 
                 // Cerrar la ventana si es necesario
                 this.Close();
             }

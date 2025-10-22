@@ -30,9 +30,10 @@ namespace ReporteadorUCAH.Formas
         {
             CultivoActual = e.ObjetoSeleccionado;
 
-            txtboxNombreCultivo.Text = CultivoActual.Nombre;
-            txtboxCultivo.Text = CultivoActual.CultivoTipo;
-            txtboxCONS.Text = CultivoActual.CONS;
+            txtID.Text = CultivoActual.Id.ToString();
+            txtNombreCultivo.Text = CultivoActual.Nombre;
+            txtCultivoTipo.Text = CultivoActual.CultivoTipo;
+            txtCONS.Text = CultivoActual.CONS;
         }
 
         public override void Nuevo()
@@ -41,25 +42,24 @@ namespace ReporteadorUCAH.Formas
             CultivoActual = new Modelos.Cultivo();
 
             // Limpiar TextBoxes
-            txtboxNombreCultivo.Text = string.Empty;
-            txtboxCultivo.Text = string.Empty;
-            txtboxCONS.Text = string.Empty;
+            txtNombreCultivo.Text = string.Empty;
+            txtCultivoTipo.Text = string.Empty;
+            txtCONS.Text = string.Empty;
         }
 
         public override void Guardar()
         {
             // Validación de campos obligatorios
-            if (string.IsNullOrWhiteSpace(txtboxNombreCultivo.Text) ||
-                string.IsNullOrWhiteSpace(txtboxCultivo.Text) ||
-                string.IsNullOrWhiteSpace(txtboxCONS.Text))
+            if (string.IsNullOrWhiteSpace(txtNombreCultivo.Text) ||
+                string.IsNullOrWhiteSpace(txtCultivoTipo.Text))
             {
                 MessageBox.Show("Por favor, llena todos los campos antes de guardar.", "Campos requeridos", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
             }
 
-            CultivoActual.Nombre = txtboxNombreCultivo.Text;
-            CultivoActual.CultivoTipo = txtboxCultivo.Text;
-            CultivoActual.CONS = txtboxCONS.Text;
+            CultivoActual.Nombre = txtNombreCultivo.Text;
+            CultivoActual.CultivoTipo = txtCultivoTipo.Text;
+            CultivoActual.CONS = txtCONS.Text;
             
             using (DatabaseConnection varCon = new DatabaseConnection())
             {
@@ -79,7 +79,7 @@ namespace ReporteadorUCAH.Formas
                     }
                 }
             }
-            LimpiarFormulario();
+            
         }
 
         public override void Eliminar()
@@ -108,9 +108,9 @@ namespace ReporteadorUCAH.Formas
         private void LimpiarFormulario()
         {
             CultivoActual = new Cultivo();
-            txtboxNombreCultivo.Text = "";
-            txtboxCultivo.Text = "";
-            txtboxCONS.Text = "";
+            txtNombreCultivo.Text = "";
+            txtCultivoTipo.Text = "";
+            txtCONS.Text = "";
         }
     }
 }

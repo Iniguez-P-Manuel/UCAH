@@ -194,7 +194,7 @@ namespace ReporteadorUCAH.DB_Services
                 }
             }
         }
-        
+
         public List<NotaCargo> BuscarNotas_old(string Busqueda)
         {
             var Notas = new List<NotaCargo>();
