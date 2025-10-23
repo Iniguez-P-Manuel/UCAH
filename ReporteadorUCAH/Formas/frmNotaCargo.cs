@@ -20,6 +20,7 @@ namespace ReporteadorUCAH.Formas
 {
     public partial class frmNotaCargo : FormModel
     {
+        private System.Windows.Forms.TextBox txtFacturaUUID;
         public frmNotaCargo()
         {
             InitializeComponent();
@@ -38,6 +39,7 @@ namespace ReporteadorUCAH.Formas
             _prevToneladasText = (txtToneladas?.Text) ?? "";
             _prevPrecioText = (txtPrecio?.Text) ?? "";
 
+
             if (txtToneladas != null)
             {
                 txtToneladas.KeyPress -= NumericTextBox_KeyPress;
@@ -52,6 +54,18 @@ namespace ReporteadorUCAH.Formas
                 txtPrecio.KeyPress += NumericTextBox_KeyPress;
                 txtPrecio.TextChanged -= TxtPrecio_TextChanged;
                 txtPrecio.TextChanged += TxtPrecio_TextChanged;
+            }
+
+            // Configurar MaskedTextBox para UUID
+            if (txtFacturaUUID != null)
+            {
+                // Convertir a mayúsculas automáticamente y validar caracteres
+                txtFacturaUUID.KeyPress -= txtFacturaUUID_KeyPress;
+                txtFacturaUUID.KeyPress += txtFacturaUUID_KeyPress;
+
+                // Forzar mayúsculas en cada cambio de texto
+                txtFacturaUUID.TextChanged -= txtFacturaUUID_TextChanged;
+                txtFacturaUUID.TextChanged += txtFacturaUUID_TextChanged;
             }
         }
 
@@ -109,41 +123,104 @@ namespace ReporteadorUCAH.Formas
 
         private void BusquedaSeleccionada(object sender, BusquedaNotas.ObjetoSeleccionadoEventArgs e)
         {
-            // Suspendemos los handlers antes de asignar a los TextBoxes programáticamente
             _suspendTextChanged = true;
 
             NotaActual = e.ObjetoSeleccionado;
+
+            // SOLUCIÓN: Buscar el UUID en ambas tablas
+            if (NotaActual != null && NotaActual.Id > 0)
+            {
+                try
+                {
+                    using (var con = new DatabaseConnection())
+                    {
+                        using (var command = con.GetConnection().CreateCommand())
+                        {
+                            // PRIMERO: Intentar obtener directamente de LiquidacionNotasCargo
+                            command.CommandText = "SELECT FacturaUUID FROM LiquidacionNotasCargo WHERE id = @Id";
+                            command.Parameters.AddWithValue("@Id", NotaActual.Id);
+
+                            var result = command.ExecuteScalar();
+
+                            if (result != null && result != DBNull.Value && !string.IsNullOrEmpty(result.ToString()))
+                            {
+                                NotaActual.FacturaUUID = result.ToString();
+                                MessageBox.Show($"✅ UUID encontrado en LiquidacionNotasCargo:\n{NotaActual.FacturaUUID}",
+                                              "DEBUG", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                            }
+                            else
+                            {
+                                // SEGUNDO: Si no está en LiquidacionNotasCargo, buscar en Facturas
+                                command.CommandText = @"
+                            SELECT f.UUID 
+                            FROM Facturas f
+                            INNER JOIN LiquidacionNotasCargo lnc ON lnc.id = @Id
+                            WHERE f.id = lnc.FacturaUUID";  // Asumiendo que FacturaUUID es ID numérico
+
+                                command.Parameters.Clear();
+                                command.Parameters.AddWithValue("@Id", NotaActual.Id);
+
+                                result = command.ExecuteScalar();
+                                if (result != null && result != DBNull.Value && !string.IsNullOrEmpty(result.ToString()))
+                                {
+                                    NotaActual.FacturaUUID = result.ToString();
+                                    MessageBox.Show($"✅ UUID encontrado en Facturas:\n{NotaActual.FacturaUUID}",
+                                                  "DEBUG", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                                }
+                                else
+                                {
+                                    MessageBox.Show("❌ No se encontró UUID en ninguna tabla\n" +
+                                                  "El campo FacturaUUID probablemente está vacío",
+                                                  "DEBUG", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                                    NotaActual.FacturaUUID = null;
+                                }
+                            }
+                        }
+                    }
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show($"❌ Error al cargar UUID:\n{ex.Message}",
+                                  "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    NotaActual.FacturaUUID = null;
+                }
+            }
+
             double totalDeducciones = NotaActual.Deducciones?.Sum(d => d.Importe) ?? 0;
 
             txtCliente.Text = NotaActual._Cliente?.Nombre ?? string.Empty;
             txtCultivo.Text = NotaActual._Cultivo?.Nombre ?? string.Empty;
-            txtIdCosecha.Text = NotaActual._Cosecha?.Id.ToString() ?? "0";
             dpFechaInicial.Value = (NotaActual._Cosecha?.FechaInicial > dpFechaInicial.MinDate ? NotaActual._Cosecha.FechaInicial : DateTime.Today);
             dpFechaFinal.Value = (NotaActual._Cosecha?.FechaFinal > dpFechaFinal.MinDate ? NotaActual._Cosecha.FechaFinal : DateTime.Today);
             txtDeducciones.Text = Math.Round(totalDeducciones, 2).ToString("F2", CultureInfo.CurrentCulture);
             txtID.Text = NotaActual.Id.ToString();
             txtImporte.Text = NotaActual.Importe.ToString("F2", CultureInfo.CurrentCulture);
-
-            // Asegurarnos de usar la culture actual al convertir a texto (evita que TextChanged haga parse invalido)
             txtPrecio.Text = NotaActual.Precio.ToString(CultureInfo.CurrentCulture);
             txtToneladas.Text = NotaActual.Tons.ToString(CultureInfo.CurrentCulture);
 
-            // Actualizar previos para que los handlers no restauren un valor antiguo
+            // CARGAR EL UUID EN EL TEXTBOX
+            if (txtFacturaUUID != null)
+            {
+                if (!string.IsNullOrEmpty(NotaActual.FacturaUUID))
+                {
+                    txtFacturaUUID.Text = NotaActual.FacturaUUID;
+                }
+                else
+                {
+                    txtFacturaUUID.Clear();
+                }
+            }
+
             _prevPrecioText = txtPrecio.Text;
             _prevToneladasText = txtToneladas.Text;
 
             if (dpFecha != null && NotaActual.Fecha != DateTime.MinValue)
                 dpFecha.Value = NotaActual.Fecha;
 
-            // Rehabilitar handlers y recalcular importe
             _suspendTextChanged = false;
 
-            // Recalcular importe explícitamente (por si hay diferencias de formato)
             RecalcularImporte();
 
-            dpFecha.Value = NotaActual.Fecha;
-
-            // Mostrar rango de cosecha
             if (NotaActual._Cosecha != null)
             {
                 dpFechaInicial.Value = NotaActual._Cosecha.FechaInicial != DateTime.MinValue ? NotaActual._Cosecha.FechaInicial : DateTime.Today;
@@ -157,10 +234,8 @@ namespace ReporteadorUCAH.Formas
         }
         public override void Nuevo()
         {
-            // Limpiar objeto nota
             NotaActual = new Modelos.NotaCargo();
 
-            // Limpiar UI
             txtID.Text = string.Empty;
             txtCliente.Text = string.Empty;
             txtCultivo.Text = string.Empty;
@@ -168,14 +243,22 @@ namespace ReporteadorUCAH.Formas
             txtPrecio.Text = "0.00";
             txtDeducciones.Text = "0.00";
             txtImporte.Text = "0.00";
+
+            // Solo asignar si el control existe
+            if (txtFacturaUUID != null)
+            {
+                _suspendUUIDTextChanged = true;
+                txtFacturaUUID.Text = "________-____-____-____-____________";
+                _suspendUUIDTextChanged = false;
+            }
+
             dpFecha.Value = DateTime.Today;
             dpFechaInicial.Value = DateTime.Today;
             dpFechaFinal.Value = DateTime.Today;
-            txtIdCosecha.Text = "0";
 
-            // Resetear previos
             _prevPrecioText = "0.00";
             _prevToneladasText = "0.00";
+            _prevUUIDText = "________-____-____-____-____________";
         }
 
         public override void Reporte()
@@ -201,7 +284,6 @@ namespace ReporteadorUCAH.Formas
 
         public override void Guardar()
         {
-            // Validar datos obligatorios
             if (NotaActual._Cliente == null)
             {
                 MessageBox.Show("Debes seleccionar un cliente.", "Validación", MessageBoxButtons.OK, MessageBoxIcon.Warning);
@@ -213,12 +295,19 @@ namespace ReporteadorUCAH.Formas
                 return;
             }
 
-            // Asignar datos del formulario
+            // Validar UUID si se ingresó parcialmente
+            if (!IsUUIDComplete() && !string.IsNullOrEmpty(GetUUIDWithoutFormatting()))
+            {
+                MessageBox.Show("El UUID está incompleto. Complete todos los caracteres o déjelo vacío.", "Validación", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                txtFacturaUUID.Focus();
+                return;
+            }
+
             NotaActual.Fecha = dpFecha.Value;
             NotaActual.Tons = double.TryParse(txtToneladas.Text, out double tons) ? tons : 0;
             NotaActual.Precio = double.TryParse(txtPrecio.Text, out double precio) ? precio : 0;
+            NotaActual.FacturaUUID = GetActualUUID();
 
-            // Recalcular importe antes de guardar
             RecalcularImporte();
             NotaActual.Importe = double.TryParse(txtImporte.Text, out double importe) ? importe : 0;
 
@@ -228,7 +317,6 @@ namespace ReporteadorUCAH.Formas
             {
                 int idCosechaParaGuardar = 0;
 
-                // === 1. GUARDAR COSECHA ===
                 using (var con = new DatabaseConnection())
                 {
                     using (var dbCosechas = new DB_Services.Cosechas(con))
@@ -240,8 +328,6 @@ namespace ReporteadorUCAH.Formas
 
                         NotaActual._Cosecha.FechaInicial = dpFechaInicial.Value;
                         NotaActual._Cosecha.FechaFinal = dpFechaFinal.Value;
-
-                        Console.WriteLine($"DEBUG - Fechas cosecha a guardar: {NotaActual._Cosecha.FechaInicial:dd/MM/yyyy} - {NotaActual._Cosecha.FechaFinal:dd/MM/yyyy}");
 
                         if (NotaActual._Cosecha.Id == 0)
                         {
@@ -262,28 +348,13 @@ namespace ReporteadorUCAH.Formas
                                 idCosechaParaGuardar = NotaActual._Cosecha.Id;
                             }
                         }
-
-                        txtIdCosecha.Text = idCosechaParaGuardar.ToString();
-                        Console.WriteLine($"DEBUG - ID Cosecha obtenido: {idCosechaParaGuardar}");
                     }
                 }
-
-                // === 2. VERIFICAR ANTES DE GUARDAR LA NOTA ===
-                Console.WriteLine($"DEBUG - Antes de guardar nota:");
-                Console.WriteLine($"  - ID Nota: {NotaActual.Id}");
-                Console.WriteLine($"  - ID Cosecha: {idCosechaParaGuardar}");
-                Console.WriteLine($"  - Tons: {NotaActual.Tons}");
-                Console.WriteLine($"  - Precio: {NotaActual.Precio}");
-                Console.WriteLine($"  - Importe: {NotaActual.Importe}");
-
-                // === 3. GUARDAR NOTA - CON MÉTODO ALTERNATIVO SI FALLA ===
-                bool guardadoExitoso = false;
 
                 using (var con = new DatabaseConnection())
                 {
                     using (var dbNotas = new DB_Services.NotasCargo(con))
                     {
-                        // Asegurar que la cosecha esté asignada
                         NotaActual._Cosecha.Id = idCosechaParaGuardar;
 
                         if (esNuevo)
@@ -291,31 +362,33 @@ namespace ReporteadorUCAH.Formas
                             int nuevoId = dbNotas.AgregarNotaCargo(NotaActual);
                             NotaActual.Id = nuevoId;
                             txtID.Text = nuevoId.ToString();
-                            guardadoExitoso = true;
                             MessageBox.Show("Nota de cargo guardada correctamente.", "Éxito", MessageBoxButtons.OK, MessageBoxIcon.Information);
                         }
                         else
                         {
-                            // Intentar actualizar normalmente
                             int filasAfectadas = dbNotas.ActualizarNotaCargo(NotaActual);
 
                             if (filasAfectadas > 0)
                             {
-                                guardadoExitoso = true;
                                 MessageBox.Show("Nota de cargo actualizada correctamente.", "Éxito", MessageBoxButtons.OK, MessageBoxIcon.Information);
                             }
                             else
                             {
-                                // **SI FALLA, USAR MÉTODO ALTERNATIVO**
-                                guardadoExitoso = ActualizarNotaManual(NotaActual, idCosechaParaGuardar);
+                                MessageBox.Show("No se pudo actualizar la nota.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                             }
                         }
-                    }
-                }
 
-                if (guardadoExitoso)
-                {
-                    VerificarGuardadoEnBaseDatos();
+                        // VERIFICACIÓN USANDO EL MÉTODO DE NotasCargo
+                        bool guardadoExitoso = dbNotas.VerificarGuardadoEnBaseDatos(NotaActual.Id);
+                        if (guardadoExitoso)
+                        {
+                            Console.WriteLine("✓ Verificación: Nota guardada correctamente en base de datos");
+                        }
+                        else
+                        {
+                            Console.WriteLine("❌ Verificación: La nota no se encontró en base de datos");
+                        }
+                    }
                 }
             }
             catch (Exception ex)
@@ -324,311 +397,77 @@ namespace ReporteadorUCAH.Formas
             }
         }
 
-        // Método alternativo para actualizar la nota manualmente INCLUYENDO DEDUCCIONES
-        private bool ActualizarNotaManual(NotaCargo nota, int idCosecha)
-        {
-            try
-            {
-                using (var con = new DatabaseConnection())
-                {
-                    using (var transaction = con.GetConnection().BeginTransaction())
-                    {
-                        try
-                        {
-                            // 1. ACTUALIZAR NOTA PRINCIPAL
-                            using (var command = con.GetConnection().CreateCommand())
-                            {
-                                command.CommandText = @"
-                                    UPDATE LiquidacionNotasCargo 
-                                    SET FECHA = @Fecha,
-                                        idCliente = @idCliente,
-                                        idCultivo = @idCultivo,
-                                        idCosecha = @idCosecha,
-                                        TONS = @Tons,
-                                        PRECIO = @Precio,
-                                        IMPORTE = @Importe
-                                    WHERE id = @Id";
-
-                                command.Parameters.AddWithValue("@Fecha", nota.Fecha);
-                                command.Parameters.AddWithValue("@idCliente", nota._Cliente?.Id ?? 0);
-                                command.Parameters.AddWithValue("@idCultivo", nota._Cultivo?.Id ?? 0);
-                                command.Parameters.AddWithValue("@idCosecha", idCosecha);
-                                command.Parameters.AddWithValue("@Tons", nota.Tons);
-                                command.Parameters.AddWithValue("@Precio", nota.Precio);
-                                command.Parameters.AddWithValue("@Importe", nota.Importe);
-                                command.Parameters.AddWithValue("@Id", nota.Id);
-
-                                int filasAfectadas = command.ExecuteNonQuery();
-
-                                if (filasAfectadas == 0)
-                                {
-                                    transaction.Rollback();
-                                    MessageBox.Show("No se pudo actualizar la nota principal.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                                    return false;
-                                }
-                            }
-
-                            // 2. ELIMINAR DEDUCCIONES EXISTENTES
-                            using (var command = con.GetConnection().CreateCommand())
-                            {
-                                command.CommandText = "DELETE FROM DeduccionesNota WHERE idNotaLiquidacion = @IdNota";
-                                command.Parameters.AddWithValue("@IdNota", nota.Id);
-                                command.ExecuteNonQuery();
-                            }
-
-                            // 3. INSERTAR NUEVAS DEDUCCIONES
-                            if (nota.Deducciones != null && nota.Deducciones.Any())
-                            {
-                                foreach (var deduccion in nota.Deducciones)
-                                {
-                                    using (var command = con.GetConnection().CreateCommand())
-                                    {
-                                        command.CommandText = @"
-                                            INSERT INTO DeduccionesNota 
-                                            (idNotaLiquidacion, idDeduccion, Importe) 
-                                            VALUES (@idNotaLiquidacion, @idDeduccion, @Importe)";
-
-                                        command.Parameters.AddWithValue("@idNotaLiquidacion", nota.Id);
-                                        command.Parameters.AddWithValue("@idDeduccion", deduccion._Deduccion?.Id ?? 0);
-                                        command.Parameters.AddWithValue("@Importe", deduccion.Importe);
-
-                                        command.ExecuteNonQuery();
-                                    }
-                                }
-                            }
-
-                            transaction.Commit();
-
-                            // 4. ACTUALIZAR EL OBJETO EN MEMORIA
-                            ActualizarDeduccionesEnObjeto(nota);
-
-                            MessageBox.Show("Nota y deducciones actualizadas correctamente.", "Éxito", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                            return true;
-                        }
-                        catch (Exception ex)
-                        {
-                            transaction.Rollback();
-                            throw new Exception($"Error en transacción: {ex.Message}", ex);
-                        }
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show($"Error en actualización manual: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                return false;
-            }
-        }
-
-        // Método para verificar inmediatamente si los datos se guardaron
-        private void VerificarGuardadoEnBaseDatos()
-        {
-            try
-            {
-                using (var con = new DatabaseConnection())
-                {
-                    using (var command = con.GetConnection().CreateCommand())
-                    {
-                        command.CommandText = @"
-                            SELECT 
-                                lnc.TONS, 
-                                lnc.PRECIO, 
-                                lnc.IMPORTE,
-                                lnc.idCosecha,
-                                cos.fechaInicial,
-                                cos.fechaFinal,
-                                (SELECT SUM(Importe) FROM DeduccionesNota WHERE idNotaLiquidacion = @IdNota) as TotalDeducciones
-                            FROM LiquidacionNotasCargo lnc
-                            LEFT JOIN Cosecha cos ON cos.id = lnc.idCosecha
-                            WHERE lnc.id = @IdNota";
-
-                        command.Parameters.AddWithValue("@IdNota", NotaActual.Id);
-
-                        using (var reader = command.ExecuteReader())
-                        {
-                            if (reader.Read())
-                            {
-                                double tonsBD = reader.GetDouble(0);
-                                double precioBD = reader.GetDouble(1);
-                                double importeBD = reader.GetDouble(2);
-                                int idCosechaBD = reader.IsDBNull(3) ? 0 : reader.GetInt32(3);
-                                DateTime? fechaInicialBD = reader.IsDBNull(4) ? (DateTime?)null : reader.GetDateTime(4);
-                                DateTime? fechaFinalBD = reader.IsDBNull(5) ? (DateTime?)null : reader.GetDateTime(5);
-                                double deduccionesBD = reader.IsDBNull(6) ? 0 : reader.GetDouble(6);
-
-                                string mensaje = "VERIFICACIÓN COMPLETA:\n\n";
-
-                                // Verificar toneladas
-                                if (Math.Abs(tonsBD - NotaActual.Tons) < 0.01)
-                                    mensaje += "✓ Toneladas correctas\n";
-                                else
-                                    mensaje += $"❌ Toneladas: BD={tonsBD}, Esperado={NotaActual.Tons}\n";
-
-                                // Verificar precio
-                                if (Math.Abs(precioBD - NotaActual.Precio) < 0.01)
-                                    mensaje += "✓ Precio correcto\n";
-                                else
-                                    mensaje += $"❌ Precio: BD={precioBD}, Esperado={NotaActual.Precio}\n";
-
-                                // Verificar importe
-                                if (Math.Abs(importeBD - NotaActual.Importe) < 0.01)
-                                    mensaje += "✓ Importe correcto\n";
-                                else
-                                    mensaje += $"❌ Importe: BD={importeBD}, Esperado={NotaActual.Importe}\n";
-
-                                // Verificar cosecha
-                                if (idCosechaBD > 0)
-                                    mensaje += $"✓ idCosecha: {idCosechaBD}\n";
-                                else
-                                    mensaje += "❌ idCosecha: NULL\n";
-
-                                // Verificar fechas
-                                if (fechaInicialBD.HasValue && fechaFinalBD.HasValue)
-                                    mensaje += $"✓ Fechas: {fechaInicialBD:dd/MM/yyyy} - {fechaFinalBD:dd/MM/yyyy}\n";
-                                else
-                                    mensaje += "❌ Fechas cosecha: NULL\n";
-
-                                // Verificar deducciones
-                                double deduccionesEsperadas = NotaActual.Deducciones?.Sum(d => d.Importe) ?? 0;
-                                if (Math.Abs(deduccionesBD - deduccionesEsperadas) < 0.01)
-                                    mensaje += "✓ Deducciones correctas\n";
-                                else
-                                    mensaje += $"❌ Deducciones: BD={deduccionesBD:C}, Esperado={deduccionesEsperadas:C}\n";
-
-                                MessageBox.Show(mensaje, "Verificación Completa", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                            }
-                        }
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show($"Error en verificación: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-            }
-        }
-
-        // Métodos helpers para manejar valores NULL de la base de datos
-        private string GetStringOrNull(SqliteDataReader reader, string columnName)
-        {
-            try
-            {
-                int ordinal = reader.GetOrdinal(columnName);
-                return reader.IsDBNull(ordinal) ? null : reader.GetString(ordinal);
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine($"Error al leer columna {columnName}: {ex.Message}");
-                return null;
-            }
-        }
-
-        private int? GetInt32OrNull(SqliteDataReader reader, string columnName)
-        {
-            try
-            {
-                int ordinal = reader.GetOrdinal(columnName);
-                return reader.IsDBNull(ordinal) ? (int?)null : reader.GetInt32(ordinal);
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine($"Error al leer columna {columnName}: {ex.Message}");
-                return null;
-            }
-        }
-
-        private double? GetDoubleOrNull(SqliteDataReader reader, string columnName)
-        {
-            try
-            {
-                int ordinal = reader.GetOrdinal(columnName);
-                return reader.IsDBNull(ordinal) ? (double?)null : reader.GetDouble(ordinal);
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine($"Error al leer columna {columnName}: {ex.Message}");
-                return null;
-            }
-        }
-
-        // Método más robusto para actualizar las deducciones
-        private void ActualizarDeduccionesEnObjeto(NotaCargo nota)
-        {
-            try
-            {
-                // Recargar las deducciones desde la base de datos
-                using (var con = new DatabaseConnection())
-                {
-                    var deduccionesActualizadas = new List<DeduccionNota>();
-
-                    using (var command = con.GetConnection().CreateCommand())
-                    {
-                        command.CommandText = @"
-                            SELECT dn.id, dn.idNotaLiquidacion, dn.Importe,
-                                   td.id as TipoDeduccionId, td.Nombre as TipoDeduccionNombre,
-                                   gd.id as GrupoDeduccionId, gd.Nombre as GrupoDeduccionNombre
-                            FROM DeduccionesNota dn
-                            INNER JOIN TipoDeducciones td ON td.id = dn.idDeduccion
-                            LEFT JOIN GrupoDeducciones gd ON gd.id = td.idGrupo
-                            WHERE dn.idNotaLiquidacion = @IdNota";
-
-                        command.Parameters.AddWithValue("@IdNota", nota.Id);
-
-                        using (var reader = command.ExecuteReader())
-                        {
-                            while (reader.Read())
-                            {
-                                var deduccion = new DeduccionNota
-                                {
-                                    Id = reader.GetInt32(reader.GetOrdinal("id")),
-                                    Importe = reader.GetDouble(reader.GetOrdinal("Importe")),
-                                    _Deduccion = new TipoDeduccion
-                                    {
-                                        Id = reader.GetInt32(reader.GetOrdinal("TipoDeduccionId")),
-                                        Nombre = GetStringOrNull(reader, "TipoDeduccionNombre")
-                                    }
-                                };
-
-                                // Manejar el grupo de deducción de forma segura
-                                var grupoId = GetInt32OrNull(reader, "GrupoDeduccionId");
-                                var grupoNombre = GetStringOrNull(reader, "GrupoDeduccionNombre");
-
-                                if (grupoId.HasValue || !string.IsNullOrEmpty(grupoNombre))
-                                {
-                                    deduccion._Deduccion._Grupo = new GrupoDeducciones
-                                    {
-                                        Id = grupoId ?? 0,
-                                        Nombre = grupoNombre
-                                    };
-                                }
-
-                                deduccionesActualizadas.Add(deduccion);
-                            }
-                        }
-                    }
-
-                    // Actualizar el objeto en memoria
-                    nota.Deducciones = deduccionesActualizadas;
-
-                    // Actualizar la UI
-                    double totalDeducciones = nota.Deducciones.Sum(d => d.Importe);
-                    txtDeducciones.Text = Math.Round(totalDeducciones, 2).ToString("F2", CultureInfo.CurrentCulture);
-
-                    // Recalcular importe final
-                    RecalcularImporte();
-
-                    Console.WriteLine($"DEBUG - Deducciones actualizadas: {totalDeducciones:C}");
-                }
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine($"Error al actualizar deducciones en objeto: {ex.Message}");
-            }
-        }
-
-
         // -----------------------------
         // Helpers y handlers requeridos por el diseñador
         // -----------------------------
+
+        //KeyPress: Bloquea caracteres minuscula y mantiene uso de separador '-'
+        private string _prevUUIDText = "";
+        private bool _suspendUUIDTextChanged = false;
+
+        // MÉTODOS PARA MANEJO DE UUID CON MASKEDTEXTBOX - MEJORADOS
+        private void txtFacturaUUID_KeyPress(object sender, KeyPressEventArgs e)
+        {
+            if (char.IsControl(e.KeyChar))
+                return;
+
+            // Convertir a mayúsculas automáticamente
+            e.KeyChar = char.ToUpper(e.KeyChar);
+
+            // Validar que solo sean caracteres A-F y 0-9
+            if (!((e.KeyChar >= 'A' && e.KeyChar <= 'F') ||
+                  (e.KeyChar >= '0' && e.KeyChar <= '9')))
+            {
+                e.Handled = true;
+            }
+        }
+
+        private void txtFacturaUUID_TextChanged(object sender, EventArgs e)
+        {
+            // Asegurar que todo esté en mayúsculas
+            var maskedBox = sender as MaskedTextBox;
+            if (maskedBox == null) return;
+
+            // Obtener la posición actual del cursor
+            int cursorPosition = maskedBox.SelectionStart;
+
+            // Convertir todo a mayúsculas
+            string currentText = maskedBox.Text;
+            string upperText = currentText.ToUpper();
+
+            // Solo actualizar si hay cambios
+            if (currentText != upperText)
+            {
+                maskedBox.Text = upperText;
+                // Restaurar la posición del cursor
+                maskedBox.SelectionStart = cursorPosition;
+            }
+        }
+
+        private string GetActualUUID()
+        {
+            if (txtFacturaUUID == null) return null;
+
+            string textWithFormat = txtFacturaUUID.Text;
+
+            // Si el texto contiene placeholders (_), no está completo
+            if (string.IsNullOrEmpty(textWithFormat) || textWithFormat.Contains("_"))
+                return null;
+
+            return textWithFormat;
+        }
+
+        private string GetUUIDWithoutFormatting()
+        {
+            if (txtFacturaUUID == null) return "";
+            return txtFacturaUUID.Text.Replace("-", "").Replace("_", "");
+        }
+
+        private bool IsUUIDComplete()
+        {
+            if (txtFacturaUUID == null) return true; // Si no existe, considerar completo
+            return !txtFacturaUUID.Text.Contains("_");
+        }
 
         // KeyPress: bloquea caracteres no numéricos (permite separador decimal)
         private void NumericTextBox_KeyPress(object sender, KeyPressEventArgs e)
@@ -763,7 +602,6 @@ namespace ReporteadorUCAH.Formas
 
             double importe = subtotal - totalDeducciones;
 
-            // Actualizar objeto y UI (asegúrate que txtImporte y txtDeducciones existan)
             if (NotaActual != null)
             {
                 NotaActual.Tons = tons;

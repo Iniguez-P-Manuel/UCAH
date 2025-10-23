@@ -29,6 +29,8 @@
         private void InitializeComponent()
         {
             panel1 = new Panel();
+            maskedtxtFacturaUUID = new MaskedTextBox();
+            lblUUID = new Label();
             label10 = new Label();
             txtIdCosecha = new TextBox();
             label9 = new Label();
@@ -60,6 +62,8 @@
             // panel1
             // 
             panel1.BackColor = Color.White;
+            panel1.Controls.Add(maskedtxtFacturaUUID);
+            panel1.Controls.Add(lblUUID);
             panel1.Controls.Add(label10);
             panel1.Controls.Add(txtIdCosecha);
             panel1.Controls.Add(label9);
@@ -89,25 +93,45 @@
             panel1.Location = new Point(6, 56);
             panel1.Margin = new Padding(4, 5, 4, 5);
             panel1.Name = "panel1";
-            panel1.Size = new Size(651, 417);
+            panel1.Size = new Size(665, 433);
             panel1.TabIndex = 5;
             panel1.Paint += panel1_Paint;
+            // 
+            // maskedtxtFacturaUUID
+            // 
+            maskedtxtFacturaUUID.Font = new Font("Courier New", 9F, FontStyle.Bold, GraphicsUnit.Point, 0);
+            maskedtxtFacturaUUID.Location = new Point(135, 230);
+            maskedtxtFacturaUUID.Margin = new Padding(10, 0, 10, 0);
+            maskedtxtFacturaUUID.Mask = "AAAAAAAA-AAAA-AAAA-AAAA-AAAAAAAAAAAA";
+            maskedtxtFacturaUUID.Name = "maskedtxtFacturaUUID";
+            maskedtxtFacturaUUID.Size = new Size(403, 28);
+            maskedtxtFacturaUUID.TabIndex = 24;
+            // 
+            // lblUUID
+            // 
+            lblUUID.AutoSize = true;
+            lblUUID.Location = new Point(29, 233);
+            lblUUID.Name = "lblUUID";
+            lblUUID.Size = new Size(103, 25);
+            lblUUID.TabIndex = 23;
+            lblUUID.Text = "UUID/CFID:";
             // 
             // label10
             // 
             label10.AutoSize = true;
-            label10.Location = new Point(30, 200);
+            label10.Location = new Point(6, 371);
             label10.Margin = new Padding(4, 0, 4, 0);
             label10.Name = "label10";
             label10.Size = new Size(94, 25);
             label10.TabIndex = 21;
             label10.Text = "# Cosecha";
+            label10.Visible = false;
             // 
             // txtIdCosecha
             // 
             txtIdCosecha.BackColor = SystemColors.Info;
             txtIdCosecha.Cursor = Cursors.No;
-            txtIdCosecha.Location = new Point(132, 197);
+            txtIdCosecha.Location = new Point(108, 368);
             txtIdCosecha.Margin = new Padding(4, 5, 4, 5);
             txtIdCosecha.Name = "txtIdCosecha";
             txtIdCosecha.PlaceholderText = "0";
@@ -115,11 +139,12 @@
             txtIdCosecha.Size = new Size(68, 31);
             txtIdCosecha.TabIndex = 20;
             txtIdCosecha.TextAlign = HorizontalAlignment.Center;
+            txtIdCosecha.Visible = false;
             // 
             // label9
             // 
             label9.AutoSize = true;
-            label9.Location = new Point(207, 227);
+            label9.Location = new Point(295, 185);
             label9.Name = "label9";
             label9.Size = new Size(107, 25);
             label9.TabIndex = 15;
@@ -128,7 +153,7 @@
             // label8
             // 
             label8.AutoSize = true;
-            label8.Location = new Point(207, 187);
+            label8.Location = new Point(29, 185);
             label8.Name = "label8";
             label8.Size = new Size(126, 25);
             label8.TabIndex = 13;
@@ -138,7 +163,7 @@
             // 
             dpFechaFinal.CustomFormat = "yyyy";
             dpFechaFinal.Format = DateTimePickerFormat.Short;
-            dpFechaFinal.Location = new Point(336, 222);
+            dpFechaFinal.Location = new Point(407, 180);
             dpFechaFinal.Name = "dpFechaFinal";
             dpFechaFinal.ShowUpDown = true;
             dpFechaFinal.Size = new Size(131, 31);
@@ -148,7 +173,7 @@
             // 
             dpFechaInicial.CustomFormat = "d/m/yyyy";
             dpFechaInicial.Format = DateTimePickerFormat.Short;
-            dpFechaInicial.Location = new Point(338, 183);
+            dpFechaInicial.Location = new Point(160, 180);
             dpFechaInicial.MinDate = new DateTime(2000, 1, 1, 0, 0, 0, 0);
             dpFechaInicial.Name = "dpFechaInicial";
             dpFechaInicial.ShowUpDown = true;
@@ -161,7 +186,7 @@
             button3.Anchor = AnchorStyles.Left;
             button3.BackgroundImage = Properties.Resources.icons8_letra_pequeña_20;
             button3.BackgroundImageLayout = ImageLayout.Stretch;
-            button3.Location = new Point(207, 3);
+            button3.Location = new Point(210, 3);
             button3.Margin = new Padding(4, 5, 4, 5);
             button3.Name = "button3";
             button3.Size = new Size(47, 52);
@@ -174,7 +199,7 @@
             txtDeducciones.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
             txtDeducciones.BackColor = SystemColors.Info;
             txtDeducciones.Cursor = Cursors.No;
-            txtDeducciones.Location = new Point(487, 317);
+            txtDeducciones.Location = new Point(501, 333);
             txtDeducciones.Margin = new Padding(4, 5, 4, 5);
             txtDeducciones.Name = "txtDeducciones";
             txtDeducciones.ReadOnly = true;
@@ -192,7 +217,7 @@
             btnDeducciones.FlatStyle = FlatStyle.Flat;
             btnDeducciones.Image = Properties.Resources.icons8_efectivo_20;
             btnDeducciones.ImageAlign = ContentAlignment.MiddleRight;
-            btnDeducciones.Location = new Point(324, 313);
+            btnDeducciones.Location = new Point(338, 329);
             btnDeducciones.Margin = new Padding(4, 5, 4, 5);
             btnDeducciones.Name = "btnDeducciones";
             btnDeducciones.Size = new Size(154, 42);
@@ -207,7 +232,7 @@
             txtImporte.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
             txtImporte.BackColor = SystemColors.Info;
             txtImporte.Cursor = Cursors.No;
-            txtImporte.Location = new Point(487, 365);
+            txtImporte.Location = new Point(501, 381);
             txtImporte.Margin = new Padding(4, 5, 4, 5);
             txtImporte.Name = "txtImporte";
             txtImporte.ReadOnly = true;
@@ -220,7 +245,7 @@
             // 
             label7.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
             label7.AutoSize = true;
-            label7.Location = new Point(408, 370);
+            label7.Location = new Point(422, 386);
             label7.Margin = new Padding(4, 0, 4, 0);
             label7.Name = "label7";
             label7.Size = new Size(76, 25);
@@ -230,7 +255,7 @@
             // txtPrecio
             // 
             txtPrecio.Anchor = AnchorStyles.Left;
-            txtPrecio.Location = new Point(394, 263);
+            txtPrecio.Location = new Point(361, 280);
             txtPrecio.Margin = new Padding(4, 5, 4, 5);
             txtPrecio.Name = "txtPrecio";
             txtPrecio.PlaceholderText = "0.00";
@@ -242,7 +267,7 @@
             // 
             label6.Anchor = AnchorStyles.Left;
             label6.AutoSize = true;
-            label6.Location = new Point(328, 268);
+            label6.Location = new Point(295, 285);
             label6.Margin = new Padding(4, 0, 4, 0);
             label6.Name = "label6";
             label6.Size = new Size(60, 25);
@@ -252,7 +277,7 @@
             // txtToneladas
             // 
             txtToneladas.Anchor = AnchorStyles.Left;
-            txtToneladas.Location = new Point(109, 263);
+            txtToneladas.Location = new Point(121, 279);
             txtToneladas.Margin = new Padding(4, 5, 4, 5);
             txtToneladas.Name = "txtToneladas";
             txtToneladas.PlaceholderText = "0.00";
@@ -264,7 +289,7 @@
             // 
             label5.Anchor = AnchorStyles.Left;
             label5.AutoSize = true;
-            label5.Location = new Point(17, 268);
+            label5.Location = new Point(29, 284);
             label5.Margin = new Padding(4, 0, 4, 0);
             label5.Name = "label5";
             label5.Size = new Size(90, 25);
@@ -276,10 +301,10 @@
             btnSeleccionarCultivo.Anchor = AnchorStyles.Left;
             btnSeleccionarCultivo.BackgroundImage = Properties.Resources.icons8_brote_32;
             btnSeleccionarCultivo.BackgroundImageLayout = ImageLayout.Stretch;
-            btnSeleccionarCultivo.Location = new Point(549, 124);
+            btnSeleccionarCultivo.Location = new Point(549, 122);
             btnSeleccionarCultivo.Margin = new Padding(4, 5, 4, 5);
             btnSeleccionarCultivo.Name = "btnSeleccionarCultivo";
-            btnSeleccionarCultivo.Size = new Size(47, 52);
+            btnSeleccionarCultivo.Size = new Size(47, 48);
             btnSeleccionarCultivo.TabIndex = 6;
             btnSeleccionarCultivo.UseVisualStyleBackColor = true;
             btnSeleccionarCultivo.Click += btnSeleccionarCultivo_Click;
@@ -288,7 +313,7 @@
             // 
             label4.Anchor = AnchorStyles.Left;
             label4.AutoSize = true;
-            label4.Location = new Point(29, 137);
+            label4.Location = new Point(29, 134);
             label4.Margin = new Padding(4, 0, 4, 0);
             label4.Name = "label4";
             label4.Size = new Size(67, 25);
@@ -300,7 +325,7 @@
             txtCultivo.Anchor = AnchorStyles.Left;
             txtCultivo.BackColor = SystemColors.Info;
             txtCultivo.Cursor = Cursors.No;
-            txtCultivo.Location = new Point(101, 132);
+            txtCultivo.Location = new Point(101, 129);
             txtCultivo.Margin = new Padding(4, 5, 4, 5);
             txtCultivo.Name = "txtCultivo";
             txtCultivo.ReadOnly = true;
@@ -312,10 +337,10 @@
             btnSeleccionarCliente.Anchor = AnchorStyles.Left;
             btnSeleccionarCliente.BackgroundImage = Properties.Resources.icons8_encuentra_hombre_usuario_32;
             btnSeleccionarCliente.BackgroundImageLayout = ImageLayout.Stretch;
-            btnSeleccionarCliente.Location = new Point(549, 76);
+            btnSeleccionarCliente.Location = new Point(549, 72);
             btnSeleccionarCliente.Margin = new Padding(4, 5, 4, 5);
             btnSeleccionarCliente.Name = "btnSeleccionarCliente";
-            btnSeleccionarCliente.Size = new Size(47, 52);
+            btnSeleccionarCliente.Size = new Size(47, 48);
             btnSeleccionarCliente.TabIndex = 4;
             btnSeleccionarCliente.UseVisualStyleBackColor = true;
             btnSeleccionarCliente.Click += btnSeleccionarCliente_Click;
@@ -324,7 +349,7 @@
             // 
             label3.Anchor = AnchorStyles.Left;
             label3.AutoSize = true;
-            label3.Location = new Point(29, 89);
+            label3.Location = new Point(29, 86);
             label3.Margin = new Padding(4, 0, 4, 0);
             label3.Name = "label3";
             label3.Size = new Size(65, 25);
@@ -336,7 +361,7 @@
             txtCliente.Anchor = AnchorStyles.Left;
             txtCliente.BackColor = SystemColors.Info;
             txtCliente.Cursor = Cursors.No;
-            txtCliente.Location = new Point(101, 84);
+            txtCliente.Location = new Point(101, 81);
             txtCliente.Margin = new Padding(4, 5, 4, 5);
             txtCliente.Name = "txtCliente";
             txtCliente.ReadOnly = true;
@@ -347,7 +372,7 @@
             // 
             label2.Anchor = AnchorStyles.Top | AnchorStyles.Right;
             label2.AutoSize = true;
-            label2.Location = new Point(441, 17);
+            label2.Location = new Point(455, 17);
             label2.Margin = new Padding(4, 0, 4, 0);
             label2.Name = "label2";
             label2.Size = new Size(57, 25);
@@ -358,7 +383,7 @@
             // 
             dpFecha.Anchor = AnchorStyles.Top | AnchorStyles.Right;
             dpFecha.Format = DateTimePickerFormat.Short;
-            dpFecha.Location = new Point(504, 12);
+            dpFecha.Location = new Point(518, 12);
             dpFecha.Margin = new Padding(4, 5, 4, 5);
             dpFecha.Name = "dpFecha";
             dpFecha.Size = new Size(135, 31);
@@ -391,7 +416,7 @@
             // 
             AutoScaleDimensions = new SizeF(10F, 25F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(663, 547);
+            ClientSize = new Size(677, 563);
             Controls.Add(panel1);
             Margin = new Padding(6, 8, 6, 8);
             Name = "frmNotaCargo";
@@ -431,5 +456,7 @@
         private DateTimePicker dpFechaInicial;
         private Label label10;
         private TextBox txtIdCosecha;
+        private Label lblUUID;
+        private MaskedTextBox maskedtxtFacturaUUID;
     }
 }
