@@ -1,4 +1,5 @@
 ﻿
+using Microsoft.Data.Sqlite;
 using ReporteadorUCAH.DB_Services;
 using ReporteadorUCAH.Modelos;
 using System;
@@ -156,11 +157,10 @@ namespace ReporteadorUCAH.Formas
         }
         public override void Nuevo()
         {
-            //Limpiar objeto nota
+            // Limpiar objeto nota
             NotaActual = new Modelos.NotaCargo();
 
-            // Limpiar TextBoxes
-            NotaActual = new NotaCargo();
+            // Limpiar UI
             txtID.Text = string.Empty;
             txtCliente.Text = string.Empty;
             txtCultivo.Text = string.Empty;
@@ -171,10 +171,11 @@ namespace ReporteadorUCAH.Formas
             dpFecha.Value = DateTime.Today;
             dpFechaInicial.Value = DateTime.Today;
             dpFechaFinal.Value = DateTime.Today;
+            txtIdCosecha.Text = "0";
 
             // Resetear previos
-            _prevPrecioText = "";
-            _prevToneladasText = "";
+            _prevPrecioText = "0.00";
+            _prevToneladasText = "0.00";
         }
 
         public override void Reporte()
@@ -200,7 +201,6 @@ namespace ReporteadorUCAH.Formas
 
         public override void Guardar()
         {
-            
             // Validar datos obligatorios
             if (NotaActual._Cliente == null)
             {
@@ -217,74 +217,414 @@ namespace ReporteadorUCAH.Formas
             NotaActual.Fecha = dpFecha.Value;
             NotaActual.Tons = double.TryParse(txtToneladas.Text, out double tons) ? tons : 0;
             NotaActual.Precio = double.TryParse(txtPrecio.Text, out double precio) ? precio : 0;
+
+            // Recalcular importe antes de guardar
+            RecalcularImporte();
             NotaActual.Importe = double.TryParse(txtImporte.Text, out double importe) ? importe : 0;
 
-            if (NotaActual._Cosecha == null)
-                NotaActual._Cosecha = new Cosecha();
+            bool esNuevo = NotaActual.Id == 0;
 
-            NotaActual._Cosecha.FechaInicial = dpFechaInicial.Value;
-            NotaActual._Cosecha.FechaFinal = dpFechaFinal.Value;
-
-            // === Guardar la cosecha primero, con su propia conexión ===
-            using (var con = new DatabaseConnection())
+            try
             {
-                using (var dbCosechas = new DB_Services.Cosechas(con))
+                int idCosechaParaGuardar = 0;
+
+                // === 1. GUARDAR COSECHA ===
+                using (var con = new DatabaseConnection())
                 {
-                    if (NotaActual._Cosecha == null)
-                        NotaActual._Cosecha = new Cosecha();
-
-                    NotaActual._Cosecha.FechaInicial = dpFechaInicial.Value;
-                    NotaActual._Cosecha.FechaFinal = dpFechaFinal.Value;
-
-                    if (NotaActual._Cosecha.Id == 0)
+                    using (var dbCosechas = new DB_Services.Cosechas(con))
                     {
-                        NotaActual._Cosecha.Id = dbCosechas.AgregarCosecha(NotaActual._Cosecha);
-                        txtIdCosecha.Text = NotaActual._Cosecha.Id.ToString();
-                    }
-                    else
-                    {
-                        var existe = dbCosechas.GetCosechaById(NotaActual._Cosecha.Id);
-                        if (existe == null)
+                        if (NotaActual._Cosecha == null)
                         {
-                            NotaActual._Cosecha.Id = dbCosechas.AgregarCosecha(NotaActual._Cosecha);
-                            txtIdCosecha.Text = NotaActual._Cosecha.Id.ToString();
+                            NotaActual._Cosecha = new Cosecha();
+                        }
+
+                        NotaActual._Cosecha.FechaInicial = dpFechaInicial.Value;
+                        NotaActual._Cosecha.FechaFinal = dpFechaFinal.Value;
+
+                        Console.WriteLine($"DEBUG - Fechas cosecha a guardar: {NotaActual._Cosecha.FechaInicial:dd/MM/yyyy} - {NotaActual._Cosecha.FechaFinal:dd/MM/yyyy}");
+
+                        if (NotaActual._Cosecha.Id == 0)
+                        {
+                            idCosechaParaGuardar = dbCosechas.AgregarCosecha(NotaActual._Cosecha);
+                            NotaActual._Cosecha.Id = idCosechaParaGuardar;
                         }
                         else
                         {
-                            dbCosechas.ActualizarCosecha(NotaActual._Cosecha);
+                            var existe = dbCosechas.GetCosechaById(NotaActual._Cosecha.Id);
+                            if (existe == null)
+                            {
+                                idCosechaParaGuardar = dbCosechas.AgregarCosecha(NotaActual._Cosecha);
+                                NotaActual._Cosecha.Id = idCosechaParaGuardar;
+                            }
+                            else
+                            {
+                                dbCosechas.ActualizarCosecha(NotaActual._Cosecha);
+                                idCosechaParaGuardar = NotaActual._Cosecha.Id;
+                            }
+                        }
+
+                        txtIdCosecha.Text = idCosechaParaGuardar.ToString();
+                        Console.WriteLine($"DEBUG - ID Cosecha obtenido: {idCosechaParaGuardar}");
+                    }
+                }
+
+                // === 2. VERIFICAR ANTES DE GUARDAR LA NOTA ===
+                Console.WriteLine($"DEBUG - Antes de guardar nota:");
+                Console.WriteLine($"  - ID Nota: {NotaActual.Id}");
+                Console.WriteLine($"  - ID Cosecha: {idCosechaParaGuardar}");
+                Console.WriteLine($"  - Tons: {NotaActual.Tons}");
+                Console.WriteLine($"  - Precio: {NotaActual.Precio}");
+                Console.WriteLine($"  - Importe: {NotaActual.Importe}");
+
+                // === 3. GUARDAR NOTA - CON MÉTODO ALTERNATIVO SI FALLA ===
+                bool guardadoExitoso = false;
+
+                using (var con = new DatabaseConnection())
+                {
+                    using (var dbNotas = new DB_Services.NotasCargo(con))
+                    {
+                        // Asegurar que la cosecha esté asignada
+                        NotaActual._Cosecha.Id = idCosechaParaGuardar;
+
+                        if (esNuevo)
+                        {
+                            int nuevoId = dbNotas.AgregarNotaCargo(NotaActual);
+                            NotaActual.Id = nuevoId;
+                            txtID.Text = nuevoId.ToString();
+                            guardadoExitoso = true;
+                            MessageBox.Show("Nota de cargo guardada correctamente.", "Éxito", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                        }
+                        else
+                        {
+                            // Intentar actualizar normalmente
+                            int filasAfectadas = dbNotas.ActualizarNotaCargo(NotaActual);
+
+                            if (filasAfectadas > 0)
+                            {
+                                guardadoExitoso = true;
+                                MessageBox.Show("Nota de cargo actualizada correctamente.", "Éxito", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                            }
+                            else
+                            {
+                                // **SI FALLA, USAR MÉTODO ALTERNATIVO**
+                                guardadoExitoso = ActualizarNotaManual(NotaActual, idCosechaParaGuardar);
+                            }
+                        }
+                    }
+                }
+
+                if (guardadoExitoso)
+                {
+                    VerificarGuardadoEnBaseDatos();
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Error al guardar: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
+        // Método alternativo para actualizar la nota manualmente INCLUYENDO DEDUCCIONES
+        private bool ActualizarNotaManual(NotaCargo nota, int idCosecha)
+        {
+            try
+            {
+                using (var con = new DatabaseConnection())
+                {
+                    using (var transaction = con.GetConnection().BeginTransaction())
+                    {
+                        try
+                        {
+                            // 1. ACTUALIZAR NOTA PRINCIPAL
+                            using (var command = con.GetConnection().CreateCommand())
+                            {
+                                command.CommandText = @"
+                                    UPDATE LiquidacionNotasCargo 
+                                    SET FECHA = @Fecha,
+                                        idCliente = @idCliente,
+                                        idCultivo = @idCultivo,
+                                        idCosecha = @idCosecha,
+                                        TONS = @Tons,
+                                        PRECIO = @Precio,
+                                        IMPORTE = @Importe
+                                    WHERE id = @Id";
+
+                                command.Parameters.AddWithValue("@Fecha", nota.Fecha);
+                                command.Parameters.AddWithValue("@idCliente", nota._Cliente?.Id ?? 0);
+                                command.Parameters.AddWithValue("@idCultivo", nota._Cultivo?.Id ?? 0);
+                                command.Parameters.AddWithValue("@idCosecha", idCosecha);
+                                command.Parameters.AddWithValue("@Tons", nota.Tons);
+                                command.Parameters.AddWithValue("@Precio", nota.Precio);
+                                command.Parameters.AddWithValue("@Importe", nota.Importe);
+                                command.Parameters.AddWithValue("@Id", nota.Id);
+
+                                int filasAfectadas = command.ExecuteNonQuery();
+
+                                if (filasAfectadas == 0)
+                                {
+                                    transaction.Rollback();
+                                    MessageBox.Show("No se pudo actualizar la nota principal.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                                    return false;
+                                }
+                            }
+
+                            // 2. ELIMINAR DEDUCCIONES EXISTENTES
+                            using (var command = con.GetConnection().CreateCommand())
+                            {
+                                command.CommandText = "DELETE FROM DeduccionesNota WHERE idNotaLiquidacion = @IdNota";
+                                command.Parameters.AddWithValue("@IdNota", nota.Id);
+                                command.ExecuteNonQuery();
+                            }
+
+                            // 3. INSERTAR NUEVAS DEDUCCIONES
+                            if (nota.Deducciones != null && nota.Deducciones.Any())
+                            {
+                                foreach (var deduccion in nota.Deducciones)
+                                {
+                                    using (var command = con.GetConnection().CreateCommand())
+                                    {
+                                        command.CommandText = @"
+                                            INSERT INTO DeduccionesNota 
+                                            (idNotaLiquidacion, idDeduccion, Importe) 
+                                            VALUES (@idNotaLiquidacion, @idDeduccion, @Importe)";
+
+                                        command.Parameters.AddWithValue("@idNotaLiquidacion", nota.Id);
+                                        command.Parameters.AddWithValue("@idDeduccion", deduccion._Deduccion?.Id ?? 0);
+                                        command.Parameters.AddWithValue("@Importe", deduccion.Importe);
+
+                                        command.ExecuteNonQuery();
+                                    }
+                                }
+                            }
+
+                            transaction.Commit();
+
+                            // 4. ACTUALIZAR EL OBJETO EN MEMORIA
+                            ActualizarDeduccionesEnObjeto(nota);
+
+                            MessageBox.Show("Nota y deducciones actualizadas correctamente.", "Éxito", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                            return true;
+                        }
+                        catch (Exception ex)
+                        {
+                            transaction.Rollback();
+                            throw new Exception($"Error en transacción: {ex.Message}", ex);
                         }
                     }
                 }
             }
-
-            // === Guardar / actualizar la nota, ya con un idCosecha válido ===
-            using (var con = new DatabaseConnection())
+            catch (Exception ex)
             {
-                using (var dbNotas = new DB_Services.NotasCargo(con))
+                MessageBox.Show($"Error en actualización manual: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return false;
+            }
+        }
+
+        // Método para verificar inmediatamente si los datos se guardaron
+        private void VerificarGuardadoEnBaseDatos()
+        {
+            try
+            {
+                using (var con = new DatabaseConnection())
                 {
-                    if (NotaActual.Id == 0)
+                    using (var command = con.GetConnection().CreateCommand())
                     {
-                        int nuevoId = dbNotas.AgregarNotaCargo(NotaActual);
-                        NotaActual.Id = nuevoId;
-                        txtID.Text = nuevoId.ToString();
-                        MessageBox.Show("Nota de cargo guardada correctamente.");
-                    }
-                    else
-                    {
-                        dbNotas.ActualizarNotaCargo(NotaActual);
-                        MessageBox.Show("Nota de cargo actualizada correctamente.");
+                        command.CommandText = @"
+                            SELECT 
+                                lnc.TONS, 
+                                lnc.PRECIO, 
+                                lnc.IMPORTE,
+                                lnc.idCosecha,
+                                cos.fechaInicial,
+                                cos.fechaFinal,
+                                (SELECT SUM(Importe) FROM DeduccionesNota WHERE idNotaLiquidacion = @IdNota) as TotalDeducciones
+                            FROM LiquidacionNotasCargo lnc
+                            LEFT JOIN Cosecha cos ON cos.id = lnc.idCosecha
+                            WHERE lnc.id = @IdNota";
+
+                        command.Parameters.AddWithValue("@IdNota", NotaActual.Id);
+
+                        using (var reader = command.ExecuteReader())
+                        {
+                            if (reader.Read())
+                            {
+                                double tonsBD = reader.GetDouble(0);
+                                double precioBD = reader.GetDouble(1);
+                                double importeBD = reader.GetDouble(2);
+                                int idCosechaBD = reader.IsDBNull(3) ? 0 : reader.GetInt32(3);
+                                DateTime? fechaInicialBD = reader.IsDBNull(4) ? (DateTime?)null : reader.GetDateTime(4);
+                                DateTime? fechaFinalBD = reader.IsDBNull(5) ? (DateTime?)null : reader.GetDateTime(5);
+                                double deduccionesBD = reader.IsDBNull(6) ? 0 : reader.GetDouble(6);
+
+                                string mensaje = "VERIFICACIÓN COMPLETA:\n\n";
+
+                                // Verificar toneladas
+                                if (Math.Abs(tonsBD - NotaActual.Tons) < 0.01)
+                                    mensaje += "✓ Toneladas correctas\n";
+                                else
+                                    mensaje += $"❌ Toneladas: BD={tonsBD}, Esperado={NotaActual.Tons}\n";
+
+                                // Verificar precio
+                                if (Math.Abs(precioBD - NotaActual.Precio) < 0.01)
+                                    mensaje += "✓ Precio correcto\n";
+                                else
+                                    mensaje += $"❌ Precio: BD={precioBD}, Esperado={NotaActual.Precio}\n";
+
+                                // Verificar importe
+                                if (Math.Abs(importeBD - NotaActual.Importe) < 0.01)
+                                    mensaje += "✓ Importe correcto\n";
+                                else
+                                    mensaje += $"❌ Importe: BD={importeBD}, Esperado={NotaActual.Importe}\n";
+
+                                // Verificar cosecha
+                                if (idCosechaBD > 0)
+                                    mensaje += $"✓ idCosecha: {idCosechaBD}\n";
+                                else
+                                    mensaje += "❌ idCosecha: NULL\n";
+
+                                // Verificar fechas
+                                if (fechaInicialBD.HasValue && fechaFinalBD.HasValue)
+                                    mensaje += $"✓ Fechas: {fechaInicialBD:dd/MM/yyyy} - {fechaFinalBD:dd/MM/yyyy}\n";
+                                else
+                                    mensaje += "❌ Fechas cosecha: NULL\n";
+
+                                // Verificar deducciones
+                                double deduccionesEsperadas = NotaActual.Deducciones?.Sum(d => d.Importe) ?? 0;
+                                if (Math.Abs(deduccionesBD - deduccionesEsperadas) < 0.01)
+                                    mensaje += "✓ Deducciones correctas\n";
+                                else
+                                    mensaje += $"❌ Deducciones: BD={deduccionesBD:C}, Esperado={deduccionesEsperadas:C}\n";
+
+                                MessageBox.Show(mensaje, "Verificación Completa", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                            }
+                        }
                     }
                 }
             }
-
-            MessageBox.Show(
-                $"Datos guardados:\n\n" +
-                $"NotaCargo ID: {NotaActual.Id}\n" +
-                $"Cosecha ID: {NotaActual._Cosecha.Id}\n" +
-                $"Fechas: {NotaActual._Cosecha.FechaInicial:dd/MM/yyyy} - {NotaActual._Cosecha.FechaFinal:dd/MM/yyyy}",
-                "Verificación Guardado", MessageBoxButtons.OK, MessageBoxIcon.Information
-            );
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Error en verificación: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
         }
+
+        // Métodos helpers para manejar valores NULL de la base de datos
+        private string GetStringOrNull(SqliteDataReader reader, string columnName)
+        {
+            try
+            {
+                int ordinal = reader.GetOrdinal(columnName);
+                return reader.IsDBNull(ordinal) ? null : reader.GetString(ordinal);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error al leer columna {columnName}: {ex.Message}");
+                return null;
+            }
+        }
+
+        private int? GetInt32OrNull(SqliteDataReader reader, string columnName)
+        {
+            try
+            {
+                int ordinal = reader.GetOrdinal(columnName);
+                return reader.IsDBNull(ordinal) ? (int?)null : reader.GetInt32(ordinal);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error al leer columna {columnName}: {ex.Message}");
+                return null;
+            }
+        }
+
+        private double? GetDoubleOrNull(SqliteDataReader reader, string columnName)
+        {
+            try
+            {
+                int ordinal = reader.GetOrdinal(columnName);
+                return reader.IsDBNull(ordinal) ? (double?)null : reader.GetDouble(ordinal);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error al leer columna {columnName}: {ex.Message}");
+                return null;
+            }
+        }
+
+        // Método más robusto para actualizar las deducciones
+        private void ActualizarDeduccionesEnObjeto(NotaCargo nota)
+        {
+            try
+            {
+                // Recargar las deducciones desde la base de datos
+                using (var con = new DatabaseConnection())
+                {
+                    var deduccionesActualizadas = new List<DeduccionNota>();
+
+                    using (var command = con.GetConnection().CreateCommand())
+                    {
+                        command.CommandText = @"
+                            SELECT dn.id, dn.idNotaLiquidacion, dn.Importe,
+                                   td.id as TipoDeduccionId, td.Nombre as TipoDeduccionNombre,
+                                   gd.id as GrupoDeduccionId, gd.Nombre as GrupoDeduccionNombre
+                            FROM DeduccionesNota dn
+                            INNER JOIN TipoDeducciones td ON td.id = dn.idDeduccion
+                            LEFT JOIN GrupoDeducciones gd ON gd.id = td.idGrupo
+                            WHERE dn.idNotaLiquidacion = @IdNota";
+
+                        command.Parameters.AddWithValue("@IdNota", nota.Id);
+
+                        using (var reader = command.ExecuteReader())
+                        {
+                            while (reader.Read())
+                            {
+                                var deduccion = new DeduccionNota
+                                {
+                                    Id = reader.GetInt32(reader.GetOrdinal("id")),
+                                    Importe = reader.GetDouble(reader.GetOrdinal("Importe")),
+                                    _Deduccion = new TipoDeduccion
+                                    {
+                                        Id = reader.GetInt32(reader.GetOrdinal("TipoDeduccionId")),
+                                        Nombre = GetStringOrNull(reader, "TipoDeduccionNombre")
+                                    }
+                                };
+
+                                // Manejar el grupo de deducción de forma segura
+                                var grupoId = GetInt32OrNull(reader, "GrupoDeduccionId");
+                                var grupoNombre = GetStringOrNull(reader, "GrupoDeduccionNombre");
+
+                                if (grupoId.HasValue || !string.IsNullOrEmpty(grupoNombre))
+                                {
+                                    deduccion._Deduccion._Grupo = new GrupoDeducciones
+                                    {
+                                        Id = grupoId ?? 0,
+                                        Nombre = grupoNombre
+                                    };
+                                }
+
+                                deduccionesActualizadas.Add(deduccion);
+                            }
+                        }
+                    }
+
+                    // Actualizar el objeto en memoria
+                    nota.Deducciones = deduccionesActualizadas;
+
+                    // Actualizar la UI
+                    double totalDeducciones = nota.Deducciones.Sum(d => d.Importe);
+                    txtDeducciones.Text = Math.Round(totalDeducciones, 2).ToString("F2", CultureInfo.CurrentCulture);
+
+                    // Recalcular importe final
+                    RecalcularImporte();
+
+                    Console.WriteLine($"DEBUG - Deducciones actualizadas: {totalDeducciones:C}");
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error al actualizar deducciones en objeto: {ex.Message}");
+            }
+        }
+
 
         // -----------------------------
         // Helpers y handlers requeridos por el diseñador
