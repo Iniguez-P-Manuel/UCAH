@@ -349,108 +349,100 @@ namespace ReporteadorUCAH.DB_Services
 
         public int AgregarNotaCargo(NotaCargo notaCargo)
         {
-            try
+            using (var conn = _dbConnection.GetConnection())
+            using (var transaction = conn.BeginTransaction())
             {
-                using (var conn = _dbConnection.GetConnection())
-                using (var transaction = conn.BeginTransaction())
+                try
                 {
-                    try
-                    {
-                        int notaCargoId;
+                    int notaCargoId;
 
-                        // Insertar la NotaCargo principal
-                        using (var command = conn.CreateCommand())
-                        {
-                            command.CommandText = @"
+                    // Insertar la NotaCargo principal
+                    using (var command = conn.CreateCommand())
+                    {
+                        command.CommandText = @"
                         INSERT INTO LiquidacionNotasCargo 
                         (FECHA, FacturaFolio, idCliente, idCultivo, idCosecha, TONS, PRECIO, IMPORTE, FacturaUUID) 
                         VALUES (@Fecha, @FacturaFolio, @idCliente, @idCultivo, @idCosecha, @Tons, @Precio, @Importe, @FacturaUUID);
                         SELECT last_insert_rowid();";
 
-                            command.Parameters.AddWithValue("@Fecha", notaCargo.Fecha);
-                            command.Parameters.AddWithValue("@FacturaFolio", notaCargo.FacturaFolio ?? "");
-                            command.Parameters.AddWithValue("@idCliente", notaCargo._Cliente?.Id ?? 0);
-                            command.Parameters.AddWithValue("@idCultivo", notaCargo._Cultivo?.Id ?? 0);
-                            command.Parameters.AddWithValue("@idCosecha", notaCargo._Cosecha?.Id ?? 0);
-                            command.Parameters.AddWithValue("@Tons", notaCargo.Tons);
-                            command.Parameters.AddWithValue("@Precio", notaCargo.Precio);
-                            command.Parameters.AddWithValue("@Importe", notaCargo.Importe);
-                            command.Parameters.AddWithValue("@FacturaUUID", notaCargo.FacturaUUID ?? "");
+                        command.Parameters.AddWithValue("@Fecha", notaCargo.Fecha);
+                        command.Parameters.AddWithValue("@FacturaFolio", notaCargo.FacturaFolio ?? "");
+                        command.Parameters.AddWithValue("@idCliente", notaCargo._Cliente?.Id ?? 0);
+                        command.Parameters.AddWithValue("@idCultivo", notaCargo._Cultivo?.Id ?? 0);
+                        command.Parameters.AddWithValue("@idCosecha", notaCargo._Cosecha?.Id ?? 0);
+                        command.Parameters.AddWithValue("@Tons", notaCargo.Tons);
+                        command.Parameters.AddWithValue("@Precio", notaCargo.Precio);
+                        command.Parameters.AddWithValue("@Importe", notaCargo.Importe);
+                        command.Parameters.AddWithValue("@FacturaUUID", notaCargo.FacturaUUID ?? "");
 
-                            notaCargoId = Convert.ToInt32(command.ExecuteScalar());
-                        }
+                        notaCargoId = Convert.ToInt32(command.ExecuteScalar());
+                    }
 
-                        // Insertar las deducciones si existen
-                        if (notaCargo.Deducciones != null && notaCargo.Deducciones.Any())
+                    // Insertar las deducciones si existen
+                    if (notaCargo.Deducciones != null && notaCargo.Deducciones.Any())
+                    {
+                        foreach (var deduccion in notaCargo.Deducciones)
                         {
-                            foreach (var deduccion in notaCargo.Deducciones)
+                            using (var command = conn.CreateCommand())
                             {
-                                using (var command = conn.CreateCommand())
-                                {
-                                    command.CommandText = @"
+                                command.CommandText = @"
                                 INSERT INTO DeduccionesNota 
                                 (idNotaLiquidacion, idDeduccion, Importe) 
                                 VALUES (@idNotaLiquidacion, @idDeduccion, @Importe)";
 
-                                    command.Parameters.AddWithValue("@idNotaLiquidacion", notaCargoId);
-                                    command.Parameters.AddWithValue("@idDeduccion", deduccion._Deduccion?.Id ?? 0);
-                                    command.Parameters.AddWithValue("@Importe", deduccion.Importe);
+                                command.Parameters.AddWithValue("@idNotaLiquidacion", notaCargoId);
+                                command.Parameters.AddWithValue("@idDeduccion", deduccion._Deduccion?.Id ?? 0);
+                                command.Parameters.AddWithValue("@Importe", deduccion.Importe);
 
-                                    command.ExecuteNonQuery();
-                                }
+                                command.ExecuteNonQuery();
                             }
                         }
+                    }
 
-                        transaction.Commit();
-                        return notaCargoId;
-                    }
-                    catch
-                    {
-                        transaction.Rollback();
-                        throw;
-                    }
+                    transaction.Commit();
+                    return notaCargoId;
                 }
-            }
-            catch (SqliteException ex)
-            {
-                Console.WriteLine($"Error al agregar nota de cargo: {ex.Message}");
-                return 0;
+                catch (Exception ex)
+                {
+                    transaction.Rollback();
+                    Console.WriteLine($"Error al agregar nota de cargo: {ex.Message}");
+                    return 0;
+                }
             }
         }
         public int ActualizarNotaCargo(NotaCargo notaCargo)
-{
-    try
-    {
-        using (var conn = _dbConnection.GetConnection())
-        using (var transaction = conn.BeginTransaction())
         {
-            try
-            {
-                int filasAfectadas = 0;
 
-                // 1. Actualizar la cosecha si existe
-                if (notaCargo._Cosecha != null && notaCargo._Cosecha.Id > 0)
+            using (var conn = _dbConnection.GetConnection())
+            using (var transaction = conn.BeginTransaction())
+            {
+                try
                 {
-                    using (var command = conn.CreateCommand())
+                    int filasAfectadas = 0;
+
+                    // 1. Actualizar la cosecha si existe
+                    if (notaCargo._Cosecha != null && notaCargo._Cosecha.Id > 0)
                     {
-                        command.CommandText = @"
+                        using (var command = conn.CreateCommand())
+                        {
+                            command.CommandText = @"
                             UPDATE Cosecha 
                             SET fechaInicial = @fechaInicial, 
                                 fechaFinal = @fechaFinal 
                             WHERE id = @Id";
 
-                        command.Parameters.AddWithValue("@fechaInicial", notaCargo._Cosecha.FechaInicial);
-                        command.Parameters.AddWithValue("@fechaFinal", notaCargo._Cosecha.FechaFinal);
-                        command.Parameters.AddWithValue("@Id", notaCargo._Cosecha.Id);
+                            command.Parameters.AddWithValue("@fechaInicial", notaCargo._Cosecha.FechaInicial);
+                            command.Parameters.AddWithValue("@fechaFinal", notaCargo._Cosecha.FechaFinal);
+                            command.Parameters.AddWithValue("@Id", notaCargo._Cosecha.Id);
 
-                        command.ExecuteNonQuery();
+                            command.ExecuteNonQuery();
+                        }
                     }
-                }
 
-                // 2. Actualizar la NotaCargo principal - CORREGIDO
-                using (var command = conn.CreateCommand())
-                {
-                    command.CommandText = @"
+                    // 2. Actualizar la NotaCargo principal - CORREGIDO
+                    using (var command = conn.CreateCommand())
+                    {
+                        command.CommandText = @"
                         UPDATE LiquidacionNotasCargo 
                         SET FECHA = @Fecha, 
                             FacturaFolio = @FacturaFolio, 
@@ -463,77 +455,71 @@ namespace ReporteadorUCAH.DB_Services
                             FacturaUUID = @FacturaUUID
                         WHERE id = @Id";
 
-                    command.Parameters.AddWithValue("@Fecha", notaCargo.Fecha);
-                    command.Parameters.AddWithValue("@FacturaFolio", notaCargo.FacturaFolio ?? "");
-                    command.Parameters.AddWithValue("@idCliente", notaCargo._Cliente?.Id ?? 0);
-                    command.Parameters.AddWithValue("@idCultivo", notaCargo._Cultivo?.Id ?? 0);
-                    
-                    // **CRÍTICO: Asegurar que idCosecha no sea 0**
-                    int idCosecha = notaCargo._Cosecha?.Id ?? 0;
-                    command.Parameters.AddWithValue("@idCosecha", idCosecha);
-                    
-                    command.Parameters.AddWithValue("@Tons", notaCargo.Tons);
-                    command.Parameters.AddWithValue("@Precio", notaCargo.Precio);
-                    command.Parameters.AddWithValue("@Importe", notaCargo.Importe);
-                    command.Parameters.AddWithValue("@FacturaUUID", notaCargo.FacturaUUID ?? "");
-                    command.Parameters.AddWithValue("@Id", notaCargo.Id);
+                        command.Parameters.AddWithValue("@Fecha", notaCargo.Fecha);
+                        command.Parameters.AddWithValue("@FacturaFolio", notaCargo.FacturaFolio ?? "");
+                        command.Parameters.AddWithValue("@idCliente", notaCargo._Cliente?.Id ?? 0);
+                        command.Parameters.AddWithValue("@idCultivo", notaCargo._Cultivo?.Id ?? 0);
 
-                    filasAfectadas = command.ExecuteNonQuery();
-                }
+                        // **CRÍTICO: Asegurar que idCosecha no sea 0**
+                        int idCosecha = notaCargo._Cosecha?.Id ?? 0;
+                        command.Parameters.AddWithValue("@idCosecha", idCosecha);
 
-                // Si no se encontró la nota de cargo, retornar 0
-                if (filasAfectadas == 0)
-                {
-                    transaction.Rollback();
-                    return 0;
-                }
+                        command.Parameters.AddWithValue("@Tons", notaCargo.Tons);
+                        command.Parameters.AddWithValue("@Precio", notaCargo.Precio);
+                        command.Parameters.AddWithValue("@Importe", notaCargo.Importe);
+                        command.Parameters.AddWithValue("@FacturaUUID", notaCargo.FacturaUUID ?? "");
+                        command.Parameters.AddWithValue("@Id", notaCargo.Id);
 
-                // 3. Eliminar las deducciones existentes
-                using (var command = conn.CreateCommand())
-                {
-                    command.CommandText = "DELETE FROM DeduccionesNota WHERE idNotaLiquidacion = @Id";
-                    command.Parameters.AddWithValue("@Id", notaCargo.Id);
-                    command.ExecuteNonQuery();
-                }
+                        filasAfectadas = command.ExecuteNonQuery();
+                    }
 
-                // 4. Insertar las nuevas deducciones si existen
-                if (notaCargo.Deducciones != null && notaCargo.Deducciones.Any())
-                {
-                    foreach (var deduccion in notaCargo.Deducciones)
+                    // Si no se encontró la nota de cargo, retornar 0
+                    if (filasAfectadas == 0)
                     {
-                        using (var command = conn.CreateCommand())
+                        transaction.Rollback();
+                        return 0;
+                    }
+
+                    // 3. Eliminar las deducciones existentes
+                    using (var command = conn.CreateCommand())
+                    {
+                        command.CommandText = "DELETE FROM DeduccionesNota WHERE idNotaLiquidacion = @Id";
+                        command.Parameters.AddWithValue("@Id", notaCargo.Id);
+                        command.ExecuteNonQuery();
+                    }
+
+                    // 4. Insertar las nuevas deducciones si existen
+                    if (notaCargo.Deducciones != null && notaCargo.Deducciones.Any())
+                    {
+                        foreach (var deduccion in notaCargo.Deducciones)
                         {
-                            command.CommandText = @"
+                            using (var command = conn.CreateCommand())
+                            {
+                                command.CommandText = @"
                                 INSERT INTO DeduccionesNota 
                                 (idNotaLiquidacion, idDeduccion, Importe) 
                                 VALUES (@idNotaLiquidacion, @idDeduccion, @Importe)";
 
-                            command.Parameters.AddWithValue("@idNotaLiquidacion", notaCargo.Id);
-                            command.Parameters.AddWithValue("@idDeduccion", deduccion._Deduccion?.Id ?? 0);
-                            command.Parameters.AddWithValue("@Importe", deduccion.Importe);
+                                command.Parameters.AddWithValue("@idNotaLiquidacion", notaCargo.Id);
+                                command.Parameters.AddWithValue("@idDeduccion", deduccion._Deduccion?.Id ?? 0);
+                                command.Parameters.AddWithValue("@Importe", deduccion.Importe);
 
-                            command.ExecuteNonQuery();
+                                command.ExecuteNonQuery();
+                            }
                         }
                     }
-                }
 
-                transaction.Commit();
-                return filasAfectadas;
-            }
-            catch (Exception ex)
-            {
-                transaction.Rollback();
-                Console.WriteLine($"Error en transacción de ActualizarNotaCargo: {ex.Message}");
-                throw;
+                    transaction.Commit();
+                    return filasAfectadas;
+                }
+                catch (Exception ex)
+                {
+                    transaction.Rollback();
+                    Console.WriteLine($"Error en transacción de ActualizarNotaCargo: {ex.Message}");
+                    return 0;
+                }
             }
         }
-    }
-    catch (SqliteException ex)
-    {
-        Console.WriteLine($"Error al actualizar nota de cargo: {ex.Message}");
-        return 0;
-    }
-}
 
 
         public void Dispose()

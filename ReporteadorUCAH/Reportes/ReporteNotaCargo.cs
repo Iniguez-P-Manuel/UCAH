@@ -111,8 +111,8 @@ public class ReporteNotaCargo : IDocument
                 {
                     docColumn.Item().PaddingTop(-0.5f, Unit.Centimetre).AlignRight().Text($"{_notaCargo.Fecha:dd/MM/yyyy}").FontSize(11).Underline();
                     docColumn.Item().AlignRight().Text($"Nota #{_notaCargo.Id}").FontSize(12);
-                    docColumn.Item().AlignRight().Text($"Cosecha:{DateTime.MinValue.ToShortDateString()}-{DateTime.MaxValue.ToShortDateString()}").FontSize(9);
-                    //docColumn.Item().AlignRight().Text($"Cosecha:{_notaCargo._Cosecha.FechaInicial.ToShortDateString()}-{_notaCargo._Cosecha.FechaFinal.ToShortDateString()}").FontSize(9);
+                    //docColumn.Item().AlignRight().Text($"Cosecha:{DateTime.MinValue.ToShortDateString()}-{DateTime.MaxValue.ToShortDateString()}").FontSize(9);
+                    docColumn.Item().AlignRight().Text($"Cosecha:{_notaCargo._Cosecha.FechaInicial.ToShortDateString()}-{_notaCargo._Cosecha.FechaFinal.ToShortDateString()}").FontSize(9);
                 });
             });
 
@@ -163,7 +163,7 @@ public class ReporteNotaCargo : IDocument
                     var deducciones = _notaCargo.Deducciones.ToList();
                     var columnas = 2; // Forzamos 2 columnas para 14 deducciones (7 y 7)
 
-                    sectionColumn.Item().PaddingVertical(10).Row(row =>
+                    sectionColumn.Item().PaddingVertical(5).Row(row =>
                     {
                         var itemsPorColumna = (int)Math.Ceiling(deducciones.Count / (double)columnas);
 
@@ -190,8 +190,8 @@ public class ReporteNotaCargo : IDocument
 
                                 foreach (var deduccion in itemsColumna)
                                 {
-                                    table.Cell().BorderBottom(1).BorderColor(Colors.Grey.Lighten1).Padding(5).Text(deduccion._Deduccion.Nombre);
-                                    table.Cell().BorderBottom(1).BorderColor(Colors.Grey.Lighten1).Padding(5).AlignRight().Text(deduccion.Importe.ToString("N2"));
+                                    table.Cell().BorderBottom(1).BorderColor(Colors.Grey.Lighten1).Padding(2).Text(deduccion._Deduccion.Nombre);
+                                    table.Cell().BorderBottom(1).BorderColor(Colors.Grey.Lighten1).Padding(2).AlignRight().Text(deduccion.Importe.ToString("N2"));
                                 }
                             });
                         }
@@ -200,7 +200,7 @@ public class ReporteNotaCargo : IDocument
             }
 
             // Resumen
-            column.Item().Section("Resumen").PaddingTop(2, Unit.Centimetre).Column(sectionColumn =>
+            column.Item().Section("Resumen").Column(sectionColumn =>
             {
                 sectionColumn.Item().PaddingVertical(10).Background(Colors.Grey.Lighten1).Padding(15).Table(table =>
                 {
@@ -237,10 +237,12 @@ public class ReporteNotaCargo : IDocument
         container.AlignCenter().Text(text =>
         {
             text.Span("UUID Factura: ").FontSize(8);
-            string uuidGenerico = "11111111-2222-3333-4444-555555555555";
-            text.Span(uuidGenerico).Bold().FontSize(8);
-            //text.Span(_notaCargo.FacturaUUID).Bold().FontSize(8);
-            text.EmptyLine();
+            if (string.IsNullOrEmpty(_notaCargo.FacturaUUID))
+                text.Span("11111111-2222-3333-4444-555555555555").Bold().FontSize(8);
+            else
+                text.Span(_notaCargo.FacturaUUID).Bold().FontSize(8);
+
+                text.EmptyLine();
             text.Span("Documento generado - ").FontSize(8);
             text.Span(DateTime.Now.ToString("dd/MM/yyyy HH:mm")).FontSize(8);
         });
