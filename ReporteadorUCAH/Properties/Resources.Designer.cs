@@ -103,6 +103,36 @@ namespace ReporteadorUCAH.Properties {
         /// <summary>
         ///   Busca un recurso adaptado de tipo System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap icons8_busca_mas_16 {
+            get {
+                object obj = ResourceManager.GetObject("icons8-busca-mas-16", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Busca un recurso adaptado de tipo System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap icons8_busca_mas_32 {
+            get {
+                object obj = ResourceManager.GetObject("icons8-busca-mas-32", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Busca un recurso adaptado de tipo System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap icons8_búsqueda_32 {
+            get {
+                object obj = ResourceManager.GetObject("icons8-búsqueda-32", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Busca un recurso adaptado de tipo System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap icons8_documento_20 {
             get {
                 object obj = ResourceManager.GetObject("icons8-documento-20", resourceCulture);

@@ -40,6 +40,8 @@ namespace ReporteadorUCAH.Formas
 
         private void NotaCargo_Load(object sender, EventArgs e)
         {
+            this.BotonEliminar(false);
+
             _prevToneladasText = (txtToneladas?.Text) ?? "";
             _prevPrecioText = (txtPrecio?.Text) ?? "";
 
@@ -159,6 +161,7 @@ namespace ReporteadorUCAH.Formas
             _suspendUUIDTextChanged = true;
 
             NotaActual = e.ObjetoSeleccionado;
+
             double totalDeducciones = NotaActual.Deducciones?.Sum(d => d.Importe) ?? 0;
 
             // Limpiar y cargar todos los campos
@@ -711,10 +714,9 @@ namespace ReporteadorUCAH.Formas
             double.TryParse(txtToneladas.Text, NumberStyles.Number, CultureInfo.CurrentCulture, out tons);
             double.TryParse(txtPrecio.Text, NumberStyles.Number, CultureInfo.CurrentCulture, out precio);
 
-            double subtotal = tons * precio;
+            double importe = tons * precio;
             double totalDeducciones = (NotaActual?.Deducciones?.Sum(d => d.Importe)) ?? 0;
 
-            double importe = subtotal - totalDeducciones;
 
             if (NotaActual != null)
             {
