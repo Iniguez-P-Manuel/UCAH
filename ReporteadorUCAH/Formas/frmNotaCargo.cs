@@ -36,6 +36,8 @@ namespace ReporteadorUCAH.Formas
 
         private void NotaCargo_Load(object sender, EventArgs e)
         {
+            this.BotonEliminar(false);
+
             _prevToneladasText = (txtToneladas?.Text) ?? "";
             _prevPrecioText = (txtPrecio?.Text) ?? "";
 
@@ -126,65 +128,6 @@ namespace ReporteadorUCAH.Formas
             _suspendTextChanged = true;
 
             NotaActual = e.ObjetoSeleccionado;
-
-            // SOLUCIÓN: Buscar el UUID en ambas tablas
-            if (NotaActual != null && NotaActual.Id > 0)
-            {
-                try
-                {
-                    using (var con = new DatabaseConnection())
-                    {
-                        using (var command = con.GetConnection().CreateCommand())
-                        {
-                            // PRIMERO: Intentar obtener directamente de LiquidacionNotasCargo
-                            command.CommandText = "SELECT FacturaUUID FROM LiquidacionNotasCargo WHERE id = @Id";
-                            command.Parameters.AddWithValue("@Id", NotaActual.Id);
-
-                            var result = command.ExecuteScalar();
-
-                            if (result != null && result != DBNull.Value && !string.IsNullOrEmpty(result.ToString()))
-                            {
-                                NotaActual.FacturaUUID = result.ToString();
-                                MessageBox.Show($"✅ UUID encontrado en LiquidacionNotasCargo:\n{NotaActual.FacturaUUID}",
-                                              "DEBUG", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                            }
-                            else
-                            {
-                                // SEGUNDO: Si no está en LiquidacionNotasCargo, buscar en Facturas
-                                command.CommandText = @"
-                            SELECT f.UUID 
-                            FROM Facturas f
-                            INNER JOIN LiquidacionNotasCargo lnc ON lnc.id = @Id
-                            WHERE f.id = lnc.FacturaUUID";  // Asumiendo que FacturaUUID es ID numérico
-
-                                command.Parameters.Clear();
-                                command.Parameters.AddWithValue("@Id", NotaActual.Id);
-
-                                result = command.ExecuteScalar();
-                                if (result != null && result != DBNull.Value && !string.IsNullOrEmpty(result.ToString()))
-                                {
-                                    NotaActual.FacturaUUID = result.ToString();
-                                    MessageBox.Show($"✅ UUID encontrado en Facturas:\n{NotaActual.FacturaUUID}",
-                                                  "DEBUG", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                                }
-                                else
-                                {
-                                    MessageBox.Show("❌ No se encontró UUID en ninguna tabla\n" +
-                                                  "El campo FacturaUUID probablemente está vacío",
-                                                  "DEBUG", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                                    NotaActual.FacturaUUID = null;
-                                }
-                            }
-                        }
-                    }
-                }
-                catch (Exception ex)
-                {
-                    MessageBox.Show($"❌ Error al cargar UUID:\n{ex.Message}",
-                                  "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                    NotaActual.FacturaUUID = null;
-                }
-            }
 
             double totalDeducciones = NotaActual.Deducciones?.Sum(d => d.Importe) ?? 0;
 
@@ -597,10 +540,9 @@ namespace ReporteadorUCAH.Formas
             double.TryParse(txtToneladas.Text, NumberStyles.Number, CultureInfo.CurrentCulture, out tons);
             double.TryParse(txtPrecio.Text, NumberStyles.Number, CultureInfo.CurrentCulture, out precio);
 
-            double subtotal = tons * precio;
+            double importe = tons * precio;
             double totalDeducciones = (NotaActual?.Deducciones?.Sum(d => d.Importe)) ?? 0;
 
-            double importe = subtotal - totalDeducciones;
 
             if (NotaActual != null)
             {

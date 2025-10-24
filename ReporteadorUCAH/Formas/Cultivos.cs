@@ -42,6 +42,7 @@ namespace ReporteadorUCAH.Formas
             CultivoActual = new Modelos.Cultivo();
 
             // Limpiar TextBoxes
+            txtID.Text = string.Empty;
             txtNombreCultivo.Text = string.Empty;
             txtCultivoTipo.Text = string.Empty;
             txtCONS.Text = string.Empty;
@@ -68,7 +69,8 @@ namespace ReporteadorUCAH.Formas
                     if (CultivoActual.Id == 0)
                     {
                         // Es nuevo
-                        dbCultivos.AgregarCultivo(CultivoActual);
+                        CultivoActual.Id = dbCultivos.AgregarCultivo(CultivoActual);
+                        txtID.Text = CultivoActual.Id.ToString();
                         MessageBox.Show("Cultivo agregado correctamente.");
                     }
                     else
@@ -108,6 +110,7 @@ namespace ReporteadorUCAH.Formas
         private void LimpiarFormulario()
         {
             CultivoActual = new Cultivo();
+            txtID.Text = "";
             txtNombreCultivo.Text = "";
             txtCultivoTipo.Text = "";
             txtCONS.Text = "";

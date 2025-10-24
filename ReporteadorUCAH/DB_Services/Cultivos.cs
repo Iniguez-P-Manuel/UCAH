@@ -141,7 +141,7 @@ namespace ReporteadorUCAH.DB_Services
             catch (SqliteException ex)
             {
                 Console.WriteLine($"Error al eliminar cultivo: {ex.Message}");
-                throw;
+                MessageBox.Show("ERROR!", $"Error al eliminar cultivo: {ex.Message}", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 
