@@ -13,12 +13,76 @@ namespace ReporteadorUCAH.Formas
 {
     public partial class DeduccionesNota : FormModel
     {
-
         public DeduccionesNota()
         {
             InitializeComponent();
         }
         public List<DeduccionNota> lstDeduccionesNota = new List<DeduccionNota>();
+
+        public override void Nuevo()
+        {
+            // Verificar si hay deducciones con valores diferentes de 0
+            bool hayDeduccionesConValor = false;
+
+            // Verificar en la lista actual
+            if (lstDeduccionesNota != null && lstDeduccionesNota.Count > 0)
+            {
+                hayDeduccionesConValor = lstDeduccionesNota.Any(d => d.Importe != 0);
+            }
+
+            // También verificar en el DataGridView por si hay cambios no guardados
+            if (!hayDeduccionesConValor)
+            {
+                foreach (DataGridViewRow row in dgvDeducciones.Rows)
+                {
+                    if (!row.IsNewRow && row.Cells[2].Value != null)
+                    {
+                        if (double.TryParse(row.Cells[2].Value.ToString(), out double importe) && importe != 0)
+                        {
+                            hayDeduccionesConValor = true;
+                            break;
+                        }
+                    }
+                }
+            }
+
+            // Si hay deducciones con valores, preguntar confirmación
+            if (hayDeduccionesConValor)
+            {
+                var resultado = MessageBox.Show(
+                    "¿Está seguro que desea eliminar todos los importes de deducciones?",
+                    "Confirmar Nuevo",
+                    MessageBoxButtons.YesNo,
+                    MessageBoxIcon.Question,
+                    MessageBoxDefaultButton.Button2 // No como opción por defecto
+                );
+
+                if (resultado != DialogResult.Yes)
+                {
+                    return; // El usuario canceló, mantener los datos actuales
+                }
+            }
+
+            // Limpiar la lista de deducciones
+            lstDeduccionesNota = new List<DeduccionNota>();
+
+            // Limpiar todos los importes en el DataGridView
+            foreach (DataGridViewRow row in dgvDeducciones.Rows)
+            {
+                if (!row.IsNewRow) // Evitar la fila nueva vacía
+                {
+                    // Poner el importe en 0 pero mantener el ID y nombre
+                    row.Cells[2].Value = 0;
+                }
+            }
+
+            // Opcional: Mostrar mensaje de confirmación solo si se limpiaron datos
+            if (hayDeduccionesConValor)
+            {
+                MessageBox.Show("Todos los importes de deducciones han sido reseteados.", "Nuevo",
+                              MessageBoxButtons.OK, MessageBoxIcon.Information);
+            }
+        }
 
         private void NotaDeducciones_Load(object sender, EventArgs e)
         {
@@ -27,9 +91,10 @@ namespace ReporteadorUCAH.Formas
 
             Color NuevoColor = Color.Khaki;
             this.CambiarColor(NuevoColor);
-            
+
             CargarDatos();
         }
+
         public void CargarDatos()
         {
             dgvDeducciones.Rows.Add("1", "Comision", 0);
@@ -57,6 +122,7 @@ namespace ReporteadorUCAH.Formas
                 RellenarImportesDeducciones(lstDeduccionesNota);
             }
         }
+
         public void RellenarImportesDeducciones(List<DeduccionNota> deducciones)
         {
             // Recorrer todas las filas del DataGridView

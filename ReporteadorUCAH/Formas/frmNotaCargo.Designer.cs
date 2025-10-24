@@ -106,6 +106,9 @@
             maskedtxtFacturaUUID.Name = "maskedtxtFacturaUUID";
             maskedtxtFacturaUUID.Size = new Size(403, 28);
             maskedtxtFacturaUUID.TabIndex = 24;
+            maskedtxtFacturaUUID.Enter += txtFacturaUUID_Enter;
+            maskedtxtFacturaUUID.KeyPress += txtFacturaUUID_KeyPress;
+            maskedtxtFacturaUUID.KeyUp += txtFacturaUUID_KeyUp;
             // 
             // lblUUID
             // 

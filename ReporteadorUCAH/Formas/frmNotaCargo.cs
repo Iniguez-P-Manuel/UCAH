@@ -20,25 +20,28 @@ namespace ReporteadorUCAH.Formas
 {
     public partial class frmNotaCargo : FormModel
     {
-        private System.Windows.Forms.TextBox txtFacturaUUID;
         public frmNotaCargo()
         {
             InitializeComponent();
+            // INICIALIZACIÓN TEMPORAL - eliminar después de probar
+            InicializarControles();
+            this.Size = new Size(677, 563);
             this.Load += NotaCargo_Load;
         }
         Modelos.NotaCargo NotaActual = new Modelos.NotaCargo();
 
         private string _prevToneladasText = "";
         private string _prevPrecioText = "";
+        
 
         // Nueva bandera para suspender temporalmente los handlers cuando actualizamos programáticamente los TextBoxes
         private bool _suspendTextChanged = false;
+        private bool _suspendUUIDTextChanged = false; // ← AGREGAR esta línea
 
         private void NotaCargo_Load(object sender, EventArgs e)
         {
             _prevToneladasText = (txtToneladas?.Text) ?? "";
             _prevPrecioText = (txtPrecio?.Text) ?? "";
-
 
             if (txtToneladas != null)
             {
@@ -57,18 +60,47 @@ namespace ReporteadorUCAH.Formas
             }
 
             // Configurar MaskedTextBox para UUID
-            if (txtFacturaUUID != null)
+            if (maskedtxtFacturaUUID != null)
             {
-                // Convertir a mayúsculas automáticamente y validar caracteres
-                txtFacturaUUID.KeyPress -= txtFacturaUUID_KeyPress;
-                txtFacturaUUID.KeyPress += txtFacturaUUID_KeyPress;
+                // Remover todos los eventos primero
+                maskedtxtFacturaUUID.KeyPress -= txtFacturaUUID_KeyPress;
+                maskedtxtFacturaUUID.KeyUp -= txtFacturaUUID_KeyUp;
+                maskedtxtFacturaUUID.TextChanged -= txtFacturaUUID_TextChanged;
+                maskedtxtFacturaUUID.Enter -= txtFacturaUUID_Enter;
 
-                // Forzar mayúsculas en cada cambio de texto
-                txtFacturaUUID.TextChanged -= txtFacturaUUID_TextChanged;
-                txtFacturaUUID.TextChanged += txtFacturaUUID_TextChanged;
+                // Agregar eventos
+                maskedtxtFacturaUUID.KeyPress += txtFacturaUUID_KeyPress;
+                maskedtxtFacturaUUID.KeyUp += txtFacturaUUID_KeyUp;
+                maskedtxtFacturaUUID.TextChanged += txtFacturaUUID_TextChanged;
+                maskedtxtFacturaUUID.Enter += txtFacturaUUID_Enter;
             }
         }
 
+        private void InicializarControles()
+        {
+            // Buscar el control si es null
+            if (maskedtxtFacturaUUID == null)
+            {
+                foreach (Control control in this.Controls)
+                {
+                    if (control.Name == "maskedtxtFacturaUUID" && control is MaskedTextBox)
+                    {
+                        maskedtxtFacturaUUID = (MaskedTextBox)control;
+                        break;
+                    }
+                }
+
+                // Si aún es null, mostrar mensaje
+                if (maskedtxtFacturaUUID == null)
+                {
+                    MessageBox.Show("No se encontró el control maskedtxtFacturaUUID", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
+                else
+                {
+                    MessageBox.Show("maskedtxtFacturaUUID encontrado y asignado", "Éxito", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                }
+            }
+        }
 
         private void btnDeducciones_Click(object sender, EventArgs e)
         {
@@ -124,70 +156,12 @@ namespace ReporteadorUCAH.Formas
         private void BusquedaSeleccionada(object sender, BusquedaNotas.ObjetoSeleccionadoEventArgs e)
         {
             _suspendTextChanged = true;
+            _suspendUUIDTextChanged = true;
 
             NotaActual = e.ObjetoSeleccionado;
-
-            // SOLUCIÓN: Buscar el UUID en ambas tablas
-            if (NotaActual != null && NotaActual.Id > 0)
-            {
-                try
-                {
-                    using (var con = new DatabaseConnection())
-                    {
-                        using (var command = con.GetConnection().CreateCommand())
-                        {
-                            // PRIMERO: Intentar obtener directamente de LiquidacionNotasCargo
-                            command.CommandText = "SELECT FacturaUUID FROM LiquidacionNotasCargo WHERE id = @Id";
-                            command.Parameters.AddWithValue("@Id", NotaActual.Id);
-
-                            var result = command.ExecuteScalar();
-
-                            if (result != null && result != DBNull.Value && !string.IsNullOrEmpty(result.ToString()))
-                            {
-                                NotaActual.FacturaUUID = result.ToString();
-                                MessageBox.Show($"✅ UUID encontrado en LiquidacionNotasCargo:\n{NotaActual.FacturaUUID}",
-                                              "DEBUG", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                            }
-                            else
-                            {
-                                // SEGUNDO: Si no está en LiquidacionNotasCargo, buscar en Facturas
-                                command.CommandText = @"
-                            SELECT f.UUID 
-                            FROM Facturas f
-                            INNER JOIN LiquidacionNotasCargo lnc ON lnc.id = @Id
-                            WHERE f.id = lnc.FacturaUUID";  // Asumiendo que FacturaUUID es ID numérico
-
-                                command.Parameters.Clear();
-                                command.Parameters.AddWithValue("@Id", NotaActual.Id);
-
-                                result = command.ExecuteScalar();
-                                if (result != null && result != DBNull.Value && !string.IsNullOrEmpty(result.ToString()))
-                                {
-                                    NotaActual.FacturaUUID = result.ToString();
-                                    MessageBox.Show($"✅ UUID encontrado en Facturas:\n{NotaActual.FacturaUUID}",
-                                                  "DEBUG", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                                }
-                                else
-                                {
-                                    MessageBox.Show("❌ No se encontró UUID en ninguna tabla\n" +
-                                                  "El campo FacturaUUID probablemente está vacío",
-                                                  "DEBUG", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                                    NotaActual.FacturaUUID = null;
-                                }
-                            }
-                        }
-                    }
-                }
-                catch (Exception ex)
-                {
-                    MessageBox.Show($"❌ Error al cargar UUID:\n{ex.Message}",
-                                  "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                    NotaActual.FacturaUUID = null;
-                }
-            }
-
             double totalDeducciones = NotaActual.Deducciones?.Sum(d => d.Importe) ?? 0;
 
+            // Limpiar y cargar todos los campos
             txtCliente.Text = NotaActual._Cliente?.Nombre ?? string.Empty;
             txtCultivo.Text = NotaActual._Cultivo?.Nombre ?? string.Empty;
             dpFechaInicial.Value = (NotaActual._Cosecha?.FechaInicial > dpFechaInicial.MinDate ? NotaActual._Cosecha.FechaInicial : DateTime.Today);
@@ -198,18 +172,46 @@ namespace ReporteadorUCAH.Formas
             txtPrecio.Text = NotaActual.Precio.ToString(CultureInfo.CurrentCulture);
             txtToneladas.Text = NotaActual.Tons.ToString(CultureInfo.CurrentCulture);
 
-            // CARGAR EL UUID EN EL TEXTBOX
-            if (txtFacturaUUID != null)
+            // SOLUCIÓN DEFINITIVA para el MaskedTextBox
+            if (maskedtxtFacturaUUID != null)
             {
+                _suspendUUIDTextChanged = true;
+
+                // Método más efectivo para limpiar y cargar
+                maskedtxtFacturaUUID.Text = ""; // Primero limpiar
+                maskedtxtFacturaUUID.ResetText();
+
                 if (!string.IsNullOrEmpty(NotaActual.FacturaUUID))
                 {
-                    txtFacturaUUID.Text = NotaActual.FacturaUUID;
+                    // Forzar la asignación del texto
+                    maskedtxtFacturaUUID.Text = NotaActual.FacturaUUID.ToUpper();
                 }
                 else
                 {
-                    txtFacturaUUID.Clear();
+                    // Asegurar que esté completamente limpio
+                    maskedtxtFacturaUUID.Text = "";
+                    maskedtxtFacturaUUID.ResetText();
                 }
+
+                _suspendUUIDTextChanged = false;
             }
+
+            if (maskedtxtFacturaUUID != null)
+            {
+                string mensajeCarga = $"=== CARGANDO REGISTRO ===\n" +
+                                     $"NotaActual.FacturaUUID: '{NotaActual.FacturaUUID}'\n" +
+                                     $"maskedtxtFacturaUUID.Text: '{maskedtxtFacturaUUID.Text}'\n" +
+                                     $"Mismo valor: {NotaActual.FacturaUUID == maskedtxtFacturaUUID.Text}";
+
+                MessageBox.Show(mensajeCarga, "Diagnóstico Carga", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            }
+            else
+            {
+                MessageBox.Show("maskedtxtFacturaUUID es NULL", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+
+            // Después de cargar el UUID en BusquedaSeleccionada:
+            DiagnosticarUUID();
 
             _prevPrecioText = txtPrecio.Text;
             _prevToneladasText = txtToneladas.Text;
@@ -244,11 +246,13 @@ namespace ReporteadorUCAH.Formas
             txtDeducciones.Text = "0.00";
             txtImporte.Text = "0.00";
 
-            // Solo asignar si el control existe
-            if (txtFacturaUUID != null)
+            if (maskedtxtFacturaUUID != null)
             {
                 _suspendUUIDTextChanged = true;
-                txtFacturaUUID.Text = "________-____-____-____-____________";
+                maskedtxtFacturaUUID.Text = "";
+                maskedtxtFacturaUUID.ResetText();
+                // Forzar un refresh
+                maskedtxtFacturaUUID.Refresh();
                 _suspendUUIDTextChanged = false;
             }
 
@@ -258,7 +262,6 @@ namespace ReporteadorUCAH.Formas
 
             _prevPrecioText = "0.00";
             _prevToneladasText = "0.00";
-            _prevUUIDText = "________-____-____-____-____________";
         }
 
         public override void Reporte()
@@ -284,6 +287,7 @@ namespace ReporteadorUCAH.Formas
 
         public override void Guardar()
         {
+            //Validaciones...
             if (NotaActual._Cliente == null)
             {
                 MessageBox.Show("Debes seleccionar un cliente.", "Validación", MessageBoxButtons.OK, MessageBoxIcon.Warning);
@@ -295,19 +299,36 @@ namespace ReporteadorUCAH.Formas
                 return;
             }
 
-            // Validar UUID si se ingresó parcialmente
-            if (!IsUUIDComplete() && !string.IsNullOrEmpty(GetUUIDWithoutFormatting()))
+            // MEJORAR validación UUID
+            string uuidIngresado = GetActualUUID();
+            string uuidSinFormato = GetUUIDWithoutFormatting();
+
+            MessageBox.Show($"Antes de validar:\nUUID ingresado: '{uuidIngresado}'\nUUID sin formato: '{uuidSinFormato}'",
+                            "Antes de Validar", MessageBoxButtons.OK, MessageBoxIcon.Information);
+
+            // Solo validar si el usuario intentó ingresar un UUID
+            if (!string.IsNullOrEmpty(uuidSinFormato) && uuidSinFormato.Length > 0)
             {
-                MessageBox.Show("El UUID está incompleto. Complete todos los caracteres o déjelo vacío.", "Validación", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                txtFacturaUUID.Focus();
-                return;
+                if (uuidIngresado == null)
+                {
+                    MessageBox.Show("El UUID está incompleto. Complete todos los caracteres o déjelo vacío.", "Validación", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    maskedtxtFacturaUUID.Focus();
+                    return;
+                }
+
+                if (uuidSinFormato.Length != 32)
+                {
+                    MessageBox.Show("El UUID debe tener exactamente 32 caracteres hexadecimales.", "Validación", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    maskedtxtFacturaUUID.Focus();
+                    return;
+                }
             }
 
+            // Asignar datos del formulario al objeto
             NotaActual.Fecha = dpFecha.Value;
             NotaActual.Tons = double.TryParse(txtToneladas.Text, out double tons) ? tons : 0;
             NotaActual.Precio = double.TryParse(txtPrecio.Text, out double precio) ? precio : 0;
-            NotaActual.FacturaUUID = GetActualUUID();
-
+            NotaActual.FacturaUUID = uuidIngresado; // Usar la variable ya validada
             RecalcularImporte();
             NotaActual.Importe = double.TryParse(txtImporte.Text, out double importe) ? importe : 0;
 
@@ -390,6 +411,7 @@ namespace ReporteadorUCAH.Formas
                         }
                     }
                 }
+               
             }
             catch (Exception ex)
             {
@@ -401,20 +423,16 @@ namespace ReporteadorUCAH.Formas
         // Helpers y handlers requeridos por el diseñador
         // -----------------------------
 
-        //KeyPress: Bloquea caracteres minuscula y mantiene uso de separador '-'
-        private string _prevUUIDText = "";
-        private bool _suspendUUIDTextChanged = false;
-
         // MÉTODOS PARA MANEJO DE UUID CON MASKEDTEXTBOX - MEJORADOS
         private void txtFacturaUUID_KeyPress(object sender, KeyPressEventArgs e)
         {
+            // Para MaskedTextBox, manejamos la entrada de caracteres
             if (char.IsControl(e.KeyChar))
                 return;
 
-            // Convertir a mayúsculas automáticamente
             e.KeyChar = char.ToUpper(e.KeyChar);
 
-            // Validar que solo sean caracteres A-F y 0-9
+            // Permitir solo caracteres hexadecimales (0-9, A-F)
             if (!((e.KeyChar >= 'A' && e.KeyChar <= 'F') ||
                   (e.KeyChar >= '0' && e.KeyChar <= '9')))
             {
@@ -422,51 +440,118 @@ namespace ReporteadorUCAH.Formas
             }
         }
 
-        private void txtFacturaUUID_TextChanged(object sender, EventArgs e)
+        private void txtFacturaUUID_KeyUp(object sender, KeyEventArgs e)
         {
-            // Asegurar que todo esté en mayúsculas
+            // Forzar mayúsculas después de cada tecla
+            if (_suspendUUIDTextChanged) return;
+
             var maskedBox = sender as MaskedTextBox;
             if (maskedBox == null) return;
 
-            // Obtener la posición actual del cursor
-            int cursorPosition = maskedBox.SelectionStart;
-
-            // Convertir todo a mayúsculas
             string currentText = maskedBox.Text;
             string upperText = currentText.ToUpper();
 
-            // Solo actualizar si hay cambios
+            // Solo actualizar si hay cambios y no estamos en medio de una actualización
             if (currentText != upperText)
             {
+                _suspendUUIDTextChanged = true;
+
+                int cursorPos = maskedBox.SelectionStart;
+                bool hasSelection = maskedBox.SelectionLength > 0;
+
                 maskedBox.Text = upperText;
-                // Restaurar la posición del cursor
-                maskedBox.SelectionStart = cursorPosition;
+
+                // Restaurar posición del cursor
+                if (!hasSelection)
+                {
+                    maskedBox.SelectionStart = Math.Min(cursorPos, upperText.Length);
+                }
+
+                _suspendUUIDTextChanged = false;
+            }
+        }
+
+        private void txtFacturaUUID_TextChanged(object sender, EventArgs e)
+        {
+            if (_suspendUUIDTextChanged) return;
+
+            var maskedBox = sender as MaskedTextBox;
+            if (maskedBox == null) return;
+
+            // Convertir a mayúsculas como respaldo
+            string currentText = maskedBox.Text;
+            string upperText = currentText.ToUpper();
+
+            if (currentText != upperText)
+            {
+                _suspendUUIDTextChanged = true;
+                int cursorPos = maskedBox.SelectionStart;
+                maskedBox.Text = upperText;
+                maskedBox.SelectionStart = Math.Min(cursorPos, upperText.Length);
+                _suspendUUIDTextChanged = false;
+            }
+        }
+
+        private void DiagnosticarUUID()
+        {
+            if (maskedtxtFacturaUUID != null)
+            {
+                string mensaje = $"=== DIAGNÓSTICO UUID ===\n" +
+                                $"Text: '{maskedtxtFacturaUUID.Text}'\n" +
+                                $"Length: {maskedtxtFacturaUUID.Text.Length}\n" +
+                                $"Contains underscore: {maskedtxtFacturaUUID.Text.Contains("_")}\n" +
+                                $"NotaActual.FacturaUUID: '{NotaActual.FacturaUUID}'\n" +
+                                $"GetActualUUID(): '{GetActualUUID()}'\n" +
+                                $"=========================";
+
+                MessageBox.Show(mensaje, "Diagnóstico UUID", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            }
+        }
+
+        private void txtFacturaUUID_Enter(object sender, EventArgs e)
+        {
+            // Seleccionar todo el texto al entrar (opcional)
+            var maskedBox = sender as MaskedTextBox;
+            if (maskedBox != null && string.IsNullOrEmpty(maskedBox.Text.Replace("_", "").Replace("-", "")))
+            {
+                maskedBox.SelectAll();
             }
         }
 
         private string GetActualUUID()
         {
-            if (txtFacturaUUID == null) return null;
+            {
+                if (maskedtxtFacturaUUID == null) return null;
 
-            string textWithFormat = txtFacturaUUID.Text;
+                string texto = maskedtxtFacturaUUID.Text;
 
-            // Si el texto contiene placeholders (_), no está completo
-            if (string.IsNullOrEmpty(textWithFormat) || textWithFormat.Contains("_"))
-                return null;
+                // Verificar si realmente hay un UUID válido
+                if (string.IsNullOrEmpty(texto) ||
+                    texto.Replace("-", "").Replace("_", "").Length == 0)
+                    return null;
 
-            return textWithFormat;
+                // Si tiene guiones bajos, no está completo
+                if (texto.Contains("_"))
+                    return null;
+
+                // Validar formato básico (debe tener 36 caracteres con guiones)
+                if (texto.Length != 36)
+                    return null;
+
+                return texto.ToUpper();
+            }
         }
 
-        private string GetUUIDWithoutFormatting()
+            private string GetUUIDWithoutFormatting()
         {
-            if (txtFacturaUUID == null) return "";
-            return txtFacturaUUID.Text.Replace("-", "").Replace("_", "");
+            if (maskedtxtFacturaUUID == null) return "";
+            return maskedtxtFacturaUUID.Text.Replace("-", "").Replace("_", "");
         }
 
         private bool IsUUIDComplete()
         {
-            if (txtFacturaUUID == null) return true; // Si no existe, considerar completo
-            return !txtFacturaUUID.Text.Contains("_");
+            if (maskedtxtFacturaUUID == null) return true;
+            return !maskedtxtFacturaUUID.Text.Contains("_");
         }
 
         // KeyPress: bloquea caracteres no numéricos (permite separador decimal)
