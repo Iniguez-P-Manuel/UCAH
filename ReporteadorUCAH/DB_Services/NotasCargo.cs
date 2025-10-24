@@ -2,6 +2,7 @@
 using ReporteadorUCAH.Modelos;
 using System;
 using System.Collections.Generic;
+using System.Data.Common;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -418,6 +419,7 @@ namespace ReporteadorUCAH.DB_Services
                 }
             }
         }
+
         // Método mejorado para actualizar notas que usa la lógica manual cuando es necesario
         public int ActualizarNotaCargo(NotaCargo notaCargo)
         {
@@ -511,6 +513,143 @@ namespace ReporteadorUCAH.DB_Services
                     Console.WriteLine($"Error en transacción de ActualizarNotaCargo: {ex.Message}");
                     return 0;
                 }
+            }
+        }
+
+        public bool EliminarNotaCargo(int idNota)
+        {
+            using (var conn = _dbConnection.GetConnection())
+            using (var transaction = conn.BeginTransaction())
+            {
+                try
+                {
+                    Console.WriteLine($"Intentando eliminar nota cargo ID: {idNota}");
+
+                    // 1. Primero verificar si la nota existe
+                    using (var command = conn.CreateCommand())
+                    {
+                        command.Transaction = transaction;
+                        command.CommandText = "SELECT COUNT(*) FROM NotasCargo WHERE Id = @id";
+                        command.Parameters.AddWithValue("@id", idNota);
+                        int existe = Convert.ToInt32(command.ExecuteScalar());
+
+                        if (existe == 0)
+                        {
+                            Console.WriteLine("❌ La nota no existe en la base de datos");
+                            transaction.Rollback();
+                            return false;
+                        }
+                    }
+
+                    // 2. Eliminar deducciones relacionadas (si la tabla existe)
+                    try
+                    {
+                        using (var command = conn.CreateCommand())
+                        {
+                            command.Transaction = transaction;
+                            command.CommandText = "DELETE FROM DeduccionesNota WHERE NotaCargoId = @id";
+                            command.Parameters.AddWithValue("@id", idNota);
+                            int deduccionesEliminadas = command.ExecuteNonQuery();
+                            Console.WriteLine($"Deducciones eliminadas: {deduccionesEliminadas}");
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine($"ℹ️ No se pudieron eliminar deducciones (puede que no existan): {ex.Message}");
+                    }
+
+                    // 3. Intentar eliminar la nota principal
+                    using (var command = conn.CreateCommand())
+                    {
+                        command.Transaction = transaction;
+                        command.CommandText = "DELETE FROM NotasCargo WHERE Id = @id";
+                        command.Parameters.AddWithValue("@id", idNota);
+                        int filasAfectadas = command.ExecuteNonQuery();
+
+                        Console.WriteLine($"Filas afectadas en NotasCargo: {filasAfectadas}");
+
+                        if (filasAfectadas > 0)
+                        {
+                            transaction.Commit();
+                            Console.WriteLine("✅ Transacción commitada - Nota eliminada exitosamente");
+                            return true;
+                        }
+                        else
+                        {
+                            transaction.Rollback();
+                            Console.WriteLine("❌ No se pudo eliminar la nota (posible restricción de FK)");
+
+                            // Diagnosticar las restricciones
+                            DiagnosticarRestricciones(conn, idNota);
+                            return false;
+                        }
+                    }
+                }
+                catch (Exception ex)
+                {
+                    transaction.Rollback();
+                    Console.WriteLine($"❌ Error al eliminar nota cargo: {ex.Message}");
+                    Console.WriteLine($"StackTrace: {ex.StackTrace}");
+
+                    // Mostrar mensaje más específico según el error
+                    if (ex.Message.Contains("FOREIGN KEY") || ex.Message.Contains("constraint"))
+                    {
+                        Console.WriteLine("⚠️ Error de restricción de clave foránea detectado");
+                    }
+                    return false;
+                }
+            }
+        }
+
+        private void DiagnosticarRestricciones(SqliteConnection conn, int idNota)
+        {
+            try
+            {
+                Console.WriteLine("=== DIAGNÓSTICO DE RESTRICCIONES ===");
+
+                // Verificar tablas que podrían referenciar NotasCargo
+                string[] tablasPosibles = {
+            "DeduccionesNota", "Pagos", "Facturas", "Movimientos",
+            "Cobros", "Abonos", "HistorialPagos"
+        };
+
+                foreach (string tabla in tablasPosibles)
+                {
+                    try
+                    {
+                        using (var command = conn.CreateCommand())
+                        {
+                            command.CommandText = $@"
+                        SELECT name FROM sqlite_master 
+                        WHERE type='table' AND name='{tabla}'";
+                            var existeTabla = command.ExecuteScalar();
+
+                            if (existeTabla != null)
+                            {
+                                command.CommandText = $@"
+                            SELECT COUNT(*) FROM {tabla} 
+                            WHERE NotaCargoId = @id";
+                                command.Parameters.AddWithValue("@id", idNota);
+                                var count = command.ExecuteScalar();
+                                int registros = Convert.ToInt32(count);
+
+                                if (registros > 0)
+                                {
+                                    Console.WriteLine($"⚠️ Tabla '{tabla}' tiene {registros} registros relacionados");
+                                }
+                            }
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine($"ℹ️ No se pudo verificar tabla {tabla}: {ex.Message}");
+                    }
+                }
+                Console.WriteLine("=====================================");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error en diagnóstico: {ex.Message}");
             }
         }
 

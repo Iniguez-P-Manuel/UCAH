@@ -196,23 +196,6 @@ namespace ReporteadorUCAH.Formas
                 _suspendUUIDTextChanged = false;
             }
 
-            if (maskedtxtFacturaUUID != null)
-            {
-                string mensajeCarga = $"=== CARGANDO REGISTRO ===\n" +
-                                     $"NotaActual.FacturaUUID: '{NotaActual.FacturaUUID}'\n" +
-                                     $"maskedtxtFacturaUUID.Text: '{maskedtxtFacturaUUID.Text}'\n" +
-                                     $"Mismo valor: {NotaActual.FacturaUUID == maskedtxtFacturaUUID.Text}";
-
-                MessageBox.Show(mensajeCarga, "Diagnóstico Carga", MessageBoxButtons.OK, MessageBoxIcon.Information);
-            }
-            else
-            {
-                MessageBox.Show("maskedtxtFacturaUUID es NULL", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-            }
-
-            // Después de cargar el UUID en BusquedaSeleccionada:
-            DiagnosticarUUID();
-
             _prevPrecioText = txtPrecio.Text;
             _prevToneladasText = txtToneladas.Text;
 
@@ -282,7 +265,70 @@ namespace ReporteadorUCAH.Formas
 
         public override void Eliminar()
         {
-            base.Eliminar();
+            if (NotaActual == null || NotaActual.Id == 0)
+            {
+                MessageBox.Show("No hay una nota de cargo seleccionada para eliminar.", "Información",
+                               MessageBoxButtons.OK, MessageBoxIcon.Information);
+                return;
+            }
+
+            // Mostrar información de la nota a eliminar
+            string infoNota = $"ID: {NotaActual.Id}\n" +
+                             $"Cliente: {NotaActual._Cliente?.Nombre ?? "N/A"}\n" +
+                             $"Cultivo: {NotaActual._Cultivo?.Nombre ?? "N/A"}\n" +
+                             $"Fecha: {NotaActual.Fecha:dd/MM/yyyy}\n" +
+                             $"Importe: {NotaActual.Importe:C}";
+
+            // Confirmar con el usuario
+            var resultado = MessageBox.Show(
+                $"¿Está seguro que desea ELIMINAR PERMANENTEMENTE la nota de cargo?\n\n" +
+                $"{infoNota}\n\n" +
+                "⚠️ Esta acción no se puede deshacer.",
+                "Confirmar Eliminación",
+                MessageBoxButtons.YesNo,
+                MessageBoxIcon.Warning,
+                MessageBoxDefaultButton.Button2
+            );
+
+            if (resultado != DialogResult.Yes)
+            {
+                return;
+            }
+
+            try
+            {
+                using (var con = new DatabaseConnection())
+                {
+                    using (var dbNotas = new DB_Services.NotasCargo(con))
+                    {
+                        // Eliminar la nota de cargo
+                        bool eliminado = dbNotas.EliminarNotaCargo(NotaActual.Id);
+
+                        if (eliminado)
+                        {
+                            MessageBox.Show("Nota de cargo eliminada permanentemente.",
+                                           "Éxito", MessageBoxButtons.OK, MessageBoxIcon.Information);
+
+                            // Limpiar el formulario después de eliminar
+                            Nuevo();
+                        }
+                        else
+                        {
+                            MessageBox.Show($"No se pudo eliminar la nota de cargo #${NotaActual.Id}.\n\n" +
+                                           "Posibles causas:\n" +
+                                           "- La nota no existe en la base de datos\n" +
+                                           "- Hay restricciones de clave foránea\n" +
+                                           "- Error de conexión a la base de datos",
+                                           "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Error al eliminar la nota: {ex.Message}\n\nStackTrace: {ex.StackTrace}",
+                               "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
         }
 
         public override void Guardar()
@@ -302,9 +348,6 @@ namespace ReporteadorUCAH.Formas
             // MEJORAR validación UUID
             string uuidIngresado = GetActualUUID();
             string uuidSinFormato = GetUUIDWithoutFormatting();
-
-            MessageBox.Show($"Antes de validar:\nUUID ingresado: '{uuidIngresado}'\nUUID sin formato: '{uuidSinFormato}'",
-                            "Antes de Validar", MessageBoxButtons.OK, MessageBoxIcon.Information);
 
             // Solo validar si el usuario intentó ingresar un UUID
             if (!string.IsNullOrEmpty(uuidSinFormato) && uuidSinFormato.Length > 0)
@@ -492,21 +535,7 @@ namespace ReporteadorUCAH.Formas
             }
         }
 
-        private void DiagnosticarUUID()
-        {
-            if (maskedtxtFacturaUUID != null)
-            {
-                string mensaje = $"=== DIAGNÓSTICO UUID ===\n" +
-                                $"Text: '{maskedtxtFacturaUUID.Text}'\n" +
-                                $"Length: {maskedtxtFacturaUUID.Text.Length}\n" +
-                                $"Contains underscore: {maskedtxtFacturaUUID.Text.Contains("_")}\n" +
-                                $"NotaActual.FacturaUUID: '{NotaActual.FacturaUUID}'\n" +
-                                $"GetActualUUID(): '{GetActualUUID()}'\n" +
-                                $"=========================";
-
-                MessageBox.Show(mensaje, "Diagnóstico UUID", MessageBoxButtons.OK, MessageBoxIcon.Information);
-            }
-        }
+        
 
         private void txtFacturaUUID_Enter(object sender, EventArgs e)
         {
